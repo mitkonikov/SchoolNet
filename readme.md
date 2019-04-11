@@ -93,7 +93,22 @@ You should only see errors about the connection to the databases. Now it's the t
 
 * Download XAMPP and install the Apache server and the MySQL database.
 
-##### STEP 3: Database setup
+##### STEP 3: .env FILE
+
+Create .env file in the main directory with the following options:
+
+```
+PORT = 3000
+DATABASE_PORT = 3306
+DATABASE_USER = <here the database username>
+DATABASE_PASS = <here the database password>
+SESSION_NAME = <session name>
+SESSION_SECRET = <!session secret!>
+PASSPORT_SALT = <salt>
+TATKIN_WORD_COUNT = 50000
+```
+
+##### STEP 4: Database setup
 
 There are 3 databases that SchoolNet uses:
 * **db_net** - Main database where everything about the users is stored *(PRIVATE)*
@@ -104,7 +119,7 @@ We have example databases that will help you set up this project, private inform
 
 In the XAMPP's installation folder, you are going to see `mysql` folder, in the `data` folder you would put the three example database folders.
 
-##### STEP 4: Port setup
+##### STEP 5: Port setup
 
 Now is the time to set up the ports.
 Our default ports are:
