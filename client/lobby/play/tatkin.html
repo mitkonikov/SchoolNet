@@ -1,0 +1,144 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="theme-color" content="#44aed8"/>
+	
+		<title>SchoolNet</title>
+		<meta name="viewport" content="user-scalable=NO, width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="/client/static/css/foundation.css"/>
+		<link rel="stylesheet" href="/client/static/css/style_common.css"/>
+		<link rel="stylesheet" href="/client/lobby/play/css/tatkin.css"/>
+        <link rel="manifest" href="/client/manifest.json">
+
+        <script src="/client/static/js/jquery-3.3.1.js"> </script>
+		<script src="/client/static/js/socket.io.js"> </script>
+        <script src="/client/static/js/slide.it.js"> </script>
+		<script src="/client/static/js/foundation.js"> </script>
+		<script src="/client/static/js/common.js"> </script>
+		<script src="/client/lobby/play/js/tatkin.js"> </script>
+	</head>
+
+	<body>
+        <div class="sit-section form-center">
+            <div class="sit-slide" id="sit-slide-0">
+                <div id="game-lobby">
+                    <div id="game-lobby-TITLE"> <div id="game-lobby-TITLE-text" class="option-text"> Игри </div> </div>
+                    <div id="game-lobby-GAMES">
+                        <div id="message-cont">
+                            <div id="message-nogames" class="center-vh noselect" style="text-align: center;">
+                                Нема започнати игри
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="options-wrapper">
+                        <div class="gotoBack option"> <div class="option-text"> 
+                            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.87 140.13" width="15" heigth="15">
+                            <polyline class="back-icon" points="103.89 10.89 22.89 70.22 103.89 129.22"/>
+                          </svg>
+                           </div> </div>
+                        <div class="gotoContribute option"> <div class="option-text"> ПРИДОНЕСИ </div> </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sit-slide sit-inactive" id="sit-slide-1">
+                <div id="interface-wrapper">
+                    <div id="vertical-align">
+                        <div id="game-name">
+                            Татковски јазик
+                        </div>
+                        <div id="question">
+                            Дали зборот постои?
+                        </div>
+                        <div id="word" WORD_NUMBER="0" WORD_ID="0">
+                            {WORD}
+                        </div>
+                    </div>
+                </div>
+                <div class="options-wrapper">
+                    <div id="correct"> <div class="option-text"> ПОСТОИ </div> </div>
+                    <div id="incorrect"> <div class="option-text"> НЕ ПОСТОИ </div> </div>
+                </div>
+                <div id="main-game-stats-wrapper">
+                    <div id="score-rt-cont">
+                        <div id="score-rt-num"><div id="score-rt">0</div></div>
+                        <div id="score-rt-text">Поени</div>
+                    </div>
+                    <div id="timer-cont">
+                        <div id="timer-num">
+                            <div id="timer">
+                                <span id="big-timer">0</span>
+                            </div>
+                            <div id="timer-s">
+                                <span id="small-timer">.000</span>
+                            </div>
+                        </div>
+                        <div id="timer-text">Преостанато време</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sit-slide sit-inactive" id="sit-slide-2">
+                <div id="message-cont">
+                    <div id="message" class="center-vh" style="text-align: center;">
+                        Се чека на професорот да ја започне играта
+                    </div>
+                </div>
+            </div>
+            <div class="sit-slide sit-inactive" id="sit-slide-3">
+                <div id="awards-slide-cont" class="noselect">
+                    <div id="awards-title-cont">
+                        ИГРАТА Е ЗАВРШЕНА!
+                    </div>
+                    <div id="awards-stats-logo">
+                        <div id="awards-logo-cont">
+                            <img id="awards-logo" class="center-h" src="/client/static/svg/tatkin.svg"></img>
+                        </div>
+                        <div id="xp-text-cont">
+                            Место: <span id="final-place">1</span> <br>
+                            XP: <span id="final-xp">1000</span>
+                        </div>
+                    </div>
+                    <div id="progressbar-row">
+                        <div id="progressbar">
+                                <div id="level-xp-cont"> 
+                                    <div id="level-xp" class="center-vh">
+                                        300 XP
+                                    </div>
+                                </div>
+                            <div id="progressbar-xp"></div>
+                        </div>
+                    </div>
+                    <div id="level-count-cont">LEVEL: <span id="final-level">1</span></div>
+                    <div id="leaderboard-title">листа на најдобрите</div>
+                    <div id="leaderboard-container">
+                        <div class="best-scores" id="best-0">
+                            <div class="place">1</div>
+                            <div class="name">Митко Ников</div>
+                            <div class="score">300</div>
+                        </div>
+                        <div class="best-scores" id="best-0">
+                            <div class="place">2</div>
+                            <div class="name">Митко Ников</div>
+                            <div class="score">500</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="options-wrapper" id="game-finish-back">
+                    <div class="gotoBack option"> <div class="option-text"> 
+                        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.87 140.13" width="15" heigth="15">
+                        <polyline class="back-icon" points="103.89 10.89 22.89 70.22 103.89 129.22"/>
+                      </svg>
+                       </div> </div>
+                    <div class="gotoContribute option"> <div class="option-text"> ПРИДОНЕСИ </div> </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SLIDE 0 - LOBBY -->
+        <!-- SLIDE 1 - GAME -->
+        <!-- SLIDE 2 - WAIT -->
+        <!-- ? SLIDE 3 - BETWEEN LEVELS -->
+        <!-- SLIDE 4 - FINISH -->
+    </body>
+</html>

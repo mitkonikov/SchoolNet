@@ -1,0 +1,527 @@
+#class-list {
+    height: 100%;
+    width: 100%;
+    background-color: var(--color-main-0-2);
+}
+
+#class-list-title {
+    height: 8%;
+    font-size: 1.8em;
+    background-color: var(--color-main-2-1);
+
+}
+
+#class-list-lobby {
+    height: 84%;
+    padding: 3% 0 0 0;
+
+}
+
+/* LISTS */
+#students-list-class {
+    background-color: var(--color-main-0-2);
+    height: 84%;
+    overflow: initial;
+    overflow-x: initial;
+}
+
+#request-student-list {
+    background-color: var(--color-main-0-2);
+    height: 84%;
+    overflow: initial;
+    overflow-x: initial;
+}
+
+#available-games-list {
+    background-color: var(--color-main-0-2);
+    height: 84%;
+    overflow: initial;
+    overflow-x: initial;
+}
+
+/* LIST ITEMS */
+.class-net {
+    padding-left: 1em;
+    background-color: var(--color-main-0-1);
+    height: fit-content;
+    cursor: pointer;
+}
+
+.class-net:nth-child(2n) {
+    background-color: var(--color-main-0-3);
+}
+
+.class-name {
+    float: left;
+}
+
+.class-name-year {
+    font-family: 'Roboto-Thin';
+    font-size: 3.3em;
+    float: left;
+}
+
+.class-name-num {
+    font-family: 'Roboto-Regular';
+    float: right;
+    font-size: 1.5em;
+    padding: 0.2em;
+}
+
+.class-name-after {
+    clear: both;
+}
+
+.class-info {
+    height: 100%;
+    padding: 0.8em;
+    float: left;
+}
+
+.form-center {
+    position: absolute;
+    width: 30em;
+    height: 85%;
+}
+
+.sit-slide {
+    width: 100%;
+    height: 100%;
+}
+
+#CircleContainer {
+  cursor: pointer;
+  position: absolute;
+  /*top: 42%;
+  top: calc(50% - 50px);
+  left: 48%;*/
+  top: 4%;
+  left: 84%;
+  margin-top: 0px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: all 0.33s cubic-bezier(0.33, 0.33, 0.33, 1.000);
+  transform: rotate(45deg);
+  box-shadow: -1px 3px 4px 0px rgba(0,0,0,0.2), -1px 2px 1px -0px rgba(0,0,0,0.2);
+
+  /* overflow: hidden; */
+}
+
+#CircleContainer:hover {
+    margin-top: 0;
+    /*box-shadow: -1px 12px 14px 0px rgba(0,0,0,0.2), -3px 14px 10px -6px rgba(0,0,0,0.2);*/
+}
+
+#EnterButton {
+    display: block;
+    position: relative;
+    top: -31.333%;
+    left: -33.333%;
+    /*background: ;*/
+    width: 84px; /*100px/Circ60px — when Container is 60pxDiameter, 84px when Container is 50pxDiameter */
+    transform: rotate(90deg);
+}
+
+#CircleStroke{
+    fill:none;
+    stroke:rgb(15, 207, 255);
+    transform: rotate(-90deg);
+    transform-origin: 50px 50px;
+    opacity:1.75;
+    stroke-dasharray: 156 1000;   /* 156=length */
+    stroke-dashoffset: -157;
+    stroke-miterlimit: 10;
+    stroke-width: 3px;
+    transition: all 0.85s 0.0s cubic-bezier(0.6, 0.0, 0.2, 1.000);
+}
+
+#CircleStroke.delay {
+    opacity: 0.05;
+    stroke-dasharray: 156 1000;   /* 156=length */
+    stroke-dashoffset: -0;
+    transition-duration: 1.2s;
+    transition-delay: 0.35s;
+}
+
+#LeftX.active, #RightX.active {
+    stroke-dasharray: 28 1000;   /* 101=length */
+    stroke-dashoffset: -69.5;
+    stroke-width: 2px;
+    opacity: 1;
+    transition-duration: 0.67s;
+}
+
+#LeftX, #RightX {
+    stroke: #FFF;
+    opacity: 0.0;
+    stroke-width: 2px;
+    stroke-dasharray: 120 1000;   /* 101=length */
+    stroke-dashoffset: 120;
+    /* transform: scale(1.2095); */
+    transform-origin: 50% 50%;
+    transition: all 0.8s cubic-bezier(0.50, 0.0, 0.1, 1.000);
+}
+
+#LeftX-below, #RightX-below {
+    stroke-dasharray: 28 1000;   /* 101=length */
+    stroke-dashoffset: -69.5;
+    stroke-width: 2px;
+    stroke: #FFF;
+    opacity: 0.3;
+}
+
+#BothX {
+    transform: translateY(0px);
+    transition: all 0.25s cubic-bezier(0.460, 0.0, 0.185, 1.000) ;
+    transition-delay: 0s;
+}
+
+.cross {
+    fill: none;
+    stroke-miterlimit: 10;
+}
+
+#circle {
+    fill: #266982;
+}
+
+.online-studs-icon {
+    background-color: var(--color-border-success);
+    border-radius: 50%;
+    border: 1px solid #fff;
+    float: left;
+    width: 0.7em;
+    height: 0.7em;
+    margin: 0.45em 0.25em 0.25em 0.75em;
+}
+
+#online-studs-num {
+    float: right;
+    font-size: 1.1em;
+    font-family: 'Roboto-Light';
+    padding-left: 0.1em;
+}
+
+.total-studs-icon {
+    background-color: var(--color-main-0-2);
+    clip-path: circle(40% at center);
+    float: right;
+    width: 0.8em;
+    height: 0.8em;
+    margin: 0.45em 0.25em 0.25em 0.75em;
+}
+
+#total-studs-num {
+    float: right;
+    font-size: 1.1em;
+    font-family: 'Roboto-Light';
+    padding-left: 0.1em;
+}
+
+.studs-icons {
+    margin-left: 0.5em;
+    float: right;
+}
+
+#slide-addClass {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-main-0-2);
+}
+
+#slide-classOptions {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-main-0-2);
+}
+
+#choose-year {
+    width: fit-content;
+    margin: 0 auto;
+    height: 9em;
+}
+
+#choose-year-scroll {
+    margin-right: 2em;
+    position: absolute;
+    left: 20%;
+    -webkit-mask-image: -webkit-gradient(linear, left 70%, left bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,0.9))), -webkit-gradient(linear, left 50%, left top, from(rgba(0,0,0,0.9)), to(rgba(0,0,0,0)));
+    -webkit-mask-composite: xor;
+}
+
+#choose-class-scroll {
+    position: absolute;
+    right: 20%;
+    -webkit-mask-image: -webkit-gradient(linear, left 70%, left bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,0.9))), -webkit-gradient(linear, left 50%, left top, from(rgba(0,0,0,0.9)), to(rgba(0,0,0,0)));
+    -webkit-mask-composite: xor;
+}
+
+#choose-year-text {
+    font-size: 1.5em;
+    font-family: 'Roboto-Thin';
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+
+#circle-add-class {
+    width: 7em;
+    height: 7em;
+    position: relative;
+    bottom: -62%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.circle-loader {
+  margin-bottom: 3.5em;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-left-color: #fff;
+  animation: loader-spin 1.2s infinite linear;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 50%;
+  width: 7em;
+  height: 7em;
+}
+
+.circle-loader:hover {
+    background-color: rgb(0, 0, 0, 0.05);
+}
+
+.circle-loader:active {
+    background-color: rgb(0, 0, 0, 0.1);
+}
+
+.load-complete {
+  -webkit-animation: none;
+  animation: none;
+  border-color: #fff;
+  transition: border 500ms ease-out;
+}
+
+.checkmark {
+    display: none;
+}
+
+.draw:after {
+    animation-duration: 800ms;
+    animation-timing-function: ease;
+    animation-name: checkmark;
+    transform: scaleX(-1) rotate(135deg);
+}
+  
+.draw:after {
+    opacity: 1;
+    height: 3.5em;
+    width: 1.75em;
+    transform-origin: left top;
+    border-right: 3px solid #fff;
+    border-top: 3px solid #fff;
+    content: '';
+    left: 1.75em;
+    top: 3.5em;
+    position: absolute;
+}
+
+@keyframes loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes checkmark {
+  0% {
+    height: 0;
+    width: 0;
+    opacity: 1;
+  }
+  20% {
+    height: 0;
+    width: 3.5em/2;
+    opacity: 1;
+  }
+  40% {
+    height: 3.5em;
+    width: 3.5em/2;
+    opacity: 1;
+  }
+  100% {
+    height: 3.5em;
+    width: 3.5em/2;
+    opacity: 1;
+  }
+}
+
+#empty-lobby {
+    font-size: 1.5em;
+    font-family: 'Roboto-Light';
+}
+
+#class-statistics-container {
+    height: 35%;
+    padding: 1em;
+}
+
+#students-container {
+    cursor: pointer;
+}
+
+#students-container-title {
+    background-color: var(--color-main-2);;
+    padding: 0.2em;
+    padding-right: 0.5em;
+    padding-left: 0.5em;
+    cursor: pointer;
+}
+
+#show-more-students {
+    float: right;
+}
+
+#best-active-students {
+    height: 20%;
+}
+
+.student-small-net {
+    padding: 0.5em;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 25%;
+    background-color: var(--color-main-0-1);
+    cursor: pointer;
+}
+
+.student-net, .student-mark-net, .avail-game-net {
+    padding: 1.5em;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 10%;
+    background-color: var(--color-main-0-1);
+    cursor: pointer;
+}
+
+.student-small-net:nth-child(2n) {
+    background-color: var(--color-main-0-3);
+}
+
+.student-net:nth-child(2n), .student-mark-net:nth-child(2n), .avail-game-net:nth-child(2n) {
+    background-color: var(--color-main-0-3);
+}
+
+.student-image {
+    height: 100%;
+    width: fit-content;
+}
+
+.student-small-online-icon {
+    height: 1.3em;
+    width: 1.3em;
+    border-style: dashed;
+    border-width: 1px;
+    border-color: #ffffffdb;
+    border-radius: 50%;
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+    float: left;
+    transition: all 0.3s ease-in-out;
+}
+
+.student-online-icon {
+    height: 2em;
+    width: 2em;
+    border-style: dashed;
+    border-width: 1px;
+    border-color: #ffffffdb;
+    border-radius: 50%;
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+    float: left;
+    transition: all 0.3s ease-in-out;
+}
+
+.student-small-online-icon.online, .student-online-icon.online {
+    background-color: var(--color-border-success);
+}
+
+.student-small-online-icon.offline, .student-online-icon.offline {
+    background-color: #0000000a;
+}
+
+.student-small-online-icon.pump, .student-online-icon.pump {
+    border-width: 1.5px;
+    transition: all 0.3s ease-in-out;
+}
+
+#student-small-name {
+    padding-left: 2em;
+}
+
+#student-name {
+    padding-left: 3em;
+}
+
+#avail-game-icon {
+    padding-left: 3em;
+}
+
+.check-img {
+    background-image: url('/client/static/img/check.png');
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+    opacity: 0.05;
+}
+
+.check-img.show {
+    opacity: 1;
+}
+
+#spacer-1 {
+    height: 23%;
+}
+
+#h-spacer {
+    width: 82%;
+    float: right;
+    background-color: rgb(17, 35, 51);
+}
+
+#confirm-students {
+    width: 82%;
+    float: right;
+    background-color: var(--color-main-2);
+}
+
+#play-game {
+    width: 82%;
+    float: right;
+    background-color: var(--color-main-2);
+}
+
+#add-class-footer {
+    position: relative;
+    top: 26%;
+    transform: translate(0, -50%);
+}
+
+@media only screen and (max-width: 530px) {
+    .form-center {
+        width: 100%;
+        height: 100%;
+    }
+
+    #choose-year-scroll {
+        left: 12%;
+    }
+
+    #circle-add-class {
+        bottom: -42%;
+    }
+}

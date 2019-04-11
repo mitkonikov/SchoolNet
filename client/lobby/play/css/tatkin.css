@@ -1,0 +1,430 @@
+body {
+    background-color: var(--color-0-2-1);
+}
+
+#interface-wrapper {
+    background-color: var(--color-0-1);
+    height: 40%;
+    text-align: center;
+}
+
+#vertical-align {
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+#main-stats-wrapper {
+    background-color: var(--color-0-2);
+    height: 6%;
+}
+
+#main-game-stats-wrapper {
+    background-color: var(--color-0-2);
+    height: 52%;
+}
+
+#game-name {
+    font-size: 1em;
+    font-family: 'Roboto-Bold';
+    height: 18%;
+}
+
+#question {
+    font-family: 'Roboto-Regular';
+    font-size: 1.2em;
+    height: 18%;
+}
+
+#word {
+    font-size: 2em;
+    font-family: 'Roboto-Thin';
+
+    height: 18%;
+}
+
+#correct {
+    background-color: var(--color-border-success);
+    width: 50%;
+    float: left;
+}
+
+#incorrect { 
+    background-color: var(--color-border-alert);
+    width: 50%;
+}
+
+#correct.submitted, #incorrect.submitted {
+    font-size: 1.2em;
+}
+
+#correct.locked, #incorrect.locked {
+    -webkit-filter: blur(1.6px);
+    -moz-filter: blur(1.6px);
+    -o-filter: blur(1.6px);
+    -ms-filter: blur(1.6px);
+    filter: blur(1.6px);
+}
+
+#occu {
+    background-color: var(--color-border-alert);
+}
+
+#skip {
+    background-color: #215545;
+}
+
+#imenka {
+    width: 50%;
+    background-color: var(--color-0-3);
+}
+
+#pridavka {
+    width: 50%;
+    background-color: #643131;
+    float: right;
+}
+
+#glagol {
+    width: 35%;
+    background-color: #ca672d;
+}
+
+#zamenka {
+    width: 32%;
+    float: left;
+    background-color: var(--color-0-main);
+}
+
+#broj {
+    width: 33%;
+    float: right;
+    background-color: #5141a7;
+}
+
+#other {
+    background-color: #a53b3b;
+}
+
+#mistake {
+    background-color: var(--color-border-alert);
+}
+
+.form-center {
+    position: absolute;
+    width: 30em;
+    height: 85%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.sit-slide {
+    width: 100%;
+    height: 100%;
+}
+
+#game-lobby {
+    height: 100%;
+    width: 100%;
+    background-color: var(--color-0-2);
+}
+
+#game-lobby-TITLE {
+    height: 8%;
+    font-size: 1.8em;
+    background-color: var(--color-0-1);
+}
+
+#game-lobby-TITLE-text {
+    text-align: left;
+    padding-left: 1em;
+}
+
+#game-lobby-GAMES {
+    height: 84%;
+    padding: 3% 0 0 0;
+}
+
+.game-lobby-GAME-container {
+    padding: 1.4em;
+    background-color: var(--color-0-3);
+    height: fit-content;
+    cursor: pointer;
+}
+
+.game-lobby-GAME-container:nth-child(2n) {
+    background-color: var(--color-0-3-1);
+}
+
+.game-lobby-GAME-container:hover {
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.3);
+    border-width: 0 0 0 0.5em;
+}
+
+.prof {
+    font-size: 1.4em;
+}
+
+.stud {
+    position: relative;
+}
+
+#contribute-wrapper {
+    height: 5%;
+}
+
+.gotoContribute {
+    width: 82%;
+    float: right;
+    background-color: var(--color-0-1);
+}
+
+#cont-gotoBack-wrap {
+    height: 4%;
+    font-size: 1em;
+    font-family: 'Roboto-Thin';
+    background-color: rgb(17, 35, 51);
+}
+
+.option-spacer {
+    background-color: var(--color-0-2);
+}
+
+#message, #message-nogames {
+    padding-left: 5em;
+    padding-right: 5em;
+    font-size: 1.2em;
+    font-family: 'Roboto-Light';
+}
+
+#message-cont {
+    width: 100%;
+    height: 100%;
+}
+
+#score-rt-cont {
+    width: 15em;
+    float: left;
+}
+
+#score-rt {
+    margin-top: -0.13em;
+    margin-left: 0.2em;
+    font-size: 6em;
+    font-family: 'Roboto-Thin';
+}
+
+#score-rt-text {
+    font-size: 2em;
+    transform: translate(+10%, -70%);
+}
+
+/* TIMER STUFF */
+
+#timer-cont {
+    width: 10em;
+    float: right;
+}
+
+#timer {
+    height: 1.2em;
+    width: 0.7em;
+    margin-top: -0.2em;
+    /* margin-right: 0.3em; */
+    float: left;
+    font-size: 8em;
+    font-family: 'Roboto-Thin';
+    letter-spacing: -0.2em;
+    text-align: right;
+}
+
+#timer-text {
+    width: 7em;
+    height: 0em;
+    font-size: 1.3em;
+    font-family: 'Roboto-Regular';
+    /* float: left; */
+    text-align: right;
+    padding: -3em;
+    /* margin: -1.4em; */
+    transform: translate(-5%, 0);
+}
+
+#timer-s {
+    margin-top: 5.4em;
+    margin-right: 1em;
+    font-size: 1.1em;
+    font-family: 'Roboto-Thin';
+    float: right;
+}
+
+#small-timer {
+    text-align: left;
+}
+
+/* GAME OVER SLIDE */
+
+#awards-title-cont {
+    font-size: 1.2em;
+    font-family: 'Roboto-Bold';
+    text-align: center;
+    padding: 0.7em;
+}
+
+#awards-stats-logo {
+    padding-left: 2em;
+    height: 20%;
+    margin-bottom: 1em;
+}
+
+#awards-stats-logo:hover {
+    background-color: rgb(0, 0, 0, 0.1);
+}
+
+#awards-logo-cont {
+    width: 20%;
+    float: left;
+}
+
+#awards-logo {
+    height: 100%;
+}
+
+#xp-text-cont {
+    padding: 1%;
+    padding-top: 1em;
+    padding-left: 27%;
+    font-family: 'Roboto-Light';
+    font-size: 1.5em;
+}
+
+#final-xp, #final-place, #final-level {
+    font-family: 'Roboto-Bold';
+}
+
+#progressbar-row {
+    height: 2em;
+    width: 100%;
+}
+
+#progressbar-row:hover {
+    background-color: rgb(0, 0, 0, 0.1);
+}
+
+#progressbar {
+    height: 100%;
+    margin-left: 1em;
+    margin-right: 1em;
+    background-color: var(--color-0-2);
+}
+
+#progressbar-xp {
+    height: 100%;
+    width: 0%;
+    background-color: var(--color-border-success);
+}
+
+#level-xp-cont {
+    height: 100%;
+    width: 100%;
+    float: left;
+
+    /*transform: translate(0, -67%);*/
+}
+
+#level-xp {
+    text-align: center;
+    font-family: 'Roboto-Bold';
+}
+
+#level-count-cont {
+    width: 100%;
+    font-size: 1.2em;
+    font-family: 'Roboto-Light';
+    text-align: center;
+    padding: 0.3em;
+    padding-bottom: 1em;
+}
+
+#leaderboard-title {
+    background-color: var(--color-0-1);
+    padding: 0.2em;
+    padding-left: 1.1em;
+}
+
+#leaderboard-title:hover {
+    background-color: var(--color-0-1-h);
+}
+
+#leaderboard-container {
+    height: 40%;
+}
+
+.best-scores {
+    height: 20%;
+    width: 100%;
+    padding: 0.4em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.best-scores:hover {
+    background-color: rgb(0, 0, 0, 0.1);
+}
+
+.best-scores .place {
+    float: left;
+    font-size: 2em;
+    font-family: 'Roboto-Bold';
+
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+
+    margin-right: 1em;
+}
+
+.best-scores .name {
+    float: left;
+
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.best-scores .score {
+    float: right;
+    font-size: 1.2em;
+    font-family: 'Roboto-Bold';
+
+    position: relative;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+#game-finish-back {
+    transform: translate(0, 82%);
+}
+
+@media only screen and (max-width: 530px) {
+    .form-center {
+        width: 100%;
+        height: 100%;
+    }
+
+    .prof {
+        font-size: 1.1em
+    }
+    
+    .game-lobby-GAME-container {
+        padding: 1em;
+    }
+
+    .options-wrapper {
+        font-family: 'Roboto-Light';
+        letter-spacing: 0.08em;
+        font-size: 0.9em;
+    }
+}

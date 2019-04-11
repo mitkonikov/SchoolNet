@@ -1,0 +1,109 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="theme-color" content="#44aed8"/>
+	
+		<title>SchoolNet</title>
+		<meta name="viewport" content="user-scalable=NO, width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="/client/static/css/foundation.css"/>
+		<link rel="stylesheet" href="/client/static/css/style_common.css"/>
+		<link rel="stylesheet" href="/client/static/css/style_lobby.css"/>
+        <link rel="manifest" href="/client/manifest.json">
+
+		<script src="/client/static/js/jquery-3.3.1.js"> </script>
+        <script src="/client/static/js/slide.it.js"> </script>
+        <script src="/client/static/js/swal.js"> </script>
+		<script src="/client/static/js/foundation.js"> </script>
+		<script src="/client/static/js/common.js"> </script>
+		<script src="/client/static/js/lobby.js"> </script>
+		
+	</head>
+
+	<body>
+		<div class="ready">
+		
+		<div class="header">
+			<iframe class="s-iframe-full" src="/client/static/animate/header.html"> </iframe>
+		</div>
+
+		<div class="form-center sit-section">
+		<div class="form-wrap s-form" id="play-form">
+			<div class="lobby-slide-form sit-inactive" id="sit-slide-0">
+				<div class="form-wrap s-form" id="news-form-wrap">
+					<div id="news-form-1" class="news-form">
+						<!-- <div id="read-more-news-form"> Прочитај повеќе </div> -->
+						<div class="hover-style"></div>
+                        <div id="titles-news-form"> <b> САКАМ </b> </div>
+                        <div id="text-news-form"> САКАМ е платформа на SchoolNet која на секој ученик му дава збор за да се искаже и да гласа за најдобрата идеа. </div>
+					</div>
+                    <div id="news-form-2" class="news-form">
+						<div class="hover-style"></div>
+						<!-- <div id="read-more-news-form"> Прочитај повеќе </div> -->
+                        <div id="titles-news-form"> <b> Crowdsourcing </b> </div>
+                        <div id="text-news-form"> Crowdsourcing е начин на собирање податоци со Ваша помош. </div>
+                    </div>
+                </div>
+			</div>
+
+			<div class="lobby-slide-form" id="sit-slide-1">
+				<div id="playable-games" class="noselect">Достапни игри</div>
+
+				<button type="button" class="btn btn-special" id="tatkoBtn" onclick="window.location = '/client/lobby/play/tatkin.html'"> 
+					<img id="tatkin-logo" src="/client/static/svg/tatkin.svg"></img>
+					ТАТКОВСКИ ЈАЗИК
+				</button>
+				<!-- <button type="button" class="btn btn-special" id="zaokruziBtn" onclick="playZaokruzi();"> ЗАОКРУЖИ </button> -->
+				
+				<div id="lobby-spacer"></div>
+				<div id="gotoDashboard" class="noselect" 
+					onclick="window.location='/client/lobby/dashboard/'">
+					<div id="gotoDashboard-effect"> </div>
+					<div class="option-text" id="gotoDashboard-text"> РАБОТНА ТАБЛА </div>
+				</div>
+			</div>
+			
+			<div class="lobby-slide-form sit-inactive" id="sit-slide-2">
+				<div id="profile-header">
+					<div id="profile-photo-wrapper">
+						<img src="/client/static/img/profile.png"/>
+					</div>
+					<div id="profile-photo-online">
+						<div id="online-icon"></div>
+					</div>
+					<div id="profile-name-wrapper">
+						<div id="profile-name-container">
+							<div id="profile-name"> Name </div>
+							<div class="edit" onclick="changeName();"> <img src="/client/static/img/edit.png"/> </div>
+						</div>
+
+						<div id="profile-desc-container">
+							<div id="profile-desc"> Description </div>
+							<div class="edit" onclick="changeDesc();"> <img src="/client/static/img/edit.png"/> </div>
+						</div>
+					</div>
+					<div id="profile-stats">
+						<div class="center-vh">
+							<div id="stats-tatkin-cont">
+								<div id="stats-logo-cont">
+									<img id="stats-logo" class="center-vh" src="/client/static/svg/tatkin.svg"></img>
+								</div>
+								<div id="stats-xp-cont">
+									Татковски јазик <br>
+									<span id="stats-xp">1000</span>
+								</div>
+							</div>
+							<div id="no-stats-msg">Немате статистики</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+
+		<div class="footer">
+			<button id="logOutBtn" onclick="logmeout();"> Одјави се </button>
+		</div>
+		</div>
+	</body>
+</html>

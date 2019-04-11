@@ -1,0 +1,265 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="theme-color" content="#44aed8"/>
+	
+		<title>SchoolNet</title>
+		<meta name="viewport" content="user-scalable=NO, width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="/client/static/css/foundation.css"/>
+		<link rel="stylesheet" href="/client/static/css/style_common.css"/>
+		<link rel="stylesheet" href="/client/static/css/style_dashboard.css"/>
+        <link rel="manifest" href="/client/manifest.json">
+
+        <script src="/client/static/js/jquery-3.3.1.js"> </script>
+        <script src="/client/static/js/slide.it.js"> </script>
+		<script src="/client/static/js/foundation.js"> </script>
+		<script src="/client/static/js/common.js"> </script>
+        <script src="/client/static/js/dashboard.js"> </script>
+        <script src="/client/static/js/scroll.it.js"></script>
+        <script src="/client/static/js/swal.js"> </script>
+	</head>
+
+	<body>
+        <div class="sit-section form-center">
+            <!-- LIST CLASSES -->
+            <div class="sit-slide" id="sit-slide-0">
+                <div id="class-list">
+                    <div id="class-list-title"> <div class="option-text"> ваши класови </div> </div>
+                    <div id="add-class"> 
+                        <div id="CircleContainer">
+                        <?xml version="1.0" encoding="iso-8859-1"?>
+                            <!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                            <svg id="EnterButton" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
+                            <g>
+                                <circle id="circle" cx="49.897" cy="50" r="30"/>
+                            </g>
+                            <g id="CircleStroke" >
+                                <circle cx="50" cy="50" r="25"/>
+                            </g>
+                            <g id="BothX">
+                                <path id="LeftX-below" class="cross" 
+                                    d="M49.897,25c-13.807,0-25,11.193-25,25
+                                    c0,6.902,2.797,13.151,7.319,17.674l29.826-29.82"/>
+                           
+                                <path id="RightX-below" class="cross" 
+                                    d="M49.895,25c13.807,0,25,11.193,25,25
+                                    c0,6.902-2.797,13.151-7.319,17.674L37.75,37.855"/>
+
+                                <path id="LeftX" class="cross" 
+                                    d="M49.897,25c-13.807,0-25,11.193-25,25
+                                    c0,6.902,2.797,13.151,7.319,17.674l29.826-29.82"/>
+                           
+                                <path id="RightX" class="cross" 
+                                    d="M49.895,25c13.807,0,25,11.193,25,25
+                                    c0,6.902-2.797,13.151-7.319,17.674L37.75,37.855"/>
+                            </g>
+                          </svg>
+                        </div>
+                    </div>
+                    <div id="class-list-lobby">
+                        <div class="option-text" id="empty-lobby"> Нема класови </div>
+                    </div>
+                    
+                    <div class="options-wrapper">
+                        <div id="gotoBack" class="option"> 
+                            <div class="option-text"> 
+                                <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.87 140.13" width="15" heigth="15">
+                                    <polyline class="back-icon" points="103.89 10.89 22.89 70.22 103.89 129.22"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADD A CLASS - SLIDE -->
+            <div class="sit-slide sit-inactive" id="sit-slide-1">
+                <div id="slide-addClass">
+                    <div id="class-list-title"> <div class="option-text"> додади клас </div> </div>
+                    <div class="center-vh" style="height: 19em;">
+                        
+                        <div id="choose-year-text">
+                            <span style="margin-right: 3.1em;"> ГОДИНА </span>
+                            <span> КЛАС </span>
+                        </div>
+
+                        <div id="choose-year">
+                        
+                            <ui class="c-year-scroll-container no-bullet">
+                                <li id="choose-year-scroll" class="noselect"> </li>
+                                <li id="choose-class-scroll"  class="noselect"> </li>
+                            </ui>
+
+                        </div>
+                        
+                        <div id="circle-add-class">
+                            <div class="circle-loader">
+                                <div class="checkmark draw"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="options-wrapper" id="add-class-footer">
+                        <div data-back="0" class="gotoBackSlide option"> 
+                            <div class="option-text"> 
+                                <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.87 140.13" width="15" heigth="15">
+                                    <polyline class="back-icon" points="103.89 10.89 22.89 70.22 103.89 129.22"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLASS SLIDE -->
+            <div class="sit-slide sit-inactive" id="sit-slide-2">
+                <div id="slide-classOptions">
+                    <div id="class-statistics-container">
+                        <div class="center-text noselect"> Статистиките за класот се се уште недостапни </div>
+                    </div>
+                    <div class="option-spacer"> </div>
+                    <div id="students-container">
+                        <div id="students-container-title">
+                            Вклучени ученици <div id="show-more-students"> Покажи ги сите </div>
+                        </div>
+                        <div id="best-active-students">
+                            <div class="option-text" id="empty-lobby"> Нема вклучени ученици </div>
+                            <!--<div class="student-small-net" id="student-0">
+                                <div class="student-small-online-icon online"> </div>
+                                <div class="center-v" id="student-name"> Митко Ников </div>
+                            </div>-->
+                        </div>
+                    </div>
+                    
+                    <div class="option-spacer" id="spacer-1"></div>
+
+                    <div class="options-wrapper">
+                        <div data-back="0" class="gotoBackSlide option"> 
+                            <div class="option-text"> 
+                                <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.87 140.13" width="15" heigth="15">
+                                    <polyline class="back-icon" points="103.89 10.89 22.89 70.22 103.89 129.22"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="play-game" class="option"> <div class="option-text"> ЗАПОЧНИ ИГРА </div> </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ALL STUDENTS IN A CLASS -->
+            <div class="sit-slide sit-inactive" id="sit-slide-3">
+                <!-- ADD A NEW STUDENT BUTTON -->
+                <div id="add-student"> 
+                    <div id="CircleContainer">
+                    <?xml version="1.0" encoding="iso-8859-1"?>
+                        <!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                        <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                        <svg id="EnterButton" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
+                        <g>
+                            <circle id="circle" cx="49.897" cy="50" r="30"/>
+                        </g>
+                        <g id="CircleStroke" >
+                            <circle cx="50" cy="50" r="25"/>
+                        </g>
+                        <g id="BothX">
+                            <path id="LeftX-below" class="cross" 
+                                d="M49.897,25c-13.807,0-25,11.193-25,25
+                                c0,6.902,2.797,13.151,7.319,17.674l29.826-29.82"/>
+                       
+                            <path id="RightX-below" class="cross" 
+                                d="M49.895,25c13.807,0,25,11.193,25,25
+                                c0,6.902-2.797,13.151-7.319,17.674L37.75,37.855"/>
+                            <path id="LeftX" class="cross" 
+                                d="M49.897,25c-13.807,0-25,11.193-25,25
+                                c0,6.902,2.797,13.151,7.319,17.674l29.826-29.82"/>
+                       
+                            <path id="RightX" class="cross" 
+                                d="M49.895,25c13.807,0,25,11.193,25,25
+                                c0,6.902-2.797,13.151-7.319,17.674L37.75,37.855"/>
+                        </g>
+                      </svg>
+                    </div>
+                </div>
+
+                <div id="class-list-title"> <div class="option-text"> ученици </div> </div>
+
+                <div id="students-list-class">
+                    <div class="option-text" id="empty-lobby"> Нема ученици </div>
+                    <!--<div class="student-net" id="student-0">
+                        <div class="student-online-icon online"> </div>
+                        <div class="center-v" id="student-name"> Митко Ников </div>
+                    </div>-->
+                </div>
+
+                <div class="options-wrapper">
+                    <div data-back="0" class="gotoBackSlide option"> 
+                        <div class="option-text"> 
+                            <svg width="35" heigth="35" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                <!--<circle cx="100" cy="100" r="90.5" class="back-icon-circle"/>-->
+                                <polyline points="140.5,39.33499526977539 59.5,98.66499710083008 140.5,157.6650047302246 " class="back-icon"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="h-spacer" class="option"> <div class="option-text"> </div> </div>
+                </div>
+            </div>
+
+            <!-- STUDENTS REQUESTS SLIDE -->
+            <div class="sit-slide sit-inactive" id="sit-slide-4">
+                <div id="class-list-title"> <div class="option-text"> покани од ученици </div> </div>
+                
+                <!-- ADD STUDENTS THAT ARE NOT IN ANY CLASS -->
+                <div id="request-student-list" class="noselect">
+                    <div class="option-text" id="empty-lobby"> Нема ученици </div>
+                </div>
+
+                <div class="options-wrapper">
+                    <div data-back="0" class="gotoBackSlide option"> 
+                        <div class="option-text"> 
+                            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.87 140.13" width="15" heigth="15">
+                                <polyline class="back-icon" points="103.89 10.89 22.89 70.22 103.89 129.22"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="confirm-students" class="option"> <div class="option-text"> ДОДАДИ </div> </div>
+                </div>
+            </div>
+
+            <!-- PLAY A GAME - SLIDE -->
+            <div class="sit-slide sit-inactive" id="sit-slide-5">
+                <div id="class-list-title"> <div class="option-text"> игри </div> </div>
+
+                <!-- LIST ALL THE AVAILABLE GAMES TO PLAY -->
+                <div id="available-games-list" class="noselect">
+                    <!-- IF THERE ARE NO GAMES, POP ERROR -->
+                    
+                    <!--
+                    <div class="avail-game-net" id="game-0">
+                        <div class="avail-game-icon"> </div>
+                        <div class="center-v" id="avail-game-net"> Татковски јазик </div>
+                    </div>
+                    -->
+                </div>
+
+                <div class="options-wrapper">
+                    <div data-back="0" class="gotoBackSlide option"> 
+                        <div class="option-text"> 
+                            <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.87 140.13" width="15" heigth="15">
+                                <polyline class="back-icon" points="103.89 10.89 22.89 70.22 103.89 129.22"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<!-- 0 -> LIST CLASSES -->
+<!-- 1 -> ADD A CLASS -->
+<!-- 2 -> CLASS SLIDE -->
+<!-- 3 -> ALL STUDENTS IN A CLASS -->
+<!-- 4 -> STUDENTS REQUESTS SLIDE -->
+<!-- 5 -> PLAY A GAME -->

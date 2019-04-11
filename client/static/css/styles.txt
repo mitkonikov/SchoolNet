@@ -1,0 +1,5 @@
+# I have no right to distribute these dependencies, so you have to download them yourself.
+# NOTE: The file names must be the same too!
+
+foundation.css
+jquery.fullPage.css

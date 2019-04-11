@@ -1,0 +1,25 @@
+{
+    "header" : {
+        "GAME"      : "TATKIN",
+        "Game_ID"   : "000",
+        "Room_ID"   : "000"
+    },
+
+    "settings" : {
+        "global" : {
+            "expires" : "mySQLformat"
+        },
+        "level" : {
+            "time" : "inSeconds",
+            "freeze-time": "inSeconds"
+        }
+    },
+
+    "game" : [
+        
+    ],
+
+    "log" : [
+        
+    ]
+}

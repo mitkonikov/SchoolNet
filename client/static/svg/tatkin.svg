@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 287 371.17">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6 {
+        fill: none;
+      }
+
+      .cls-1 {
+        stroke: rgb(255, 255, 255, 0.2);
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke-width: 20px;
+      }
+
+      .cls-2 {
+        stroke: rgb(255, 255, 255, 0.15);
+      }
+
+      .cls-3 {
+        stroke: rgb(255, 255, 255, 0.05);
+      }
+
+      .cls-4 {
+        stroke: #ccc;
+        stroke-width: 25px;
+      }
+
+      .cls-5, .cls-6 {
+        stroke: #fff;
+      }
+
+      .cls-5 {
+        stroke-width: 17px;
+      }
+
+      .cls-6 {
+        stroke-linejoin: bevel;
+        stroke-width: 13px;
+      }
+    </style>
+  </defs>
+  <g id="Layer_3" data-name="Layer 3">
+    <line class="cls-1" x1="252" y1="21.3" x2="252" y2="292.3"/>
+    <line class="cls-2" x1="270" y1="14.3" x2="270" y2="274.3"/>
+    <line class="cls-3" x1="232" y1="31.3" x2="232" y2="302.3"/>
+    <path class="cls-4" d="M319.5,379" transform="translate(-106 -63.7)"/>
+    <path class="cls-4" d="M319.5,99" transform="translate(-106 -63.7)"/>
+  </g>
+  <g id="Layer_1" data-name="Layer 1">
+    <polygon class="cls-5" points="143.5 360.98 278.5 271.58 278.5 11.62 143.5 54.49 8.5 11.62 8.5 271.58 143.5 360.98"/>
+  </g>
+  <g id="Layer_2" data-name="Layer 2">
+    <polyline class="cls-6" points="194 238.3 144 116.3 94 238.3"/>
+    <polyline class="cls-6" points="119 177.3 143.5 208.8 169 177.3"/>
+  </g>
+</svg>
