@@ -112,7 +112,7 @@ TATKIN_WORD_COUNT = 50000
 
 There are 3 databases that SchoolNet uses:
 * **db_net** - Main database where everything about the users is stored *(PRIVATE)*
-* **db_records** - Database where records of games that are currently playing are stored *(PRIVATE)*
+* **db_records** - Database where records of games that are currently played are stored *(PRIVATE)*
 * **db_words** - Database filled with words from Wikipedia and contributions from the users *(PUBLIC)*
 
 We have example databases that will help you set up this project, private informations (such as account info. or statistical user information) will never be made public!
@@ -138,7 +138,6 @@ Go to `http://localhost:3000/` and if there are no error messages, hooray!
 * SchoolNet is a **really complex** network, you are going to need a couple of hours if not days to set it up...
 * Ok, so, here are some things you should know:
 * SchoolNet uses [.env](https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786) variables
-* 
 
 ##### Sources, useful links:
 
@@ -158,10 +157,34 @@ Go to `http://localhost:3000/` and if there are no error messages, hooray!
 
 Want to contribute? Our project uses GitHub, so go! Make some changes!
 
+When contributing follow the [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
+
 
 ### Todos
 
+* Work on responsivness
+* Email server
+  * Verification on sign-in
+  * Forgot the password
+* Re-Captcha
+* Sign-in via Facebook
+* Class/students removal
+* Students/teachers search bar
+* Sub-contributions
+* Contributions statistics
+* Organize color palettes
+* Clear console logs
+* Make a custom back-end control unit
+* Picture profile customization
+* Finalize database and file path organization
+* Upload SchoolNet Works repository on GitHub
+* SchoolNet API
 
+* Implement the Google 4.1.1 syntex rule:
+  * Braces are used for all control structures,
+    even if the block contains only one instruction
+* Implement the Google 6.2.5 syntex rule:
+  * Constant names are CONSTANT_CASED
 
 License
 ----

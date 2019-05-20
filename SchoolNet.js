@@ -38,7 +38,7 @@ var BLOCKED           = require('blocked-at');
 
 const uuidv4 = require('uuid/v4');
 
-var connection = databases.connection;
+var network = databases.network;
 var wordsDB = databases.wordsDB;
 var records = databases.records;
 
@@ -80,7 +80,7 @@ passport.use('local', new LocalStrategy({
 
         var school = req.body.school;
 
-        connection.query("select * from tbl_students where Nickname = ? and School_ID = ?", [username, school], function(err, rows){
+        network.query("select * from tbl_students where Nickname = ? and School_ID = ?", [username, school], function(err, rows){
             if (err != null) console.log(err);
             
             //console.log("DEV: ");
@@ -99,7 +99,7 @@ passport.use('local', new LocalStrategy({
                 return done(null, false);
             }
 
-            connection.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [1, rows[0].ID]);
+            network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [1, rows[0].ID]);
 
             done(null, rows[0]);
         });
@@ -111,7 +111,7 @@ passport.serializeUser(function(user, done){
 });
 
 passport.deserializeUser(function(ID, done){
-    connection.query("select * from tbl_students where ID = ?", [ID], function (err, rows){
+    network.query("select * from tbl_students where ID = ?", [ID], function (err, rows){
         done(err, rows[0]);
     });
 });
@@ -160,7 +160,7 @@ app.post('/client/registerme', function(req, res, next) {
     }
 
     // Check if there's already an existing user with the same username in the same school
-    connection.query("SELECT * FROM tbl_students WHERE Nickname = ? AND School_ID = ?", [req.body.username, req.body.school], function(err, rows) {
+    network.query("SELECT * FROM tbl_students WHERE Nickname = ? AND School_ID = ?", [req.body.username, req.body.school], function(err, rows) {
 
         // if (err != null) console.log(err);
         if (rows.length == 0) {
@@ -168,7 +168,7 @@ app.post('/client/registerme', function(req, res, next) {
                 // REGISTER THE STUDENT
                 // GET TEACHERS ID
 
-                connection.query("SELECT * FROM tbl_students WHERE Email = ? AND School_ID = ?", [req.body.teacheremail, req.body.school], function(err, rows) {
+                network.query("SELECT * FROM tbl_students WHERE Email = ? AND School_ID = ?", [req.body.teacheremail, req.body.school], function(err, rows) {
                     // if (err != null) console.log(err);
                     if (rows.length == 0) {
                         res.send("teacher email problem");
@@ -211,17 +211,17 @@ app.post('/client/registerme', function(req, res, next) {
                     console.log(valuesINFO);
                     
                     // STUDENTS
-                    connection.query("INSERT INTO tbl_students SET ?", values, function(err, rows) {
+                    network.query("INSERT INTO tbl_students SET ?", values, function(err, rows) {
                         // ERROR HANDLING
                         // DEV
                         console.log(rows);
                         
-                        connection.query("SELECT ID FROM tbl_students WHERE Nickname = ? AND Password = ?", [values.Nickname, values.Password], function(err, rows) {
+                        network.query("SELECT ID FROM tbl_students WHERE Nickname = ? AND Password = ?", [values.Nickname, values.Password], function(err, rows) {
                             var ID = rows[0].ID;
 
                             // STUDENTS_INFO
                             valuesINFO['ID'] = ID;
-                            connection.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
+                            network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
                                 // STATISTICS
                                 var valuesStats = {
                                     ID : ID,
@@ -235,8 +235,8 @@ app.post('/client/registerme', function(req, res, next) {
                                     Teacher_Email : req.body.teacheremail
                                 }
 
-                                connection.query("INSERT INTO tbl_stats SET ?", valuesStats);
-                                connection.query("INSERT INTO tbl_student_request SET ?", s_req);
+                                network.query("INSERT INTO tbl_stats SET ?", valuesStats);
+                                network.query("INSERT INTO tbl_student_request SET ?", s_req);
                                 res.send("success");
                             });
                         });
@@ -270,17 +270,17 @@ app.post('/client/registerme', function(req, res, next) {
                 };
 
                 // TEACHERS
-                connection.query("INSERT INTO tbl_students SET ?", values, function(err, rows) {
+                network.query("INSERT INTO tbl_students SET ?", values, function(err, rows) {
                     // ERROR HANDLING
                     // DEV
                     console.log(rows);
                     
-                    connection.query("SELECT ID FROM tbl_students WHERE Nickname = ? AND Password = ?", [values.Nickname, values.Password], function(err, rows) {
+                    network.query("SELECT ID FROM tbl_students WHERE Nickname = ? AND Password = ?", [values.Nickname, values.Password], function(err, rows) {
                         var ID = rows[0].ID;
 
                         // STUDENTS_INFO
                         valuesINFO['ID'] = ID;
-                        connection.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
+                        network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
                             // STATISTICS
                             var valuesStats = {
                                 ID : ID,
@@ -288,7 +288,7 @@ app.post('/client/registerme', function(req, res, next) {
                                 Successive_Logins : 1
                             }
 
-                            connection.query("INSERT INTO tbl_stats SET ?", valuesStats);
+                            network.query("INSERT INTO tbl_stats SET ?", valuesStats);
                             res.send("success");
                         });
                     });
@@ -304,7 +304,7 @@ app.post('/client/registerme', function(req, res, next) {
 
 app.get('/client/logout', function(req, res) {
     if (req.isAuthenticated()) {
-        connection.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, req.user.ID]);
+        network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, req.user.ID]);
         req.logout();
     }
     res.redirect('/');
@@ -336,13 +336,13 @@ var TATKIN_WORD_COUNT = process.env.TATKIN_WORD_COUNT;
 app.post('/client/query', function(req, res) {
     if (req.isAuthenticated()) {
         if (req.body.username === 'me') {
-            connection.query("SELECT Role, Display_Name, About, Emoji FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID = ? AND tbl_students_info.ID = ?", [req.user.ID, req.user.ID], function(err, rows) {
+            network.query("SELECT Role, Display_Name, About, Emoji FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID = ? AND tbl_students_info.ID = ?", [req.user.ID, req.user.ID], function(err, rows) {
                 res.send(rows);
             });
         } else if (req.body.stats) {
             if (req.body.stats === 'me') {
                 // stats from games for the user
-                connection.query("SELECT * FROM tbl_stats WHERE ID = ?", req.user.ID, (err, statboard) => {
+                network.query("SELECT * FROM tbl_stats WHERE ID = ?", req.user.ID, (err, statboard) => {
                     if (err) {
                         // PRIORITY ERROR
                         res.send("empty");
@@ -360,7 +360,7 @@ app.post('/client/query', function(req, res) {
         } else if (req.body.game) {
             if (req.body.game === 'tatkin') {
                 if (req.body.command === 'list-games') {
-                    connection.query("SELECT Class_ID FROM tbl_classes_student WHERE Student_ID = ?", req.user.ID, (err, class_ids) => {
+                    network.query("SELECT Class_ID FROM tbl_classes_student WHERE Student_ID = ?", req.user.ID, (err, class_ids) => {
                         if (class_ids.length == 0) {
                             res.send("empty");
                             return;
@@ -368,13 +368,13 @@ app.post('/client/query', function(req, res) {
 
                         let CLASS_IDs = [];
                         for (c in class_ids) CLASS_IDs.push(parseInt(class_ids[c].Class_ID));
-                        connection.query("SELECT * FROM tbl_games_current WHERE Class_ID IN (" + CLASS_IDs.join() + ") AND Privacy = ?", 1, (err, rows) => {
+                        network.query("SELECT * FROM tbl_games_current WHERE Class_ID IN (" + CLASS_IDs.join() + ") AND Privacy = ?", 1, (err, rows) => {
                             if (rows.length == 0) res.send("empty");
                             else {
                                 let Teacher_IDs = [];
                                 for (r in rows)
                                     Teacher_IDs.push(parseInt(rows[r].Teacher_ID));
-                                connection.query("SELECT ID, Firstname, Lastname FROM tbl_students WHERE ID IN (" + Teacher_IDs.join() + ")", (err, names) => {
+                                network.query("SELECT ID, Firstname, Lastname FROM tbl_students WHERE ID IN (" + Teacher_IDs.join() + ")", (err, names) => {
                                     for (r in rows) {
                                         if (rows[r].Teacher_ID == names[r].ID) {
                                             rows[r].Fullname = names[r].Firstname + " " + names[r].Lastname;
@@ -423,7 +423,7 @@ app.post('/client/query', function(req, res) {
                             }
 
                             if (rows) {
-                                connection.query("SELECT Crowd_Tatkin FROM tbl_stats WHERE ID = ?", req.user.ID, function(err, rows) {
+                                network.query("SELECT Crowd_Tatkin FROM tbl_stats WHERE ID = ?", req.user.ID, function(err, rows) {
                                     // ERROR HANDLING
                                     if (err) {
                                         res.send("failed");
@@ -433,7 +433,7 @@ app.post('/client/query', function(req, res) {
 
                                     if (rows) {
                                         var updateSTAT = parseInt(rows[0].Crowd_Tatkin) + 1;
-                                        connection.query("UPDATE tbl_stats SET Crowd_Tatkin = ? WHERE ID = ?", [updateSTAT, req.user.ID], function(err, rows) {
+                                        network.query("UPDATE tbl_stats SET Crowd_Tatkin = ? WHERE ID = ?", [updateSTAT, req.user.ID], function(err, rows) {
                                             // ERROR HANDLING
                                         });
                                     }
@@ -453,7 +453,7 @@ app.post('/client/query', function(req, res) {
                 }
             } else if (req.body.game === 'game-info') {
                 if (req.body.command === 'get-game-info') {
-                    connection.query("SELECT * FROM tbl_games_current WHERE ID = ?", req.body.data.Game_ID, (err, rows) => {
+                    network.query("SELECT * FROM tbl_games_current WHERE ID = ?", req.body.data.Game_ID, (err, rows) => {
                         if (rows.length == 0) res.send("empty");
                         else res.send(rows);
                     });
@@ -465,19 +465,19 @@ app.post('/client/query', function(req, res) {
             res.send("no game");
         }
     } else if (req.body.command === 'get-main-statistics') {
-        connection.query("SELECT (SELECT COUNT(*) FROM tbl_students) AS Users", (err, countRows) => {
+        network.query("SELECT (SELECT COUNT(*) FROM tbl_students) AS Users", (err, countRows) => {
             if (err) {
                 console.trace(err);
                 countRows[0].Users = "";
             }
             
-            connection.query("SELECT (SUM(Crowd_Tatkin)) AS Contributions_Tatkin FROM tbl_stats", (err, contrib) => {
+            network.query("SELECT (SUM(Crowd_Tatkin)) AS Contributions_Tatkin FROM tbl_stats", (err, contrib) => {
                 if (err) {
                     console.trace(err);
                     contrib[0].Contributions_Tatkin = "";
                 }
                 
-                connection.query("SELECT Stat_Count FROM tbl_stats_web WHERE Stat_Name = 'Index Requests'", (err, countReq) => {
+                network.query("SELECT Stat_Count FROM tbl_stats_web WHERE Stat_Name = 'Index Requests'", (err, countReq) => {
                     if (err) {
                         console.trace(err);
                         countReq[0].Stat_Count = "";
@@ -502,14 +502,14 @@ app.post('/client/update', function(req, res) {
 
         if (req.body.command === 'display-name-change') {
             if (DATA.displayname && DATA.displayname.length >= 5 && DATA.displayname.length <= 100) {
-                connection.query("UPDATE tbl_students_info SET Display_Name = ? WHERE ID = ? ", [DATA.displayname.trim(), req.user.ID], function(err, rows) {
+                network.query("UPDATE tbl_students_info SET Display_Name = ? WHERE ID = ? ", [DATA.displayname.trim(), req.user.ID], function(err, rows) {
                     if (rows) res.send("success");
                     else res.send("failed");
                 });
             } else res.send("failed");
         } else if (req.body.command === 'desc-change') {
             if (DATA.description && DATA.description.length >= 5 && DATA.description.length <= 250) {
-                connection.query("UPDATE tbl_students_info SET About = ? WHERE ID = ? ", [DATA.description.trim(), req.user.ID], function(err, rows) {
+                network.query("UPDATE tbl_students_info SET About = ? WHERE ID = ? ", [DATA.description.trim(), req.user.ID], function(err, rows) {
                     if (rows) res.send("success");
                     else res.send("failed");
                 });
@@ -525,7 +525,7 @@ app.post('/client/dashboard/query', function(req, res) {
                 if (typeof req.body.command !== undefined) {
                     if (req.body.command === 'list-class') {
                         // LIST ALL CLASSES
-                        connection.query("SELECT * FROM tbl_classes WHERE Teacher_ID = ?", req.user.ID, function(err, rows) {
+                        network.query("SELECT * FROM tbl_classes WHERE Teacher_ID = ?", req.user.ID, function(err, rows) {
                             res.send(rows);
                         });
 
@@ -536,7 +536,7 @@ app.post('/client/dashboard/query', function(req, res) {
                         return;
                     } else if (req.body.command === 'list-students') {
                         // LIST THE STUDENTS IN A SPECIFIC CLASS
-                        connection.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", 
+                        network.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", 
                                         req.body.data.Class_ID, function(err, rows) {
                             
                             if (rows.length == 0) {
@@ -552,14 +552,14 @@ app.post('/client/dashboard/query', function(req, res) {
                             //console.log(STUDENTS);
                             //console.log(databases.mySQL.escape(STUDENTS.join()));
                             
-                            connection.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + STUDENTS.join() + ")", function(err, rows) {
+                            network.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + STUDENTS.join() + ")", function(err, rows) {
                                 if (rows) res.send(rows);
                                 else res.send("empty");
                             });
                         });
                     } else if (req.body.command === 'list-best-students') {
                         // LIST THE BEST STUDENTS IN A SPECIFIC CLASS
-                        connection.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", 
+                        network.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", 
                                         req.body.data.Class_ID, function(err, rows) {
                             
                             if (rows.length == 0) {
@@ -571,14 +571,14 @@ app.post('/client/dashboard/query', function(req, res) {
                             for (r in rows)
                                 STUDENTS.push(parseInt(rows[r].Student_ID));
                             
-                            connection.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + STUDENTS.join() + ") AND Online = ?", '1', function(err, rows) {
+                            network.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + STUDENTS.join() + ") AND Online = ?", '1', function(err, rows) {
                                 if (rows) res.send(rows);
                                 else res.send("empty");
                             });
                         });
                     } else if (req.body.command === 'list-request-students') {
                         // GET EVERY REQUEST
-                        connection.query("SELECT * FROM tbl_student_request WHERE Teacher_Email = ?", req.user.Email, function(err, rows) {
+                        network.query("SELECT * FROM tbl_student_request WHERE Teacher_Email = ?", req.user.Email, function(err, rows) {
                             if (rows) {
                                 let IDs = [];
                                 for (r in rows) {
@@ -587,7 +587,7 @@ app.post('/client/dashboard/query', function(req, res) {
 
                                 // console.log(databases.mySQL.escape(IDs.join()));
                                 
-                                connection.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students_info JOIN tbl_students WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + IDs.join() + ") LIMIT 25", IDs.join(), function(err, rows) {
+                                network.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students_info JOIN tbl_students WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + IDs.join() + ") LIMIT 25", IDs.join(), function(err, rows) {
                                     if (err) {
                                         res.send("problem");
                                         return;
@@ -607,7 +607,7 @@ app.post('/client/dashboard/query', function(req, res) {
                         });
                     } else if (req.body.command === 'list-available-games') {
                         // LIST AVAILABLE GAMES
-                        connection.query("SELECT * FROM tbl_games", function(err, rows) {
+                        network.query("SELECT * FROM tbl_games", function(err, rows) {
                             if (rows) res.send(rows);
                             else res.send("empty");
                         });
@@ -617,7 +617,7 @@ app.post('/client/dashboard/query', function(req, res) {
                         classData["Teacher_ID"] = req.user.ID;
                         classData["Students_IDs"] = "-1";
 
-                        connection.query("INSERT INTO tbl_classes SET ?", classData, function(err, rows) {
+                        network.query("INSERT INTO tbl_classes SET ?", classData, function(err, rows) {
                             if (rows) res.send("success");
                             else res.send("failed");
                         });
@@ -631,21 +631,21 @@ app.post('/client/dashboard/query', function(req, res) {
 
                         for (d in INPUT_DATA) {
                             let STUDENT_DATA = { Class_ID: in_class_id, Student_ID: parseInt(INPUT_DATA[d]) };
-                            connection.query("INSERT INTO tbl_classes_student SET ?", STUDENT_DATA);
-                            // connection.query("DELETE")
+                            network.query("INSERT INTO tbl_classes_student SET ?", STUDENT_DATA);
+                            // network.query("DELETE")
                         }
 /*
                         console.log(BINDED_DATA);
 
-                        connection.query("INSERT INTO tbl_classes_student (Class_ID, Student_ID) VALUES ?", BINDED_DATA, (err, rows) => {
+                        network.query("INSERT INTO tbl_classes_student (Class_ID, Student_ID) VALUES ?", BINDED_DATA, (err, rows) => {
                             if (err) console.log(err)
                         });*/
 
-                        // connection.query("UPDATE tbl_students SET Valid = ? WHERE ID IN (" + INPUT_DATA.join() + ")", '1');
-                        // connection.query("DELETE FROM tbl_student_request WHERE Teacher_Email = ? AND Student_ID IN (" + INPUT_DATA.join() + ")", req.user.Email);
+                        // network.query("UPDATE tbl_students SET Valid = ? WHERE ID IN (" + INPUT_DATA.join() + ")", '1');
+                        // network.query("DELETE FROM tbl_student_request WHERE Teacher_Email = ? AND Student_ID IN (" + INPUT_DATA.join() + ")", req.user.Email);
                         res.send("success");
                     
-                        /*connection.query("SELECT ID, Students_IDs FROM tbl_classes WHERE ID = ? AND Teacher_ID = ?", [in_class_id, req.user.ID], function(err, rows) {
+                        /*network.query("SELECT ID, Students_IDs FROM tbl_classes WHERE ID = ? AND Teacher_ID = ?", [in_class_id, req.user.ID], function(err, rows) {
                             if (rows) {
                                 let IDs = [];
                                 if (rows[0].Students_IDs != '-1') {
@@ -665,9 +665,9 @@ app.post('/client/dashboard/query', function(req, res) {
                                 }
                                 UPDATE_IDs = UPDATE_IDs.substring(0, UPDATE_IDs.length - 1);
 
-                                connection.query("UPDATE tbl_classes SET Students_IDs = ? WHERE ID = ?", [UPDATE_IDs, rows[0].ID]);
-                                connection.query("UPDATE tbl_students SET Valid = ? WHERE ID IN (" + INPUT_DATA.join() + ")", '1');
-                                connection.query("DELETE FROM tbl_student_request WHERE Teacher_Email = ? AND Student_ID IN (" + INPUT_DATA.join() + ")", req.user.Email);
+                                network.query("UPDATE tbl_classes SET Students_IDs = ? WHERE ID = ?", [UPDATE_IDs, rows[0].ID]);
+                                network.query("UPDATE tbl_students SET Valid = ? WHERE ID IN (" + INPUT_DATA.join() + ")", '1');
+                                network.query("DELETE FROM tbl_student_request WHERE Teacher_Email = ? AND Student_ID IN (" + INPUT_DATA.join() + ")", req.user.Email);
                                 res.send("success");
                             } else {
                                 res.send("failed");
@@ -679,7 +679,7 @@ app.post('/client/dashboard/query', function(req, res) {
                         res.send("success");
                     } else if (req.body.command === 'play-game') {
                         let TEACHER_ID = req.user.ID;
-                        connection.query("SELECT * FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, () => {
+                        network.query("SELECT * FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, () => {
                             let CLASS_ID = parseInt(req.body.data.Class_ID);
                             let GAME_ID = parseInt(req.body.data.Game_ID);
 
@@ -705,14 +705,14 @@ app.post('/client/dashboard/query', function(req, res) {
                                 Demo_ID     : CURRENT_DATE_TIME_TRIMMED + "_" + UUID
                             };
 
-                            connection.query("INSERT INTO tbl_games_current SET ?", GAME_CURRENT);
+                            network.query("INSERT INTO tbl_games_current SET ?", GAME_CURRENT);
 
                             res.send("success");
                         });
 
                     } else if (req.body.command === 'started-games') {
                         let TEACHER_ID = req.user.ID;
-                        connection.query("SELECT Game_ID FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, (err, rows) => {
+                        network.query("SELECT Game_ID FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, (err, rows) => {
                             if (err) {
                                 res.send("empty");
                                 console.trace(err);
@@ -720,7 +720,7 @@ app.post('/client/dashboard/query', function(req, res) {
                             }
 
                             if (rows.length > 0) {
-                                connection.query("SELECT Path_Dashboard FROM tbl_games WHERE ID = ?", rows[0].Game_ID, (err, games) => {
+                                network.query("SELECT Path_Dashboard FROM tbl_games WHERE ID = ?", rows[0].Game_ID, (err, games) => {
                                     if (err) {
                                         res.send("empty");
                                         console.trace(err);
@@ -789,10 +789,10 @@ app.get('/', function(req, res) {
 
     indexRequestsCount += 1;
     if (indexRequestsCount % 10 == 0) {
-        connection.query("SELECT Stat_Count From tbl_stats_web WHERE Stat_Name = ?", 'Index Requests', function(err, rows) {
+        network.query("SELECT Stat_Count From tbl_stats_web WHERE Stat_Name = ?", 'Index Requests', function(err, rows) {
             currentStatCount = rows[0].Stat_Count;
             currentStatCount += indexRequestsCount;
-            connection.query("UPDATE tbl_stats_web SET Stat_Count = ? WHERE Stat_Name = 'Index Requests'", currentStatCount);
+            network.query("UPDATE tbl_stats_web SET Stat_Count = ? WHERE Stat_Name = 'Index Requests'", currentStatCount);
             indexRequestsCount = 0;
         });
     }
@@ -838,7 +838,7 @@ var passportPass = {
 }
 
 let DBs = {
-    connection      : connection,
+    network      : network,
     wordsDB         : wordsDB,
     records         : records
 }
@@ -879,7 +879,7 @@ process.on('SIGINT', () => {
     console.log('Closing http server.');
     server.close(() => {
       console.log('Http server closed.');
-      connection.end(() => {
+      network.end(() => {
         console.log('mySQL connection closed.');
         process.exit(0);
       });

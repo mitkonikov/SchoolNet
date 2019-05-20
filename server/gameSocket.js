@@ -4,7 +4,7 @@
  * @param {JSON} passportPass       Passport Pass contains references to store, passport and cookieParser
  */
 var gameSocket = function(server, passportPass, DBs) {
-    let connection = DBs.connection;
+    let network = DBs.network;
     let wordsDB = DBs.wordsDB;
 
     var socketio                = require('socket.io');

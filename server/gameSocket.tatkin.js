@@ -20,7 +20,7 @@ function getRoom(socket_rooms) {
 var tatkinSocket = function(io, gameSocket, DBs) {
     const fs = require('fs');
 
-    let connection = DBs.connection;
+    let network = DBs.network;
     let wordsDB = DBs.wordsDB;
     let records = DBs.records;
     let template = "./server/template_demos/tatkin.json";
@@ -38,7 +38,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
     var gameTatkinSocket    = io.of('/game/tatkin');
 
     let obj = {
-        connection:         connection,
+        network:         network,
         wordsDB:            wordsDB,
         records:            records,
         fs:                 fs,
@@ -62,7 +62,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
                 // 1. FIND THE CLASS AND THE GAME STARTED BY THE TEACHER
                 // 2. INITIATE HEARTBEAT
 
-                connection.query("SELECT * FROM tbl_games_current WHERE Game_ID = ? AND Teacher_ID = ?", [1, USER.ID], (err, rows) => {
+                network.query("SELECT * FROM tbl_games_current WHERE Game_ID = ? AND Teacher_ID = ?", [1, USER.ID], (err, rows) => {
                     // JOINS THE ROOM
                     // INITIATE A DEMO
 
@@ -128,7 +128,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
 
                 socket.on("make game public", (data) => {
                     let ROOM = getRoom(socket.rooms);
-                    connection.query("UPDATE tbl_games_current SET Privacy = ? WHERE Room_ID = ?", [1, ROOM]);
+                    network.query("UPDATE tbl_games_current SET Privacy = ? WHERE Room_ID = ?", [1, ROOM]);
 
                     gameSocket.emit("make game public");
 
@@ -158,7 +158,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
 
                     if (USER.Role == 1) { // TODO: I DON'T KNOW IF THAT IS NECESSERY
                         let ROOM = getRoom(socket.rooms);
-                        connection.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", ["started", ROOM]);
+                        network.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", ["started", ROOM]);
 
                         // when you start the game, you update the level and freeze time
                         resetLevelTime(obj);
@@ -172,7 +172,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
 
                 socket.on("game pause", (data) => {
                     let ROOM = getRoom(socket.rooms);
-                    connection.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", ["paused", ROOM]);
+                    network.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", ["paused", ROOM]);
 
                     let logData = {Source: "teacher", Command: "game", Data: "pause"};
                     logDemo(records, demo_table, logData);
@@ -182,7 +182,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
 
                 socket.on("game resume", (data) => {
                     let ROOM = getRoom(socket.rooms);
-                    connection.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", ["started", ROOM]);
+                    network.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", ["started", ROOM]);
 
                     let logData = {Source: "teacher", Command: "game", Data: "resume"};
                     logDemo(records, demo_table, logData);
@@ -335,7 +335,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
                 
                 // LISTEN FOR THE JOIN CONFIRMATION AND THE GAME ID
                 socket.on("student join", (data) => {
-                    connection.query("SELECT * FROM tbl_games_current WHERE ID = ?", parseInt(data.Game_ID), (err, rows) => {
+                    network.query("SELECT * FROM tbl_games_current WHERE ID = ?", parseInt(data.Game_ID), (err, rows) => {
                         socket.join(rows[0].Room_ID);
 
                         demo_table = rows[0].Demo_ID;
@@ -399,7 +399,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
                         getDemoRow(obj, USER.ID, "score", (score) => {
                             awardResult.gameScore = parseInt(score);
 
-                            connection.query("SELECT Score_Tatkin FROM tbl_stats WHERE ID = ?", USER.ID, (err, rows) => {
+                            network.query("SELECT Score_Tatkin FROM tbl_stats WHERE ID = ?", USER.ID, (err, rows) => {
                                 if (err) {
                                     console.trace(err);
                                     return;
@@ -705,7 +705,7 @@ function createDemoJSON(obj, Game_ID, Room_ID) {
  * @param {Function}    callback    Callback function
  */
 function getClassID(obj, Room_ID, callback) {
-    obj.connection.query("SELECT Class_ID FROM tbl_games_current WHERE Room_ID = ?", Room_ID, (err, rows) => {
+    obj.network.query("SELECT Class_ID FROM tbl_games_current WHERE Room_ID = ?", Room_ID, (err, rows) => {
         if (err) {
             console.log(err);
         }
@@ -725,7 +725,7 @@ function getClassID(obj, Room_ID, callback) {
  * @param {Function}    callback    Callback function
  */
 function getStudentIDs(obj, ClassID, callback) {
-    obj.connection.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", ClassID, (err, students) => {
+    obj.network.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", ClassID, (err, students) => {
         let STUDENT_IDS = [];
         for (s of students) {
             STUDENT_IDS.push(parseInt(s.Student_ID));
@@ -748,7 +748,7 @@ function getStudents(obj, socket, Room_ID) {
     getClassID(obj, Room_ID, (err, ClassID) => {
         getStudentIDs(obj, ClassID, (err, StudentIDs) => {
             let SSIDs = StudentIDs.join();
-            obj.connection.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID IN (" + SSIDs + ") AND tbl_students_info.ID = tbl_students.ID", (err, info) => {
+            obj.network.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID IN (" + SSIDs + ") AND tbl_students_info.ID = tbl_students.ID", (err, info) => {
                 obj.records.query("SELECT Source, Data FROM " + obj.demo_table + " WHERE Command = ?", "score", (err, score) => {
                     getStudentsConnectInfo(obj, (online_students) => {
                         score.sort(function(a, b) { return parseInt(a.Source) - parseInt(b.Source); });
@@ -783,7 +783,7 @@ function getStudents(obj, socket, Room_ID) {
 function getStudentsOnlineInfo(obj, socket, Room_ID) {
     getClassID(obj, Room_ID, (err, ClassID) => {
         getStudentIDs(obj, ClassID, (err, STUDENT_IDS) => {
-            obj.connection.query("SELECT Online FROM tbl_students WHERE ID IN (" + STUDENT_IDS.join() + ")", (err, result) => {
+            obj.network.query("SELECT Online FROM tbl_students WHERE ID IN (" + STUDENT_IDS.join() + ")", (err, result) => {
                 socket.emit("set students online", result);
             });
         });
@@ -1069,7 +1069,7 @@ function updateGlobalPlayerScore(obj) {
         let IDs = [];
         for (let score of ingame_scores) IDs.push(parseInt(score.Source)); 
 
-        obj.connection.query("SELECT ID, Score_Tatkin FROM tbl_stats WHERE ID IN (" + IDs.join() + ")", (err, global_scores) => {
+        obj.network.query("SELECT ID, Score_Tatkin FROM tbl_stats WHERE ID IN (" + IDs.join() + ")", (err, global_scores) => {
             if (err) {
                 console.trace(err);
                 return;
@@ -1090,7 +1090,7 @@ function updateGlobalPlayerScore(obj) {
             }
 
             for (let player of updateScores) {
-                obj.connection.query("UPDATE tbl_stats SET Score_Tatkin = ? WHERE ID = ?", [player.Score_Tatkin, player.ID]);
+                obj.network.query("UPDATE tbl_stats SET Score_Tatkin = ? WHERE ID = ?", [player.Score_Tatkin, player.ID]);
             }
         });
     });
@@ -1135,7 +1135,7 @@ function writePlaces(obj, callback) {
 function HEARTBEAT(obj, socket) {
     // console.log("heartbeating...");
     
-    // send the student connection info and get all of the connected students
+    // send the student network info and get all of the connected students
     getStudentsConnectInfo(obj, (connected_students) => {
         getGameState(obj, (state) => {
             if (state == "pause") {
@@ -1167,7 +1167,7 @@ function HEARTBEAT(obj, socket) {
                                 studentIDs.push(parseInt(scoreboard[i].Source));
                             }
 
-                            obj.connection.query("SELECT ID, Display_Name FROM tbl_students_info WHERE ID IN (" + studentIDs.join() + ")", (err, display_names) => {
+                            obj.network.query("SELECT ID, Display_Name FROM tbl_students_info WHERE ID IN (" + studentIDs.join() + ")", (err, display_names) => {
                                 // { Source : ID , Data : SCORE , Place : PLACE, Display_Name : NAME }
                                 if (err) {
                                     obj.gameTatkinSocket.emit("game finish", scoreboard);
@@ -1229,7 +1229,7 @@ function HEARTBEAT(obj, socket) {
                         });
 
                         // TODO: Put this in the previous brackets
-                        obj.connection.query("SELECT * FROM tbl_games_current WHERE Demo_ID = ?", obj.demo_table, (err, rows) => {
+                        obj.network.query("SELECT * FROM tbl_games_current WHERE Demo_ID = ?", obj.demo_table, (err, rows) => {
                             if (err) {
                                 console.trace(err);
                                 return;
@@ -1244,8 +1244,8 @@ function HEARTBEAT(obj, socket) {
                                     Date_Time: rows[0].Date_Time
                                 }
 
-                                obj.connection.query("INSERT INTO tbl_games_played SET ?", SAVED);
-                                obj.connection.query("DELETE FROM tbl_games_current WHERE Demo_ID = ?", obj.demo_table);
+                                obj.network.query("INSERT INTO tbl_games_played SET ?", SAVED);
+                                obj.network.query("DELETE FROM tbl_games_current WHERE Demo_ID = ?", obj.demo_table);
                             }
                         });
 
