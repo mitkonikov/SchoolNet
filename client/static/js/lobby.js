@@ -11,7 +11,7 @@ $(document).ready(function() {
 
   //TouchIt(this); DOESNT WORK
   $(document).slideIt({
-    scaleDown : false,
+	scaleDown : false,
     mainDuration: 300,
     fadeInDelay: 70
   });

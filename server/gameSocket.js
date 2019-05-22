@@ -28,7 +28,7 @@ var gameSocket = function(server, passportPass, DBs) {
         let USER = socket.request.user;
         
         //console.log('game socket connected');
-        console.log(USER);
+        // console.log(USER);
 
         if (USER.logged_in) {
             //console.log(USER.Nickname + " is listening in a lobby...");
