@@ -9,30 +9,30 @@ $(document).ready(function() {
 	$("#gotoDashboard").hide();
 	$("#tatkin-logo").show();
 
-  //TouchIt(this); DOESNT WORK
-  $(document).slideIt({
-	scaleDown : false,
-    mainDuration: 300,
-    fadeInDelay: 70
-  });
+	//TouchIt(this); DOESNT WORK
+	$(document).slideIt({
+		scaleDown : false,
+		mainDuration: 300,
+		fadeInDelay: 70
+	});
 
-  // GET BASIC PROFILE INFO
-  var BASIC_INFO = getBasicProfileInfo();
-  setTimeout(function() {
-		if (BASIC_INFO[0]["Role"] == "1") {
-			$("#gotoDashboard").slideDown();
+	// GET BASIC PROFILE INFO
+	var BASIC_INFO = getBasicProfileInfo();
+	setTimeout(function() {
+			if (BASIC_INFO[0]["Role"] == "1") {
+				$("#gotoDashboard").slideDown();
+			}
+		$("#profile-name").text(BASIC_INFO[0]["Display_Name"]);
+		if (BASIC_INFO[0]["About"] != "") $("#profile-desc").text(BASIC_INFO[0]["About"]);
+		NAME =  $("#profile-name").text();
+		ABOUT = $("#profile-desc").text();
+	}, 500);
+
+  	window.onmessage = function(e){
+    	if (e.data.startsWith('state')) {
+			slideInfo = e.data.split("-");
+			$.fn.slideIt.NOW(slideInfo[1], slideInfo[2]);
 		}
-    $("#profile-name").text(BASIC_INFO[0]["Display_Name"]);
-    if (BASIC_INFO[0]["About"] != "") $("#profile-desc").text(BASIC_INFO[0]["About"]);
-	  NAME =  $("#profile-name").text();
-	  ABOUT = $("#profile-desc").text();
-  }, 500);
-
-  window.onmessage = function(e){
-    if (e.data.startsWith('state')) {
-      slideInfo = e.data.split("-");
-      $.fn.slideIt.NOW(slideInfo[1], slideInfo[2]);
-    }
 	};
 
 	$("#gotoDashboard").on('mouseenter', function() {
@@ -58,6 +58,12 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+	$("#search-box").keyup(function (event) {
+        if (event.keyCode == 13) {
+            searchMe();
+        }
+    });
 });
 
 function changeSWALTheme() {

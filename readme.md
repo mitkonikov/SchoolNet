@@ -172,13 +172,15 @@ When contributing follow the [Google JavaScript Style Guide](https://google.gith
 * Students/teachers search bar
 * Sub-contributions
 * Contributions statistics
+* Add a news-feed dynamic updating
 * Organize color palettes
 * Clear console logs
-* Make a custom back-end control unit
+* Make a custom back-end admin control unit
 * Picture profile customization
 * Finalize database and file path organization
 * Upload SchoolNet Works repository on GitHub
 * SchoolNet API
+* SEO Optimization
 
 * Implement the Google 4.1.1 syntex rule:
   * Braces are used for all control structures,

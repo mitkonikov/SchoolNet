@@ -68,6 +68,35 @@
     text-align: center;
 }
 
+#search-bar {
+    clear: both;
+
+    height: 2.4375rem;
+    margin-bottom: 1em;
+}
+
+#search-box {
+    float: left;
+
+    width: calc(100% - 2.5375rem);
+}
+
+#search-icon {
+    padding: 1.5%;
+    padding-top: 1.9%;
+    
+    height: 2.4375rem;
+    width: 2.4375rem;
+    
+    float: right;
+}
+
+
+#search-icon-img:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
 .news-form {
     padding: 0.7em 0.7em 0.7em 1em;
     margin: 0;
