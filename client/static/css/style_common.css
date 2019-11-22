@@ -508,6 +508,28 @@ select {
     font-family: 'Roboto-Bold';
 }
 
+/* CARDS */
+.card-simple {
+    padding-left: 0.6em;
+    padding-top: 0.2em;
+    padding-bottom: 0.4em;
+    text-align: left;
+    font-size: 0.9em;
+}
+
+.card-simple:hover {
+    background-color: rgba(0, 0, 0, 0.068);
+}
+
+.card-large {
+    padding: 0.7em 0.7em 0.7em 1em;
+    margin: 0;
+}
+
+.card-large:hover {
+    padding: 0.7em 1em 0.7em 1em;
+}
+
 /* REALLY COOL WEB KIT STUFF */
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */

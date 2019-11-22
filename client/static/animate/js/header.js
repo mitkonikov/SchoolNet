@@ -73,7 +73,7 @@ function draw() {
         let v2 = morph[i];
 
         // Lerp to the target
-        v2.lerp(v1, 0.1);
+        v2.lerp(v1, 0.2);
         // Check how far we are from target
         totalDistance += p5.Vector.dist(v1, v2);
     }
@@ -116,6 +116,12 @@ function draw() {
         noLoop();
         return;
     } else {
+
+        strokeWeight(STROKE*(1-
+            Math.sin(totalDistance*(3.1415/2) /
+            WIDTH/2
+        )/2 ));
+
         // Draw a polygon that makes up all the vertices
         drawShapeList(morph);
     }
@@ -227,16 +233,19 @@ function reCalculateShapes() {
     let tempTriangle = [];
     DrawingShape(triPOINTS, tempTriangle, SIZE*20/100*POINTS_MULT * 1.4);
 
+    let counter = 0;
     for (var i = 0; i < tempTriangle.length; ++i) {
-        if (i == 10) {
-            for (var k = 0; k < 8; ++k) {
-                triangle.push(triPOINTS[2]);
+        if ((i % 2 == 0 || i % 3 == 0) && i != 0) {
+            if (counter < 9) {
+                triangle.push(tempTriangle[i-1]);
+                counter++;
             }
         }
         
         triangle.push(tempTriangle[i]);
     }
 
+    console.log(counter);
     console.log(triangle.length);
     console.log(square.length);
     console.log(circle.length); 
