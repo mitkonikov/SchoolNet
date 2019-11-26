@@ -1,3 +1,6 @@
+// MAIN SERVER DIRECTORY
+let MSD = "././";
+
 function getTime() {
     let CURRENT_DATE_TIME = new Date().toISOString().replace('T', ' ');
     CURRENT_DATE_TIME = CURRENT_DATE_TIME.replace('Z', '');
@@ -23,9 +26,9 @@ var tatkinSocket = function(io, gameSocket, DBs) {
     let network = DBs.network;
     let wordsDB = DBs.wordsDB;
     let records = DBs.records;
-    let template = "./server/template_demos/tatkin.json";
+    let template = MSD + "/template_demos/tatkin.json";
     let demo_table = "";
-    let demo_path = "./server/demos/";
+    let demo_path = MSD + "/demos/";
     let HEARTBEAT_INTERVAL;
 
     console.log("Starting AI...");
@@ -504,7 +507,7 @@ function updateDemo(obj, data) {
  * @param {*} wordsDB   Word database
  */
 function pythonSetup(spawn, wordsDB) {
-    const pythonProcess = spawn('python', ["server/python/word_gen.py"], { stdio: 'pipe'});
+    const pythonProcess = spawn('python', [MSD + "/python/word_gen.py"], { stdio: 'pipe'});
     
     pythonProcess.stdout.on('data', (data) => {
         let bufferOriginal = Buffer.from(data);

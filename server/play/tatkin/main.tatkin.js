@@ -1,0 +1,1 @@
+var TATKIN_WORD_COUNT = process.env.TATKIN_WORD_COUNT;

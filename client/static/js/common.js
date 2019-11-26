@@ -7,6 +7,25 @@ var $body = $('body');
 var canScroll = true;
 var slideMoving = false;
 
+function postAjax(client_url, data) {
+	return new Promise((resolve, reject) => {
+        $.ajax({
+            url: '/client/' + client_url,
+            type: 'POST',
+            data: data,
+            success: function(response) {
+                if (response) {
+                    if (response == 'empty') resolve("empty");
+                    else resolve(response);
+                } else {
+                    console.log(response);
+                    resolve("problem");
+                }
+            }
+        });
+    });
+}
+
 // $(document).ready(() => document.body.requestFullscreen());
 /*$(document).ready(function() {
     $({scroll:0}).animate({scroll:100}, {

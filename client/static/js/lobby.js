@@ -61,7 +61,7 @@ $(document).ready(function() {
 
 	$("#search-box").keyup(function (event) {
         if (event.keyCode == 13) {
-            searchMe();
+            search();
         }
     });
 });
@@ -85,23 +85,9 @@ function changeSWALTheme() {
  * Ajax request that lists all user statistics
  */
 function getStatistics() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/query',
-            type: 'POST',
-            data: {
-                stats : 'me'
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
-    });
+	return postAjax('query', {
+		stats : 'me'
+	});
 }
 
 async function changeName() {
@@ -163,4 +149,16 @@ async function changeDesc() {
 			});
 		}
 	})
+}
+
+function search() {
+	postSearch().then((resolve) => {
+		console.log(resolve);
+	});
+}
+
+function postSearch() {
+	return postAjax('query', {
+		search_request: $("#search-box").text()
+	});
 }
