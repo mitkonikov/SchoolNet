@@ -1,5 +1,5 @@
 // MAIN SERVER DIRECTORY
-let MSD = "././";
+let MSD = "./././server/";
 
 function getTime() {
     let CURRENT_DATE_TIME = new Date().toISOString().replace('T', ' ');

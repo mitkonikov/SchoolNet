@@ -21,8 +21,8 @@ var gameSocket = function(server, passportPass, DBs) {
     }));
 
     var gameSocket          = io.of('/game');
-    var gameTatkinSocket    = require('./play/tatkin/gameSocket.tatkin.js/index.js.js').socket(io, gameSocket, DBs);
-
+    var gameTatkinSocket    = require('./play/tatkin/gameSocket.tatkin').socket(io, gameSocket, DBs);
+    
     gameSocket.on('connection', (socket) => {
         // LOBBY CONNECTION
         let USER = socket.request.user;

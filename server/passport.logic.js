@@ -1,5 +1,4 @@
 var app;
-var passport;
 
 var Server = function(node_app) {
     app = node_app;
@@ -8,7 +7,7 @@ var Server = function(node_app) {
 var Initialize = function(network) {
     var flash             = require('connect-flash');
     var crypto            = require('crypto');
-    passport              = require('passport');
+    var passport              = require('passport');
     var LocalStrategy     = require('passport-local').Strategy;
 
     // PASSPORT
@@ -57,8 +56,9 @@ var Initialize = function(network) {
             done(err, rows[0]);
         });
     });
+
+    module.exports.passport = passport;
 }
 
 module.exports.Server = Server;
 module.exports.Initialize = Initialize;
-module.exports.passport = passport;
