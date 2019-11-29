@@ -1,5 +1,5 @@
 // MAIN SERVER DIRECTORY
-let MSD = "./././server/";
+let MSD = "./server";
 
 function getTime() {
     let CURRENT_DATE_TIME = new Date().toISOString().replace('T', ' ');
@@ -41,7 +41,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
     var gameTatkinSocket    = io.of('/game/tatkin');
 
     let obj = {
-        network:         network,
+        network:            network,
         wordsDB:            wordsDB,
         records:            records,
         fs:                 fs,

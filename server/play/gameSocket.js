@@ -20,8 +20,7 @@ var gameSocket = function(server, passportPass, DBs) {
         fail:           onAuthorizeFail
     }));
 
-    var gameSocket          = io.of('/game');
-    var gameTatkinSocket    = require('./play/tatkin/gameSocket.tatkin').socket(io, gameSocket, DBs);
+    gameSocket          = io.of('/game');
     
     gameSocket.on('connection', (socket) => {
         // LOBBY CONNECTION
@@ -61,6 +60,11 @@ var gameSocket = function(server, passportPass, DBs) {
         console.log(error);
         console.log(userinfo)
         console.log(" ====================== ");
+    }
+
+    return {
+        io,
+        gameSocket,
     }
 }
 

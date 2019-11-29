@@ -14,6 +14,8 @@ dotenv.config();
 var databases         = require('./server/dbConnection');
 var sess              = require('express-session');
 
+var network = databases.network;
+
 var passport_module   = require('./server/passport.logic');
 passport_module.Server(app);
 
@@ -26,8 +28,6 @@ var MySQLOptions = {
     }
 };
 
-// var BetterMemoryStore = require('session-memory-store')(sess);
-
 var bodyParser        = require('body-parser');
 var cookieParser      = require('cookie-parser');
 app.use(bodyParser());
@@ -37,13 +37,13 @@ var BLOCKED           = require('blocked-at');
 
 const uuidv4 = require('uuid/v4');
 
-var network = databases.network;
-var wordsDB = databases.wordsDB;
-var records = databases.records;
+var timer = BLOCKED(function(ms, stack) {
+    // console.log('\x1b[31m%s\x1b[0m', "MAIN THREAD BLOCKED FOR " + ms + "ms");
+    //  <= THE THREAD IS STARTED AT: " + stack
+}, {threshold: 10});
 
 // COOKIE
 var store = new MySQLStore(MySQLOptions);
-// var store = new BetterMemoryStore({ expires: 60 * 60 * 1000, debug: true });
 
 app.use(sess({
     name: process.env.SESSION_NAME,
@@ -57,15 +57,20 @@ app.use(sess({
     saveUninitialized: true
 }));
 
-var timer = BLOCKED(function(ms, stack) {
-    // console.log('\x1b[31m%s\x1b[0m', "MAIN THREAD BLOCKED FOR " + ms + "ms");
-    //  <= THE THREAD IS STARTED AT: " + stack
-}, {threshold: 10});
+// Initializes the passport module
+passport_module = passport_module.Initialize(databases.network);
+
+var passportPass = {
+    store           : store,
+    passport        : passport_module.passport,
+    cookieParser    : cookieParser
+}
+
+// Requires the Main Game Logic Module
+var gameLogic = require('./server/play/main.play').Initialize(server, passportPass, databases);
 
 var indexRequestsCount = 0;
 var prev_ip = false;
-
-passport_module.Initialize(network);
 
 app.post('/client/signin', function(req, res, next) {
 
@@ -266,24 +271,6 @@ app.get('/favicon.ico', function(req, res) {
     res.sendFile(__dirname + '/favicon.ico');
 });
 
-WORD_TYPES = ['imenka', 'pridavka', 'glagol', 'zamenka', 'broj', 'other'];
-
-/** From String Type to Int Type */
-function encodeWord(type) {
-    if (type == -1) return -1;
-    for (var i = 0; i < WORD_TYPES.length; ++i) {
-        if (type === WORD_TYPES[i]) return i;
-    }
-    return 404;
-}
-
-/** From Int Type to String Type */
-function decodeWord(type) {
-    if (type == -1) return "mistake";
-    return WORD_TYPES[type];
-}
-
-var TATKIN_WORD_COUNT = process.env.TATKIN_WORD_COUNT;
 app.post('/client/query', function(req, res) {
     if (req.isAuthenticated()) {
         if (req.body.username === 'me') {
@@ -309,109 +296,7 @@ app.post('/client/query', function(req, res) {
                 });
             }
         } else if (req.body.game) {
-            if (req.body.game === 'tatkin') {
-                if (req.body.command === 'list-games') {
-                    network.query("SELECT Class_ID FROM tbl_classes_student WHERE Student_ID = ?", req.user.ID, (err, class_ids) => {
-                        if (class_ids.length == 0) {
-                            res.send("empty");
-                            return;
-                        }
-
-                        let CLASS_IDs = [];
-                        for (c in class_ids) CLASS_IDs.push(parseInt(class_ids[c].Class_ID));
-                        network.query("SELECT * FROM tbl_games_current WHERE Class_ID IN (" + CLASS_IDs.join() + ") AND Privacy = ?", 1, (err, rows) => {
-                            if (rows.length == 0) res.send("empty");
-                            else {
-                                let Teacher_IDs = [];
-                                for (r in rows)
-                                    Teacher_IDs.push(parseInt(rows[r].Teacher_ID));
-                                network.query("SELECT ID, Firstname, Lastname FROM tbl_students WHERE ID IN (" + Teacher_IDs.join() + ")", (err, names) => {
-                                    for (r in rows) {
-                                        if (rows[r].Teacher_ID == names[r].ID) {
-                                            rows[r].Fullname = names[r].Firstname + " " + names[r].Lastname;
-                                        }
-                                    }
-
-                                    res.send(rows);
-                                });
-                            }
-                        });
-                    });
-                }
-            } else if (req.body.game === 'contribute-tatkin') {
-                if (req.body.command === 'get-word') {
-                    var random_id = Math.floor(Math.random() * TATKIN_WORD_COUNT) + 1;
-                    wordsDB.query("SELECT ID, Word FROM tbl_words WHERE ID = ? AND Mistake = ?", [random_id, 0], function(err, rows) {
-                        res.send(rows[0]);
-                    })
-                } else if (req.body.command === 'contribute') {
-                    if (req.body.data) {
-                        var DATA = req.body.data;
-                        var MISTAKE = 0;
-                        if (DATA.type == 'mistake') {
-                            DATA.type = -1;
-                            MISTAKE = 1;
-                        }
-
-                        var word_contribution = {
-                            ID : '',
-                            Word_ID : parseInt(DATA.word_id),
-                            Student_ID : req.user.ID,
-                            Type : encodeWord(DATA.type),
-                            Mistake : MISTAKE
-                        };
-
-                        // console.log(word_contribution);
-                        wordsDB.query("INSERT INTO tbl_contributions SET ?", word_contribution, function(err, rows) {
-                            // console.log(rows);
-                            // console.log("ERROR: " + err);
-
-                            // ERROR HANDLING
-                            if (err) {
-                                res.send("failed");
-                                logErrorHandler("SQL", null, req.user.ID, err, null);
-                                return;
-                            }
-
-                            if (rows) {
-                                network.query("SELECT Crowd_Tatkin FROM tbl_stats WHERE ID = ?", req.user.ID, function(err, rows) {
-                                    // ERROR HANDLING
-                                    if (err) {
-                                        res.send("failed");
-                                        logErrorHandler("SQL", null, req.user.ID, err, null);
-                                        return;
-                                    }
-
-                                    if (rows) {
-                                        var updateSTAT = parseInt(rows[0].Crowd_Tatkin) + 1;
-                                        network.query("UPDATE tbl_stats SET Crowd_Tatkin = ? WHERE ID = ?", [updateSTAT, req.user.ID], function(err, rows) {
-                                            // ERROR HANDLING
-                                        });
-                                    }
-                                    
-                                    res.send("success");
-                                });
-                            } else {
-                                res.send("failed");
-                            }
-                        });
-                        // console.log(DATA);
-                    } else {
-                        res.send("no data");
-                    }
-                } else {
-                    res.send("invalid command");
-                }
-            } else if (req.body.game === 'game-info') {
-                if (req.body.command === 'get-game-info') {
-                    network.query("SELECT * FROM tbl_games_current WHERE ID = ?", req.body.data.Game_ID, (err, rows) => {
-                        if (rows.length == 0) res.send("empty");
-                        else res.send(rows);
-                    });
-                }
-            } else {
-                res.send("no game");
-            }
+            gameLogic.Query(req, res, req.body.game);
         } else {
             res.send("no game");
         }
@@ -781,20 +666,6 @@ app.get('*', function(req, res) {
 // STARTING THE SERVER
 server.listen(process.env.PORT);
 console.log('\x1b[32m%s\x1b[0m', "Server started.");
-
-var passportPass = {
-    store           : store,
-    passport        : passport_module.passport,
-    cookieParser    : cookieParser
-}
-
-let DBs = {
-    network         : network,
-    wordsDB         : wordsDB,
-    records         : records
-}
-
-var gameSocketModule = require("./server/gameSocket.js").init(server, passportPass, DBs);
 
 /** Custom-build error handler */
 function logErrorHandler(type, ip, user, error, userinfo) {
