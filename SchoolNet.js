@@ -11,6 +11,8 @@ app.use(requestIp.mw())
 const dotenv          = require('dotenv');
 dotenv.config();
 
+var ErrorHandler      = require("./server/ErrorHandler");
+
 var databases         = require('./server/dbConnection');
 var sess              = require('express-session');
 
@@ -34,7 +36,7 @@ var bodyParser        = require('body-parser');
 var cookieParser      = require('cookie-parser');
 app.use(bodyParser());
 
-var protectionChecks  = require('./server/protectionChecks');
+var protectionChecks  = require('./server/protectionChecks')(ErrorHandler);
 var BLOCKED           = require('blocked-at');
 
 const uuidv4 = require('uuid/v4');
@@ -83,7 +85,7 @@ app.post('/client/signin', function(req, res, next) {
 
     passport_module.passport.authenticate('local', function(err, user, info) {
         if (err) {
-            logErrorHandler("SQL", req.clientIp, null, err);
+            ErrorHandler.log("SQL", req.clientIp, null, err);
             // further print the username entered
             res.send(err);
         }
@@ -92,7 +94,7 @@ app.post('/client/signin', function(req, res, next) {
         
         req.logIn(user, function(err) {
             if (err) { 
-                logErrorHandler("SQL", req.clientIp, null, err);
+                ErrorHandler.log("SQL", req.clientIp, null, err);
                 // further print the username entered
                 res.send(err);
             }
@@ -550,15 +552,6 @@ app.get('*', function(req, res) {
 server.listen(process.env.PORT);
 console.log('\x1b[32m%s\x1b[0m', "Server started.");
 
-/** Custom-build error handler */
-function logErrorHandler(type, ip, user, error, userinfo) {
-    console.log(" ====================== ");
-    console.log('\x1b[31m%s\x1b[0m%s\x1b[32m%s\x1b[0m', "ERROR:", " TYPE: " + type, ", IP: " + ip + ", USER: " + user);
-    console.log(error);
-    console.log(userinfo)
-    console.log(" ====================== ");
-}
-
 String.prototype.multiReplace = function(array) {
     let result = "";
     
@@ -583,10 +576,10 @@ process.on('SIGINT', () => {
     console.info('SIGINT signal received.');
     console.log('Closing http server.');
     server.close(() => {
-      console.log('Http server closed.');
-      network.end(() => {
-        console.log('mySQL connection closed.');
-        process.exit(0);
-      });
+        console.log('Http server closed.');
+        network.end(() => {
+            console.log('mySQL connection closed.');
+            process.exit(0);
+        });
     });
-  });
+});

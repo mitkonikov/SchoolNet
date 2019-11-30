@@ -1,3 +1,9 @@
+var logErrorHandler;
+
+module.exports = function(ErrorHandler_ref) {
+    logErrorHandler = ErrorHandler_ref.log;
+}
+
 /**
  * Checks if the data in a field validates a regexCheck of main characters
  * @param {*} field         String of the name of the field 
@@ -113,7 +119,7 @@ var registerCheck = function(body, ip) {
     var data = {
         firstname: body.firstname,
         lastname: body.lastname,
-        email: body.email,
+        email: body.email.trim(),
         gender: body.gender
     }
 
@@ -141,7 +147,7 @@ var registerCheck = function(body, ip) {
     // lastname
 
     // email
-    if (!emailCheck(body.email)) {
+    if (!emailCheck(data.email)) {
         var errorDesc = "Bypassed the client-side Javascript! \n Email doesn't pass the emailCheck";
         logErrorHandler("POST", ip, null, errorDesc, data);
         return false;
@@ -149,7 +155,7 @@ var registerCheck = function(body, ip) {
 
     // teacheremail
     if (body.student == 'true') {
-        if (!emailCheck(body.teacheremail)) {
+        if (!emailCheck(data.teacheremail)) {
             var errorDesc = "Bypassed the client-side Javascript! \n Teacher email doesn't pass the emailCheck";
             logErrorHandler("POST", ip, null, errorDesc, data);
             return false;
@@ -168,14 +174,7 @@ var registerCheck = function(body, ip) {
 
 /** Custom-build error handler */
 function logErrorHandler(type, ip, user, error, userinfo) {
-    console.log();
-    console.log(" ========================= ");
-    console.log(" == protectionChecks.js == ");
-    console.log('\x1b[31m%s\x1b[0m%s\x1b[32m%s\x1b[0m', "ERROR:", " TYPE: " + type, ", IP: " + ip + ", USER: " + user);
-    console.log(error);
-    console.log(userinfo)
-    console.log(" ========================= ");
-    console.log();
+    
 }
 
 module.exports.signinCheck = signinCheck;
