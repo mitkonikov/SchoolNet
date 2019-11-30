@@ -4,9 +4,8 @@ var Server = function(node_app) {
     app = node_app;
 }
 
-var Initialize = function(network) {
+var Initialize = function(network, crypto) {
     var flash             = require('connect-flash');
-    var crypto            = require('crypto');
     var passport          = require('passport');
     var LocalStrategy     = require('passport-local').Strategy;
     
