@@ -1,6 +1,6 @@
 var logErrorHandler;
 
-module.exports = function(ErrorHandler_ref) {
+module.exports.Error = function(ErrorHandler_ref) {
     logErrorHandler = ErrorHandler_ref.log;
 }
 

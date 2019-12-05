@@ -1,10 +1,6 @@
 var NAME = "Name";
 var ABOUT = "Description";
 
-function logmeout() {
-    window.location = "/client/logout";
-}
-
 $(document).ready(function() {
 	$("#gotoDashboard").hide();
 	$("#tatkin-logo").show();
@@ -86,7 +82,7 @@ function changeSWALTheme() {
  */
 function getStatistics() {
 	return postAjax('query', {
-		stats : 'me'
+		command : 'get-stats-me'
 	});
 }
 
@@ -152,13 +148,10 @@ async function changeDesc() {
 }
 
 function search() {
-	postSearch().then((resolve) => {
+	postAjax('query', {
+		command: 'search-request',
+		data: $("#search-box").val()
+	}).then((resolve) => {
 		console.log(resolve);
-	});
-}
-
-function postSearch() {
-	return postAjax('query', {
-		search_request: $("#search-box").text()
 	});
 }

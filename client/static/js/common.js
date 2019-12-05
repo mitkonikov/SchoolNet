@@ -7,6 +7,11 @@ var $body = $('body');
 var canScroll = true;
 var slideMoving = false;
 
+/**
+ * General function for posting to the server
+ * @param {String}  client_url   Posting header
+ * @param {*}       data         Data
+ */
 function postAjax(client_url, data) {
 	return new Promise((resolve, reject) => {
         $.ajax({
@@ -74,7 +79,7 @@ function getBasicProfileInfo() {
     $.ajax({
 		url: '/client/query',
 		type: 'POST',
-        data: { username : 'me' },
+        data: { command : 'get-info-me' },
 		success: function(response) {
             for (var i = 0; i < response.length; ++i) {
                 RESULT.push(response[i]);
@@ -368,4 +373,8 @@ function clearDOM(id) {
             myNode.removeChild(myNode.firstChild);
         }
     }
+}
+
+function logmeout() {
+    window.location = "/client/logout";
 }

@@ -36,7 +36,9 @@ var bodyParser        = require('body-parser');
 var cookieParser      = require('cookie-parser');
 app.use(bodyParser());
 
-var protectionChecks  = require('./server/protectionChecks')(ErrorHandler);
+var protectionChecks  = require('./server/protectionChecks');
+protectionChecks.Error(ErrorHandler);
+
 var BLOCKED           = require('blocked-at');
 
 const uuidv4 = require('uuid/v4');
@@ -156,64 +158,10 @@ app.get('/favicon.ico', function(req, res) {
     res.sendFile(__dirname + '/favicon.ico');
 });
 
-app.post('/client/query', function(req, res) {
-    if (req.isAuthenticated()) {
-        if (req.body.username === 'me') {
-            network.query("SELECT Role, Display_Name, About, Emoji FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID = ? AND tbl_students_info.ID = ?", [req.user.ID, req.user.ID], function(err, rows) {
-                res.send(rows);
-            });
-        } else if (req.body.stats) {
-            if (req.body.stats === 'me') {
-                // stats from games for the user
-                network.query("SELECT * FROM tbl_stats WHERE ID = ?", req.user.ID, (err, statboard) => {
-                    if (err) {
-                        // PRIORITY ERROR
-                        res.send("empty");
-                        return;
-                    }
+var QueryModule = require("./server/query");
+QueryModule.Initialize(databases, gameLogic);
 
-                    if (statboard.length) {
-                        res.send(statboard[0]);
-                    } else {
-                        // PRIORITY ERROR
-                        res.send("empty");
-                    }
-                });
-            }
-        } else if (req.body.game) {
-            gameLogic.Query(req, res, req.body.game);
-        } else {
-            res.send("no game");
-        }
-    } else if (req.body.command === 'get-main-statistics') {
-        network.query("SELECT (SELECT COUNT(*) FROM tbl_students) AS Users", (err, countRows) => {
-            if (err) {
-                console.trace(err);
-                countRows[0].Users = "";
-            }
-            
-            network.query("SELECT (SUM(Crowd_Tatkin)) AS Contributions_Tatkin FROM tbl_stats", (err, contrib) => {
-                if (err) {
-                    console.trace(err);
-                    contrib[0].Contributions_Tatkin = "";
-                }
-                
-                network.query("SELECT Stat_Count FROM tbl_stats_web WHERE Stat_Name = 'Index Requests'", (err, countReq) => {
-                    if (err) {
-                        console.trace(err);
-                        countReq[0].Stat_Count = "";
-                    }
-                    
-                    res.send({
-                        Users: countRows[0].Users,
-                        Contributions_Tatkin: contrib[0].Contributions_Tatkin,
-                        Index_Requests: countReq[0].Stat_Count
-                    });
-                });
-            });
-        });
-    } 
-});
+app.post('/client/query', QueryModule.Query);
 
 app.post('/client/update', function(req, res) {
     // COMMAND
