@@ -9,3 +9,8 @@ todo.txt
 /client/static/js/p5.min.js
 /client/static/js/socket.io.js
 /client/static/js/swal.js
+/client/static/css/material-components-web.min.css
+/client/static/js/material-components-web.min.js
+dashboard_admin.css
+dashboard_admin.html
+dashboard_admin.js
