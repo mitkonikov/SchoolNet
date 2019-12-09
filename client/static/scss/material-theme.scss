@@ -1,0 +1,40 @@
+$mdc-shape-small-component-radius: 0px;
+$mdc-shape-medium-component-radius: 0px;
+$mdc-shape-large-component-radius: 0px;
+
+$mdc-theme-primary: #1c4b5e;
+$mdc-theme-secondary: #c94028;
+
+$mdc-theme-on-primary: #ffffff;
+$mdc-theme-on-secondary: #ffffff;
+
+$mdc-elevation-transition-duration: 100ms;
+
+$mdc-ripple-light-ink-opacities: (
+  hover: .02,
+  focus: .0,
+  press: .12,
+  selected: .0,
+  activated: .0
+);
+
+@import "@material/button/mdc-button";
+@import "@material/ripple/mdc-ripple";
+
+.mdc-button {
+	@include mdc-button-container-fill-color($mdc-theme-primary);
+	@include mdc-button-ink-color(white);
+
+	@include mdc-elevation(0);
+	&:disabled,
+	&:visited,
+	&:focus,
+	&:not(:disabled),
+	&:not(:hover) {
+		@include mdc-elevation(0);
+	}
+
+	&:active {
+		@include mdc-elevation(4);
+	}
+}

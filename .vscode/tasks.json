@@ -1,0 +1,10 @@
+{
+    "version": "2.0.0",
+    "tasks": [{
+        "label": "npm_scss_watch",
+        "command": "npm",
+        "type": "shell",
+        "isBackground": true,
+        "args": ["run", "watch"],
+    }]
+}

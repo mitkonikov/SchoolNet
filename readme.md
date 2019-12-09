@@ -50,6 +50,8 @@ SchoolNet uses a number of open source projects to work properly:
 * [Wikipedia](http://mk.wikipedia.org) - Open source encyclopedia
 * [p5.js](http://p5js.org) - Amazing library for fast dynamic animations and design
 * [Sweetalert2](https://sweetalert2.github.io) - Modern pop-ups
+* [SASS](https://sass-lang.com/documentation) - Easier CSS
+* [MaterialDesign](https://material.io/) - Modern look
 * [VisualStudioCode](https://code.visualstudio.com/) - Top-of-the-line free open source editor
 * and finally, can a project be done without [StackOverflow](http://stackoverflow.com)?
 
@@ -133,6 +135,13 @@ Go to `http://localhost:3000/` and if there are no error messages, hooray!
 
 **Go, have fun!**
 
+##### OPTIONAL: STEP 6: Development
+
+Because we have implemented Material Design in our project, it requires some kind of SASS compiler/watcher. We use webpack's watch command. Before running the server, just run the command: `npm run watch`
+
+You shouldn't have any problems with the file names when building the SASS files into CSS, but if you do, just report them here.
+
+
 ##### NOTES:
 
 * SchoolNet is a **really complex** network, you are going to need a couple of hours if not days to set it up...
@@ -162,6 +171,7 @@ When contributing follow the [Google JavaScript Style Guide](https://google.gith
 
 ### Todos
 
+* Implement Material Design everywhere
 * Work on responsivness
 * Email server
   * Verification on sign-in
