@@ -1,17 +1,70 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!---------------------------------------------->
+    <!--- IT MAY LOOK BROKEN AT SOME PARTS, 
+      BUT THIS IS ONLY MEANT FOR DEVELEPMENT --->
+    <!---------------------------------------------->
+
     <link rel="stylesheet" href="/client/static/css/material-theme.css">
-    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <script src="/client/static/js/jquery-3.3.1.js"> </script>
     <script src="/client/static/css/material.js" async></script>
   </head>
   <body>
-      <h1> Hello World </h1>
-
       <button class="mdc-button mdc-button--raised">
         <div class="mdc-button__ripple"></div>
         <span class="mdc-button__label">Button</span>
       </button>
+      <br>
+      <div class="mdc-text-field mdc-text-field--fullwidth">
+        <input class="mdc-text-field__input" placeholder="Username">
+        <div class="mdc-line-ripple"></div>
+      </div>
+      <br>
+      <div class="mdc-text-field mdc-text-field--no-label">
+        <input class="mdc-text-field__input" placeholder="Username">
+        <div class="mdc-line-ripple"></div>
+      </div>
+      <br>
+      <br>
+      <div style="width: 300px;">
+      <div class="mdc-card">
+        <div class="mdc-card__primary-action" tabindex="0">
+          <div class="mdc-card-content">
+            <!-- content within actionable area -->
+            My content
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    
+    <div style="width: 350px;">
+      <div class="mdc-card demo-card demo-ui-control">
+        <div class="mdc-card__primary-action demo-card__primary-action" tabindex="0">
+          <div class="mdc-card__media mdc-card__media--square demo-card__media" style="background-image: url(&quot;https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg&quot;);"></div>
+          <div class="demo-card__primary">
+            <h2 class="demo-card__title mdc-typography mdc-typography--headline6">Our Changing Planet</h2>
+            <h3 class="demo-card__subtitle mdc-typography mdc-typography--subtitle2">by Kurt Wagner</h3>
+          </div>
+        </div>
+        <div class="mdc-card__actions">
+          <div class="mdc-card__action-buttons">
+            <button class="mdc-button mdc-card__action mdc-card__action--button">  <span class="mdc-button__ripple"></span> Read</button>
+            <button class="mdc-button mdc-card__action mdc-card__action--button">  <span class="mdc-button__ripple"></span> Bookmark</button>
+          </div>
+          <div class="mdc-card__action-icons">
+            <button class="mdc-icon-button mdc-card__action mdc-card__action--icon--unbounded" aria-pressed="false" aria-label="Add to favorites" title="Add to favorites">
+              <i class="material-icons mdc-icon-button__icon mdc-icon-button__icon--on">favorite</i>
+              <i class="material-icons mdc-icon-button__icon">favorite_border</i>
+            </button>
+            <button class="mdc-icon-button material-icons mdc-card__action mdc-card__action--icon--unbounded" title="Share" data-mdc-ripple-is-unbounded="true">share</button>
+            <button class="mdc-icon-button material-icons mdc-card__action mdc-card__action--icon--unbounded" title="More options" data-mdc-ripple-is-unbounded="true">more_vert</button>
+          </div>
+        </div>
+      </div>
+      </div>
   </body>
 </html>
