@@ -36,9 +36,14 @@ module.exports = [{
     },
 
     entry: {
-      material : 
-      ['./client/static/scss/material-theme.scss',
-      './client/static/js/material.js']
+      material : [
+        './client/static/scss/material-theme.scss',
+        './client/static/js/material.js'
+      ],
+      lobby : [
+        './client/static/scss/material-lobby.scss',
+        './client/static/js/material-lobby.js',
+      ]
     },
     output: {
       // This is necessary for webpack to compile

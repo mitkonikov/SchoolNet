@@ -33,7 +33,7 @@ var Query = function(req, res) {
                 });
             } else if (req.body.command === 'search-request') {
                 let name_search = "%" + req.body.data + "%";
-                network.query("SELECT ID FROM tbl_students WHERE (Firstname LIKE ? OR Lastname LIKE ?) AND Role = ?", [name_search, name_search, '1'], (err, rows) => {
+                network.query("SELECT ID, Firstname, Lastname FROM tbl_students WHERE (Firstname LIKE ? OR Lastname LIKE ?) AND Role = ?", [name_search, name_search, '1'], (err, rows) => {
                     res.send(rows);
                 });
             }

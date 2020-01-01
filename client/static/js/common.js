@@ -353,11 +353,11 @@ function MouseIt(element, swipeUp, swipeDown, swipeRight, swipeLeft) {
 
 /**
  * Creates a DIV element
- * @param {String} id The class attribute of the div
+ * @param {String} Class The class attribute of the div
  */
-function createDIV(id) {
+function createDIV(Class) {
     RESULT = document.createElement("div");
-    RESULT.classList.add(id);
+    RESULT.classList.add(Class);
     return RESULT;
 }
 

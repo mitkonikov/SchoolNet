@@ -54,12 +54,6 @@ $(document).ready(function() {
 			}
 		}
 	});
-
-	$("#search-box").keyup(function (event) {
-        if (event.keyCode == 13) {
-            search();
-        }
-    });
 });
 
 function changeSWALTheme() {
@@ -145,13 +139,4 @@ async function changeDesc() {
 			});
 		}
 	})
-}
-
-function search() {
-	postAjax('query', {
-		command: 'search-request',
-		data: $("#search-box").val()
-	}).then((resolve) => {
-		console.log(resolve);
-	});
 }

@@ -3034,9 +3034,6 @@ svg.mdc-button__icon {
   .mdc-icon-button.mdc-ripple-upgraded {
     --mdc-ripple-fg-opacity: 0.12; }
 
-body {
-  background-color: #71b8d5; }
-
 .mdc-button {
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12); }
   .mdc-button:not(:disabled) {
@@ -3067,6 +3064,21 @@ body {
   color: #ffffff; }
 
 .mdc-text-field__input::placeholder {
+  color: #ffffff; }
+
+.mdc-text-field__input::-webkit-input-placeholder:hover {
+  color: #ffffff; }
+
+.mdc-text-field__input::-moz-placeholder:hover {
+  color: #ffffff; }
+
+.mdc-text-field__input:-ms-input-placeholder:hover {
+  color: #ffffff; }
+
+.mdc-text-field__input::-ms-input-placeholder:hover {
+  color: #ffffff; }
+
+.mdc-text-field__input::placeholder:hover {
   color: #ffffff; }
 
 .mdc-text-field--fullwidth {

@@ -30,11 +30,6 @@ $mdc-text-field__input-padding: 0.6em;
 @import "@material/card/mdc-card";
 @import "@material/icon-button/mdc-icon-button";
 
-// For development purposes only.
-body {
-	background-color: lighten($mdc-theme-primary, 40%);
-}
-
 // Basic theme for a button
 .mdc-button {
 	@include mdc-button-container-fill-color($mdc-theme-primary);
@@ -61,6 +56,10 @@ body {
 
 .mdc-text-field__input {
 	&::placeholder {
+		color: $mdc-theme-on-primary;
+	}
+
+	&::placeholder:hover {
 		color: $mdc-theme-on-primary;
 	}
 }

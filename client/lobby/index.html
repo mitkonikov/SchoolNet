@@ -8,10 +8,13 @@
 
 		<link rel="stylesheet" href="/client/static/css/foundation.css"/>
 		<link rel="stylesheet" href="/client/static/css/style_common.css"/>
-		<link rel="stylesheet" href="/client/static/css/style_lobby.css"/>
+		<link rel="stylesheet" href="/client/static/css/material-theme.css"/>
+		<link rel="stylesheet" href="/client/static/css/material-lobby.css"/>
         <link rel="manifest" href="/client/manifest.json">
 
 		<script src="/client/static/js/jquery-3.3.1.js"> </script>
+		<script src="/client/static/css/material.js" async> </script>
+        <script src="/client/static/css/lobby.js"> </script>
         <script src="/client/static/js/slide.it.js"> </script>
         <script src="/client/static/js/swal.js"> </script>
 		<script src="/client/static/js/foundation.js"> </script>
@@ -32,25 +35,20 @@
 			<div class="lobby-slide-form sit-inactive" id="sit-slide-0">
 				<div id="tool-bar">
 					<div id="search-bar">
-						<input type="text" class="textbox in-box" placeholder="Пребарај" id="search-box"/>
-						<div id="search-icon" onclick="search()">
+						<!--<input type="text" class="textbox in-box" placeholder="Пребарај" id="search-box"/>-->
+						<div id="search-box-cont">
+							<div id="search-box-mdc" class="mdc-text-field mdc-text-field--no-label">
+								<input id="search-box" class="mdc-text-field__input" placeholder="Пребарај">
+								<div class="mdc-line-ripple"></div>
+							</div>
+						</div>
+						<div id="search-icon">
 							<img id="search-icon-img" src="/client/static/svg/search.svg"></img>
 						</div>
 					</div>
 				</div>
 				<div class="form-wrap noselect" id="search-results">
-					<div id="" class="search-result-card-small">
-						<div class="search-result-profile-picture">
-							<img src="/client/static/img/profile.png" alt="">
-						</div>
-						<div class="search-result-name">NAME</div>
-					</div>
-					<div id="" class="search-result-card-small">
-						<div class="search-result-profile-picture">
-							<img src="/client/static/img/profile.png" alt="">
-						</div>
-						<div class="search-result-name">NAME</div>
-					</div>
+					
 				</div>
 				<div class="form-wrap s-form" id="news-form-wrap">
 					<div id="news-form-1" class="card-large">
