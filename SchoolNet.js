@@ -8,6 +8,9 @@ var server = require('http').Server(app);
 const requestIp = require('request-ip');
 app.use(requestIp.mw())
 
+const expressSanitizer = require('express-sanitizer');
+app.use(expressSanitizer());
+
 const dotenv          = require('dotenv');
 dotenv.config();
 

@@ -15,18 +15,21 @@ $(document).ready(function() {
 });
 
 function search() {
-	postAjax('query', {
-		command: 'search-request',
-		data: $("#search-box").val()
-	}).then((resolve) => {
-        if (resolve.length > 0) {
-            for (let tag of resolve) {
-                buildSearchCard(tag);
+    let searchQuery = $("#search-box").val();
+    if (searchQuery.trim() != "") {
+        postAjax('query', {
+            command: 'search-request',
+            data: $("#search-box").val()
+        }).then((resolve) => {
+            if (resolve.length > 0) {
+                for (let tag of resolve) {
+                    buildSearchCard(tag);
+                }
+            } else {
+                noResultsCard();
             }
-        } else {
-            noResultsCard();
-        }
-	});
+        });
+    }
 }
 
 function buildSearchCard(data) {

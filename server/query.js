@@ -10,12 +10,20 @@ var Initialize = function(node_databases, node_gameLogic) {
 
 var Query = function(req, res) {
     if (req.isAuthenticated()) {
-        if (req.body.command) {
-            if (req.body.command === 'get-info-me') {
+        if (typeof req.body.command !== "undefined") {
+            let commandSanitized = req.sanitize(req.body.command);
+
+            let dataSanitized = "";
+            if (typeof req.body.data !== "undefined")
+                dataSanitized = req.sanitize(req.body.data);
+
+            console.log(dataSanitized);
+
+            if (commandSanitized === 'get-info-me') {
                 network.query("SELECT Role, Display_Name, About, Emoji FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID = ? AND tbl_students_info.ID = ?", [req.user.ID, req.user.ID], function(err, rows) {
                     res.send(rows);
                 });
-            } if (req.body.command === 'get-stats-me') {
+            } if (commandSanitized === 'get-stats-me') {
                 // stats from games for the user
                 network.query("SELECT * FROM tbl_stats WHERE ID = ?", req.user.ID, (err, statboard) => {
                     if (err) {
@@ -31,11 +39,13 @@ var Query = function(req, res) {
                         res.send("empty");
                     }
                 });
-            } else if (req.body.command === 'search-request') {
-                let name_search = "%" + req.body.data + "%";
-                network.query("SELECT ID, Firstname, Lastname FROM tbl_students WHERE (Firstname LIKE ? OR Lastname LIKE ?) AND Role = ?", [name_search, name_search, '1'], (err, rows) => {
-                    res.send(rows);
-                });
+            } else if (commandSanitized === 'search-request') {
+                if (dataSanitized.length > 2) {
+                    let name_search = "%" + dataSanitized + "%";
+                    network.query("SELECT ID, Firstname, Lastname FROM tbl_students WHERE (Firstname LIKE ? OR Lastname LIKE ?) AND Role = ?", [name_search, name_search, '1'], (err, rows) => {
+                        res.send(rows);
+                    });
+                }
             }
         } else if (req.body.game) {
             gameLogic.Query(req, res, req.body.game);
