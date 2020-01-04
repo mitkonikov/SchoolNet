@@ -17,8 +17,6 @@ var Query = function(req, res) {
             if (typeof req.body.data !== "undefined")
                 dataSanitized = req.sanitize(req.body.data);
 
-            console.log(dataSanitized);
-
             if (commandSanitized === 'get-info-me') {
                 network.query("SELECT Role, Display_Name, About, Emoji FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID = ? AND tbl_students_info.ID = ?", [req.user.ID, req.user.ID], function(err, rows) {
                     res.send(rows);

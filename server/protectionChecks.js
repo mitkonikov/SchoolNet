@@ -28,7 +28,7 @@ var regexCheck = function(field, data, userinfo) {
  * @param {*} userinfo      Information about the user that submits the data
  */
 var emptyCheck = function(field, data, userinfo) {
-    if (!data) {
+    if (!(typeof data !== undefined)) {
         var errorDesc = "Tried to send an empty POST request bypassing the client-side Javascript! \n " + field + " is not defined!";
         logErrorHandler("POST", userinfo.ip, null, errorDesc, userinfo);
         return false;
@@ -63,12 +63,13 @@ var lengthCheck = function(field, data, min, max, userinfo) {
 
 /**
  * Main signin-check function
- * @param {*} username Username
- * @param {*} password Password
- * @param {*} school   School
- * @param {*} ip       IP Address of the user
  */
-var signinCheck = function(username, password, school, ip) {
+var signinCheck = function(req) {
+    let username = req.sanitize(req.body.username);
+    let password = req.sanitize(req.body.password);
+    let school = req.sanitize(req.body.school);
+    let ip = req.clientIp;
+
     userinfo = {
         username: username,
         school: school,

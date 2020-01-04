@@ -1,3 +1,4 @@
+import {MDCRipple} from '@material/ripple/index';
 
 $(document).ready(function() {
     $("#search-box").keyup(function (event) {
@@ -10,7 +11,8 @@ $(document).ready(function() {
 
     buildPost({
         Title: "САКАМ",
-        Content: "САКАМ е платформа на SchoolNet која на секој ученик му дава збор за да се искаже и да гласа за најдобрата идеа."
+        Content: "САКАМ е платформа на SchoolNet која на секој ученик му дава збор за да се искаже и да гласа за најдобрата идеа.",
+        Color: "#3b8760"
     });
 });
 
@@ -35,18 +37,19 @@ function search() {
 function buildSearchCard(data) {
     clearDOM("search-results");
 
-    var profileImage = document.createElement('img'); 
+    let profileImage = document.createElement('img'); 
     profileImage.src = '/client/static/img/profile.png'; 
 
-    searchResultCardSmall = createDIV("search-result-card-small");
-    searchResultCardSmall.id = data.ID;
-    MDC_Card = createDIV("mdc-card");
+    let searchResultCardSmall = createDIV("search-result-card-small");
+    searchResultCardSmall.id = "search-result-" + data.ID;
+    let MDC_Card = createDIV("mdc-card");
     MDC_Card.classList.add("mdc-ripple-upgraded");
-    MDC_Card_Action = createDIV("mdc-card__primary-action");
-    searchResultCardSmallBg = createDIV("search-result-card-small-bg");
-    searchResultProfilePicture = createDIV("search-result-profile-picture");
+    let MDC_Card_Action = createDIV("mdc-card__primary-action");
+
+    let searchResultCardSmallBg = createDIV("search-result-card-small-bg");
+    let searchResultProfilePicture = createDIV("search-result-profile-picture");
     searchResultProfilePicture.appendChild(profileImage);
-    searchResultName = createDIV("search-result-name");
+    let searchResultName = createDIV("search-result-name");
     searchResultName.innerHTML = data.Firstname + " " + data.Lastname;
 
     searchResultCardSmallBg.appendChild(searchResultProfilePicture);
@@ -55,16 +58,24 @@ function buildSearchCard(data) {
     MDC_Card.appendChild(MDC_Card_Action);
     searchResultCardSmall.appendChild(MDC_Card);
 
+    const rippleCard = new MDCRipple(MDC_Card);
+    const rippleAction = new MDCRipple(MDC_Card_Action);
+
     document.getElementById("search-results").appendChild(searchResultCardSmall);
+
+    $("#search-result-" + data.ID).click(() => {
+        window.location = "/client/lobby/profile.html";
+    });
 }
 
 function noResultsCard() {
-    searchResultCardSmall = createDIV("search-result-card-small");
-    MDC_Card = createDIV("mdc-card");
+    let searchResultCardSmall = createDIV("search-result-card-small");
+    let MDC_Card = createDIV("mdc-card");
     MDC_Card.classList.add("mdc-ripple-upgraded");
-    MDC_Card_Action = createDIV("mdc-card__primary-action");
-    searchResultCardSmallBg = createDIV("search-result-card-small-bg");
-    searchResultName = createDIV("search-result-no-result-text");
+    let MDC_Card_Action = createDIV("mdc-card__primary-action");
+
+    let searchResultCardSmallBg = createDIV("search-result-card-small-bg");
+    let searchResultName = createDIV("search-result-no-result-text");
     searchResultName.innerHTML = "No results.";
 
     searchResultCardSmallBg.appendChild(searchResultName);
@@ -74,25 +85,29 @@ function noResultsCard() {
 
     clearDOM("search-results");
 
+    const rippleCard = new MDCRipple(MDC_Card);
+    const rippleAction = new MDCRipple(MDC_Card_Action);
+
     document.getElementById("search-results").appendChild(searchResultCardSmall);
 }
 
 function buildPost(data) {
     clearDOM("posts");
 
-    postCardSmall = createDIV("post-card-small");
+    let postCardSmall = createDIV("post-card-small");
     postCardSmall.id = data.ID;
-    MDC_Card = createDIV("mdc-card");
+    let MDC_Card = createDIV("mdc-card");
     MDC_Card.classList.add("mdc-ripple-upgraded");
-    MDC_Card_Action = createDIV("mdc-card__primary-action");
+    let MDC_Card_Action = createDIV("mdc-card__primary-action");
 
-    postCardSmallBg = createDIV("post-card-small-bg");
-    postCardSmallBg.style.backgroundColor = "#3b8760";
+    let postCardSmallBg = createDIV("post-card-small-bg");
+    postCardSmallBg.style.backgroundColor = data.Color;
 
-    postTitle = createDIV("post-title");
+    let postTitle = createDIV("post-title");
     postTitle.innerHTML = data.Title;
+    postTitle.style.fontFamily = "Roboto-Bold";
 
-    postContent = createDIV("post-content");
+    let postContent = createDIV("post-content");
     postContent.innerHTML = data.Content;
 
     postCardSmallBg.appendChild(postTitle);
@@ -100,6 +115,9 @@ function buildPost(data) {
     MDC_Card_Action.appendChild(postCardSmallBg);
     MDC_Card.appendChild(MDC_Card_Action);
     postCardSmall.appendChild(MDC_Card);
+    
+    const rippleCard = new MDCRipple(MDC_Card);
+    const rippleAction = new MDCRipple(MDC_Card_Action);
 
     document.getElementById("posts").appendChild(postCardSmall);
 }

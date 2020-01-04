@@ -83,7 +83,7 @@ var prev_ip = false;
 
 app.post('/client/signin', function(req, res, next) {
 
-    if (!protectionChecks.signinCheck(req.body.username, req.body.password, req.body.school, req.clientIp)) {
+    if (!protectionChecks.signinCheck(req)) {
         res.send('incorrect');
         return;
     }
