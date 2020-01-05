@@ -490,6 +490,11 @@ app.get('/client/lobby*', function(req, res) {
     }
 });
 
+app.get('/user/:userCalled', function(req, res) {
+    console.log("User profile requested: " + req.params.userCalled);
+    res.sendFile(__dirname + "/client/lobby/profile.html");
+});
+
 app.get('/:pageCalled', function(req, res) {
     console.log('User requested page out-of-bounds: ' + req.params.pageCalled);
     res.redirect('/');

@@ -123,9 +123,12 @@ $(document).ready(function() {
     });
 
     $("#students-container-title").click(function() {
-        getStudents().then((response) => {
-            console.log(response);
-
+        postAjax('dashboard/query', { 
+            command : 'list-students',
+            data : {
+                Class_ID : CLASS_ID
+            }
+        }).then((response) => {
             if (response == "problem") {
                 popError();
             } else if (response == "empty") {
@@ -380,29 +383,6 @@ function playGame(GAME_ID) {
                 data : {
                     Class_ID : CLASS_ID, 
                     Game_ID : GAME_ID
-                }
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
-    });
-}
-
-function getStudents() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/dashboard/query',
-            type: 'POST',
-            data: { 
-                command : 'list-students',
-                data : {
-                    Class_ID : CLASS_ID
                 }
             },
             success: function(response) {

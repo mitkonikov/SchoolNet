@@ -110,20 +110,18 @@
   -webkit-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
   width: 0%;
-  -webkit-transform: translate(100%, 0);
-          transform: translate(100%, 0);
   margin: 0 auto;
   height: 5em;
   position: relative;
   background-color: #b13415;
-  position: absolute; }
+  position: absolute;
+  left: 50%; }
 
 #gotoDashboard-effect.shover {
   -webkit-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
   width: 100%;
-  -webkit-transform: translate(0%, 0);
-          transform: translate(0%, 0); }
+  left: 0%; }
 
 #tatkin-logo {
   width: 2.6em;

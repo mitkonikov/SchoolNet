@@ -23,7 +23,6 @@ function postAjax(client_url, data) {
                     if (response == 'empty') resolve("empty");
                     else resolve(response);
                 } else {
-                    console.log(response);
                     resolve("problem");
                 }
             }
