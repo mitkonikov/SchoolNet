@@ -91,6 +91,10 @@ body {
     overflow: hidden;
 }
 
+:fullscreen::backdrop {
+	background-color: var(--color-bg-main); /* dark blue */
+}
+
 /*html { 
     height:100vh;
 }*/

@@ -21,7 +21,13 @@ var Query = function(req, res) {
                 network.query("SELECT Role, Display_Name, About, Emoji FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID = ? AND tbl_students_info.ID = ?", [req.user.ID, req.user.ID], function(err, rows) {
                     res.send(rows);
                 });
-            } if (commandSanitized === 'get-stats-me') {
+            } else if (commandSanitized === 'get-info-user') {
+                network.query("SELECT ID FROM tbl_students WHERE Nickname = ?", req.body.data.Nickname, (err, rowsID) => {
+                    network.query("SELECT Role, Display_Name, About, Emoji FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID = ? AND tbl_students_info.ID = ?", [rowsID[0].ID, rowsID[0].ID], function(err, rows) {
+                        res.send(rows);
+                    });
+                });
+            } else if (commandSanitized === 'get-stats-me') {
                 // stats from games for the user
                 network.query("SELECT * FROM tbl_stats WHERE ID = ?", req.user.ID, (err, statboard) => {
                     if (err) {
@@ -40,7 +46,7 @@ var Query = function(req, res) {
             } else if (commandSanitized === 'search-request') {
                 if (dataSanitized.length > 2) {
                     let name_search = "%" + dataSanitized + "%";
-                    network.query("SELECT ID, Firstname, Lastname FROM tbl_students WHERE (Firstname LIKE ? OR Lastname LIKE ?) AND Role = ?", [name_search, name_search, '1'], (err, rows) => {
+                    network.query("SELECT ID, Nickname, Firstname, Lastname FROM tbl_students WHERE (Firstname LIKE ? OR Lastname LIKE ?) AND Role = ?", [name_search, name_search, '1'], (err, rows) => {
                         res.send(rows);
                     });
                 }

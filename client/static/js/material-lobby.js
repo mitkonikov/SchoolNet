@@ -64,7 +64,7 @@ function buildSearchCard(data) {
     document.getElementById("search-results").appendChild(searchResultCardSmall);
 
     $("#search-result-" + data.ID).click(() => {
-        window.location = "/client/lobby/profile.html";
+        window.location = "/user/" + data.Nickname;
     });
 }
 

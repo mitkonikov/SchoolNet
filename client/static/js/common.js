@@ -30,7 +30,6 @@ function postAjax(client_url, data) {
     });
 }
 
-// $(document).ready(() => document.body.requestFullscreen());
 /*$(document).ready(function() {
     $({scroll:0}).animate({scroll:100}, {
         step: function(val) {
@@ -73,20 +72,8 @@ function getSchools() {
     return RESULT;
 }
 
-function getBasicProfileInfo() {
-    var RESULT = [];
-    $.ajax({
-		url: '/client/query',
-		type: 'POST',
-        data: { command : 'get-info-me' },
-		success: function(response) {
-            for (var i = 0; i < response.length; ++i) {
-                RESULT.push(response[i]);
-            }
-		}
-    });
-
-    return RESULT;
+function getBasicProfileInfo(data) {
+    return postAjax('query', data);
 }
 
 async function asyncUpdateDatabase(COMMAND, DATA) {

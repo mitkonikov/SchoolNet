@@ -491,8 +491,11 @@ app.get('/client/lobby*', function(req, res) {
 });
 
 app.get('/user/:userCalled', function(req, res) {
-    console.log("User profile requested: " + req.params.userCalled);
-    res.sendFile(__dirname + "/client/lobby/profile.html");
+    if (req.isAuthenticated()) {
+        res.sendFile(__dirname + "/client/lobby/profile.html");
+    } else {
+        res.redirect('/');
+    }
 });
 
 app.get('/:pageCalled', function(req, res) {

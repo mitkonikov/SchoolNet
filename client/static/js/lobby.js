@@ -12,18 +12,6 @@ $(document).ready(function() {
 		fadeInDelay: 70
 	});
 
-	// GET BASIC PROFILE INFO
-	var BASIC_INFO = getBasicProfileInfo();
-	setTimeout(function() {
-			if (BASIC_INFO[0]["Role"] == "1") {
-				$("#gotoDashboard").slideDown();
-			}
-		$("#profile-name").text(BASIC_INFO[0]["Display_Name"]);
-		if (BASIC_INFO[0]["About"] != "") $("#profile-desc").text(BASIC_INFO[0]["About"]);
-		NAME =  $("#profile-name").text();
-		ABOUT = $("#profile-desc").text();
-	}, 500);
-
   	window.onmessage = function(e){
     	if (e.data.startsWith('state')) {
 			slideInfo = e.data.split("-");
@@ -52,6 +40,28 @@ $(document).ready(function() {
 				$("#stats-tatkin-cont").children("#stats-xp-cont").children("#stats-xp").text(response.Score_Tatkin);
 				$("#stats-tatkin-cont").show();
 			}
+		}
+	});
+
+	$("#fullscreen-button-hide").click(() => {
+		if (
+			document.fullscreenElement ||
+			document.webkitFullscreenElement ||
+			document.mozFullScreenElement ||
+			document.msFullscreenElement
+		) {
+			document.exitFullscreen();
+			return;
+		}
+		
+		if (document.body.requestFullscreen) {
+			document.body.requestFullscreen();
+		} else if (document.body.webkitRequestFullscreen) {
+			document.body.webkitRequestFullscreen();
+		} else if (document.body.mozRequestFullScreen) {
+			document.body.mozRequestFullScreen();
+		} else if (document.body.msRequestFullscreen) {
+			document.body.msRequestFullscreen();
 		}
 	});
 });

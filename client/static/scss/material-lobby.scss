@@ -1,3 +1,5 @@
+@import "material-theme.scss";
+
 #logOutBtn {
     position: relative;
     display: block;
@@ -231,6 +233,74 @@
 
 .post-card-small-bg {
     padding: 0.7em 0.8em;
+}
+
+#fullscreen-button-hide {
+    transition: width 0.5s ease-in-out;
+    width: 0.2em;
+    height: 2.5em;
+    position: fixed;
+    right: 1em;
+    top: 1em;
+    background-color: $mdc-theme-primary;
+    cursor: pointer;
+
+    &:hover {
+        width: 2.5em;
+
+        #fullscreen-button-content {
+            transition: all 1s ease-in;
+            opacity: 1;
+        }
+
+        #fullscreen-button-exit-content {
+            transition: all 0.5s ease-in;
+            opacity: 1;
+        }
+    }
+
+    /*&:hover:before {
+        transition: all 0.1s 0.5s linear;
+        width: 100%;
+        height: 100%;
+    }*/
+
+    #fullscreen-button-content, #fullscreen-button-exit-content {
+        opacity: 0;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+#fullscreen-button-hide::before {
+    content: '';
+    position: absolute;
+    width: 1000%;
+    height: 200%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index:-1;
+}
+
+#fullscreen-button-exit-content {
+    display: none;
+}
+
+#fullscreen-button-content {
+    display: block;
+}
+
+body:fullscreen {
+    #fullscreen-button-exit-content {
+        display: block;
+    }
+
+    #fullscreen-button-content {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 1300px) and (max-height: 800px) {
