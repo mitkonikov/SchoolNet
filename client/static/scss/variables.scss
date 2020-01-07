@@ -1,0 +1,21 @@
+$mdc-shape-small-component-radius: 0px;
+$mdc-shape-medium-component-radius: 0px;
+$mdc-shape-large-component-radius: 0px;
+
+$mdc-theme-primary: #1c4b5e;
+$mdc-theme-secondary: #c94028;
+
+$mdc-theme-on-primary: #ffffff;
+$mdc-theme-on-secondary: #ffffff;
+
+$mdc-elevation-transition-duration: 100ms;
+
+$mdc-ripple-light-ink-opacities: (
+  hover: .02,
+  focus: .0,
+  press: .12,
+  selected: .0,
+  activated: .0
+);
+
+$mdc-text-field__input-padding: 0.6em;

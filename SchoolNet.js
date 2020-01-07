@@ -17,6 +17,9 @@ dotenv.config();
 var ErrorHandler      = require("./server/ErrorHandler");
 
 var databases         = require('./server/dbConnection');
+var dbController      = require('./server/databaseController');
+dbController.Connect(databases);
+
 var sess              = require('express-session');
 
 var crypto            = require('crypto');
