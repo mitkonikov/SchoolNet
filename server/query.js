@@ -1,10 +1,12 @@
-var databases;
+
+/** Database Controller */
+var database;
 var network;
 var gameLogic;
 
-var Initialize = function(node_databases, node_gameLogic) {
-    databases = node_databases;
-    network = node_databases.network;
+var Initialize = function(node_databaseController, node_gameLogic) {
+    database = node_databaseController;
+    network = database.DB("db_net");
     gameLogic = node_gameLogic;
 }
 

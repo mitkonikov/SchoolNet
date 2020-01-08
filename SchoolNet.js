@@ -11,18 +11,20 @@ app.use(requestIp.mw())
 const expressSanitizer = require('express-sanitizer');
 app.use(expressSanitizer());
 
-const dotenv          = require('dotenv');
+const dotenv            = require('dotenv');
 dotenv.config();
 
-var ErrorHandler      = require("./server/ErrorHandler");
+var ErrorHandler        = require("./server/ErrorHandler");
 
-var databases         = require('./server/dbConnection');
-var dbController      = require('./server/databaseController');
-dbController.Connect(databases);
+var databases           = require('./server/dbConnection');
 
-var sess              = require('express-session');
+/** The Main Controller Module for database access */
+var databaseController  = require('./server/databaseController');
+databaseController.Connect(databases);
 
-var crypto            = require('crypto');
+var sess                = require('express-session');
+
+var crypto              = require('crypto');
 
 var network = databases.network;
 
@@ -165,7 +167,7 @@ app.get('/favicon.ico', function(req, res) {
 });
 
 var QueryModule = require("./server/query");
-QueryModule.Initialize(databases, gameLogic);
+QueryModule.Initialize(databaseController, gameLogic);
 
 app.post('/client/query', QueryModule.Query);
 

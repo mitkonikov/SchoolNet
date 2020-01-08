@@ -33,3 +33,8 @@ module.exports.mySQL = mysql;
 module.exports.network = network;
 module.exports.wordsDB = wordsDB;
 module.exports.records = records;
+module.exports.obj = {
+	"db_net": network,
+	"db_words": wordsDB,
+	"db_records": records
+}
