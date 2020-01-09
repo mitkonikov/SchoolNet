@@ -24,6 +24,7 @@ function search() {
             data: $("#search-box").val()
         }).then((resolve) => {
             if (resolve.length > 0) {
+                clearDOM("search-results");
                 for (let tag of resolve) {
                     buildSearchCard(tag);
                 }
@@ -35,8 +36,6 @@ function search() {
 }
 
 function buildSearchCard(data) {
-    clearDOM("search-results");
-
     let profileImage = document.createElement('img'); 
     profileImage.src = '/client/static/img/profile.png'; 
 

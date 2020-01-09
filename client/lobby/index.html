@@ -102,35 +102,40 @@
 			<div class="lobby-slide-form sit-inactive" id="sit-slide-2">
 				<div id="profile-header">
 					<div id="profile-photo-wrapper">
-						<img src="/client/static/img/profile.png"/>
+						<div id="profile-photo" class="center-vh">
+							<img src="/client/static/img/profile.png"/>
+						</div>
 					</div>
 					<div id="profile-photo-online">
 						<div id="online-icon"></div>
 					</div>
-					<div id="profile-name-wrapper" class="noselect">
-						<div id="profile-name-container">
-							<div id="profile-name"> Name </div>
-							<div class="edit" onclick="changeName();"> <img src="/client/static/img/edit.png"/> </div>
-						</div>
-
-						<div id="profile-desc-container">
-							<div id="profile-desc"> Description </div>
-							<div class="edit" onclick="changeDesc();"> <img src="/client/static/img/edit.png"/> </div>
+	
+					<div id="profile-info-wrapper" class="noselect">
+						<div id="profile-name-wrapper" class="center-vh">
+							<div id="profile-name-container">
+								<div id="profile-name"> Name </div>
+								<div class="edit" onclick="changeName();"> <img src="/client/static/img/edit.png"/> </div>
+							</div>
+							
+							<div id="profile-desc-container">
+								<div id="profile-desc"> Description </div>
+								<div class="edit" onclick="changeDesc();"> <img src="/client/static/img/edit.png"/> </div>
+							</div>
 						</div>
 					</div>
-					<div id="profile-stats">
-						<div class="center-vh">
-							<div id="stats-tatkin-cont">
-								<div id="stats-logo-cont">
-									<img id="stats-logo" class="center-vh" src="/client/static/svg/tatkin.svg"></img>
-								</div>
-								<div id="stats-xp-cont">
-									Татковски јазик <br>
-									<span id="stats-xp">1000</span>
-								</div>
+				</div>
+				<div id="profile-stats">
+					<div class="center-vh">
+						<div id="stats-tatkin-cont">
+							<div id="stats-logo-cont">
+								<img id="stats-logo" class="center-vh" src="/client/static/svg/tatkin.svg"></img>
 							</div>
-							<div id="no-stats-msg">Немате статистики</div>
+							<div id="stats-xp-cont">
+								Татковски јазик <br>
+								<span id="stats-xp">1000</span>
+							</div>
 						</div>
+						<div id="no-stats-msg">Немате статистики</div>
 					</div>
 				</div>
 			</div>
