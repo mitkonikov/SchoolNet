@@ -43,6 +43,10 @@ module.exports = [{
       lobby : [
         './client/static/scss/material-lobby.scss',
         './client/static/js/material-lobby.js',
+      ],
+      portfolioBundle : [
+        './client/static/scss/portfolio-bundle.scss',
+        './client/static/js/portfolio-bundle.js',
       ]
     },
     output: {

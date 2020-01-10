@@ -447,6 +447,9 @@ app.get('/p/:pageCalled/:subPageCalled', function(req, res) {
     res.redirect('/');
 });
 
+// this is for another project
+app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));
+
 app.use('/client/static', express.static(__dirname + '/client/static'));
 app.use('/client/dynamics', express.static(__dirname + '/client/dynamics'));
 app.use('/client/home', express.static(__dirname + '/client/home'));

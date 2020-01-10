@@ -14,3 +14,9 @@ todo.txt
 dashboard_admin.css
 dashboard_admin.html
 dashboard_admin.js
+/client/portfolio
+/client/static/scss/portfolio-bundle.scss
+/client/static/scss/portfolio-variables.scss
+/client/static/js/portfolio-bundle.js
+/client/static/css/portfolio-bundle.css
+/client/static/css/portfolioBundle.js
