@@ -1,152 +1,127 @@
 .logo-text {
-    text-align: center;
-    font-family: 'Kapak';
-    font-size: 3em;
-    background-color: transparent;
-    color: rgb(250, 250, 250);
-        -webkit-background-clip: text;
-        -moz-background-clip: text;
-        background-clip: text;
-}
+  text-align: center;
+  font-family: 'Kapak';
+  font-size: 3em;
+  background-color: transparent;
+  color: #fafafa;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text; }
 
 #schoolBtn {
-    font-size: 1.1em;
-    width: 100%;
-}
+  font-size: 1.1em;
+  width: 100%; }
 
 #registerBtn {
-    width: 100%;
-    font-size: 0.9em;
-    padding-bottom: 1em;
-}
+  width: 100%;
+  font-size: 0.9em;
+  padding-bottom: 1em; }
 
 #loggingBtn, #pickSchoolBtn {
-    width: 100%;
-    font-size: 1.15em;
-    padding-top: 0.6em;
-    padding-bottom: 0.6em;
-    margin-bottom: 0.4em;
-}
+  width: 100%;
+  font-size: 1.15em;
+  padding-top: 0.6em;
+  padding-bottom: 0.6em;
+  margin-bottom: 0.4em; }
 
 #recentSchoolBtn {
-    width: 100%;
-    font-size: 0.95em;
-}
+  width: 100%;
+  font-size: 0.95em; }
 
 #school-form {
-    display: none;
-}
+  display: none; }
 
 #school-big-text {
-    font-size: 2em;
-}
+  font-size: 2em; }
 
 #form-msg {
-    font-size: 0.9em;
-    line-height: 1;
-    text-align: center;
-    margin-top: 1em;
-    color: rgb(255, 225, 213);
-}
+  font-size: 0.9em;
+  line-height: 1;
+  text-align: center;
+  margin-top: 1em;
+  color: #ffe1d5; }
 
 #login-password {
-    margin-top: -0.5em;
-}
+  margin-top: -0.5em; }
 
 .info-form {
-    padding: 0.7em 0.7em 0.7em 1em;
-    margin: 0.7em 0 0 0
-}
+  padding: 0.7em 0.7em 0.7em 1em;
+  margin: 0.7em 0 0 0; }
 
 #info-form {
-    width: 68%;
-    height: unset;
-}
+  width: 68%;
+  height: unset; }
 
 #teachers-info-form {
-    background-color: var(--color-imperial-blue);
-}
+  background-color: var(--color-imperial-blue); }
 
 #students-info-form {
-    background-color: var(--color-border-success);
-}
+  background-color: var(--color-border-success); }
 
 #parents-info-form {
-    background-color: var(--color-main-2);
-}
+  background-color: var(--color-main-2); }
 
 #parents-info-form:hover {
-    background-color: var(--color-main-2-h);
-}
+  background-color: var(--color-main-2-h); }
 
 #parents-info-form.rotation {
-    transform: rotate3d(1, 0, 0, 90deg);
-    transition: all 0.3s ease-in;
-}
+  -webkit-transform: rotate3d(1, 0, 0, 90deg);
+          transform: rotate3d(1, 0, 0, 90deg);
+  -webkit-transition: all 0.3s ease-in;
+  transition: all 0.3s ease-in; }
 
 #parents-info-form.rotation2 {
-    transform: rotate3d(1, 0, 0, 180deg);
-    transition: all 0.3s ease-in;
-}
+  -webkit-transform: rotate3d(1, 0, 0, 180deg);
+          transform: rotate3d(1, 0, 0, 180deg);
+  -webkit-transition: all 0.3s ease-in;
+  transition: all 0.3s ease-in; }
 
 .reverse-rotation {
-    transform: rotate3d(1, 0, 0, 180deg);
-}
+  -webkit-transform: rotate3d(1, 0, 0, 180deg);
+          transform: rotate3d(1, 0, 0, 180deg); }
 
 #info-form-cont {
-    width: 40%;
-    float: left;
-}
+  width: 40%;
+  float: left; }
 
 #about-cont {
-    width: 50%;
-    float: right;
-    background-color: var(--color-0-main);
-    padding: 0.7em 0.7em 0.7em 1em;
-    margin: 0.7em 0 0 0;
-}
+  width: 50%;
+  float: right;
+  background-color: var(--color-0-main);
+  padding: 0.7em 0.7em 0.7em 1em;
+  margin: 0.7em 0 0 0; }
 
 #founder-picture {
-    width: 8em;
-    width: 8em;
-    float: right;
-}
+  width: 8em;
+  width: 8em;
+  float: right; }
 
 #stats {
-    height: 100%;
-}
+  height: 100%; }
 
 .iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
 
 .iframe-wrapper:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    display: block;
-}
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: block; }
 
 @media screen and (max-width: 833px) {
-    #info-form-cont {
-        width: 100%;
-    }
-
-    #about-cont {
-        display: none;
-    }
-}
+  #info-form-cont {
+    width: 100%; }
+  #about-cont {
+    display: none; } }
 
 @media only screen and (max-width: 500px) {
-    #info-form {
-        width: 85%;
-    }
-}
+  #info-form {
+    width: 85%; } }

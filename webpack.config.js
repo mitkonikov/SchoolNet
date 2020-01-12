@@ -38,7 +38,12 @@ module.exports = [{
     entry: {
       material : [
         './client/static/scss/material-theme.scss',
-        './client/static/js/material.js'
+        './client/static/js/material.js',
+        
+        // <---->
+        './client/static/scss/style_common.scss',
+        './client/static/scss/style_register.scss',
+        './client/static/scss/style_home.scss'
       ],
       lobby : [
         './client/static/scss/material-lobby.scss',

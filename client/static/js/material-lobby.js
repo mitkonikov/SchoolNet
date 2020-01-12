@@ -46,6 +46,12 @@ function buildSearchCard(data) {
     let MDC_Card_Action = createDIV("mdc-card__primary-action");
 
     let searchResultCardSmallBg = createDIV("search-result-card-small-bg");
+
+    if (data.Following == "1")
+        searchResultCardSmallBg.classList.add("following");
+    else
+        searchResultCardSmallBg.classList.add("not-following");
+
     let searchResultProfilePicture = createDIV("search-result-profile-picture");
     searchResultProfilePicture.appendChild(profileImage);
     let searchResultName = createDIV("search-result-name");

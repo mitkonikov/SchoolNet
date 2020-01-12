@@ -17,15 +17,25 @@ $(document).ready(function() {
             command : 'get-info-me'
         }).then(setBasicInfo);
     }
+
+    $("#follow-button").click(() => {
+
+    });
 });
 
 function setBasicInfo(BASIC_INFO) {
-    if (BASIC_INFO[0]["Role"] == "1") {
+    console.log(BASIC_INFO);
+
+    if (BASIC_INFO["Following"]) {
+        $("#follow-button-text").text("UNFOLLOW");
+    }
+
+    if (BASIC_INFO["Role"] == "1") {
         $("#gotoDashboard").slideDown();
     }
 
-    $("#profile-name").text(BASIC_INFO[0]["Display_Name"]);
-    if (BASIC_INFO[0]["About"] != "") $("#profile-desc").text(BASIC_INFO[0]["About"]);
+    $("#profile-name").text(BASIC_INFO["Display_Name"]);
+    if (BASIC_INFO["About"] != "") $("#profile-desc").text(BASIC_INFO["About"]);
     NAME =  $("#profile-name").text();
     ABOUT = $("#profile-desc").text();
 }

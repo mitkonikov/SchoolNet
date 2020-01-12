@@ -1,3 +1,37 @@
+$theme-colors: (
+  'primary': (
+    'base': #44aed8,
+    'light': #e4efff,
+    'dark': #183F4F
+  ),
+  'accent': (
+    'base': #F2523A,
+    // 'base': #D64933,
+    'light': #ff8100,
+    'dark': rgb(128, 45, 32)
+  ),
+  'green': (
+    'base': #46A072,
+    'light': #62d89b,
+    'dark': #327251
+  ),
+  'desire': (
+    'base': #ea3546,
+    'light': #ea3546,
+    'dark': #ea3546
+  ),
+  'yellow': (
+    'base': #F4F066,
+    'light': #F4F066,
+    'dark': #F4F066
+  )
+);
+
+@function theme-color($key: 'primary', $variant: 'base') {
+  $map: map-get($theme-colors, $key);
+  @return map-get($map, $variant);
+}
+
 $mdc-shape-small-component-radius: 0px;
 $mdc-shape-medium-component-radius: 0px;
 $mdc-shape-large-component-radius: 0px;

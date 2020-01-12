@@ -168,32 +168,11 @@ app.get('/favicon.ico', function(req, res) {
 
 var QueryModule = require("./server/query");
 QueryModule.Initialize(databaseController, gameLogic);
-
 app.post('/client/query', QueryModule.Query);
 
-app.post('/client/update', function(req, res) {
-    // COMMAND
-    // DATA
-    if (req.isAuthenticated()) {
-        let DATA = req.body.data;
-
-        if (req.body.command === 'display-name-change') {
-            if (DATA.displayname && DATA.displayname.length >= 5 && DATA.displayname.length <= 100) {
-                network.query("UPDATE tbl_students_info SET Display_Name = ? WHERE ID = ? ", [DATA.displayname.trim(), req.user.ID], function(err, rows) {
-                    if (rows) res.send("success");
-                    else res.send("failed");
-                });
-            } else res.send("failed");
-        } else if (req.body.command === 'desc-change') {
-            if (DATA.description && DATA.description.length >= 5 && DATA.description.length <= 250) {
-                network.query("UPDATE tbl_students_info SET About = ? WHERE ID = ? ", [DATA.description.trim(), req.user.ID], function(err, rows) {
-                    if (rows) res.send("success");
-                    else res.send("failed");
-                });
-            } else res.send("failed");
-        }
-    }
-});
+var UpdateModule = require("./server/update");
+UpdateModule.Initialize(databaseController, gameLogic);
+app.post('/client/update', UpdateModule.Update);
 
 app.post('/client/dashboard/query', function(req, res) {
     if (req.isAuthenticated()) {
