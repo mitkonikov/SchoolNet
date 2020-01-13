@@ -39,8 +39,9 @@ let DB = function(database) {
         }
 
         let isFollowing = function(Follower_ID, Following_ID, callback) {
-            currentDB.query("SELECT ID FROM tbl_following WHERE ID_Follower = ? AND ID_Following = ?", [Follower_ID, Following_ID], (err, rows) => {
-                if (typeof rows !== undefined) callback(true);
+            currentDB.query("SELECT ID FROM tbl_following WHERE Follower_ID = ? AND Following_ID = ?", [Follower_ID, Following_ID], (err, rows) => {                
+                if (typeof rows !== undefined)
+                    if (rows.length > 0) callback(true);
                 else callback(false);
             });
         }
@@ -97,12 +98,42 @@ let DB = function(database) {
             });
         }
 
+        /**
+         * Follow or Unfollow a user
+         * @param {Object}      req         Full Request
+         * @param {Object}      data        Data about the request
+         * @param {Function}    callback    Callback function
+         */
+        let followUser = function(req, data, callback) {
+            getUserByNickname(data.Following_User, (followingID) => {
+                isFollowing(req.user.ID, followingID, (follow) => {
+                    if (follow == false) {
+                        let followData = { 
+                            Follower_ID: req.user.ID, 
+                            Following_ID: followingID
+                        };
+        
+                        currentDB.query("INSERT INTO tbl_following SET ?", 
+                            [followData, followData], (err, rows) => {
+                            callback("followed");
+                        });
+                    } else {
+                        currentDB.query("DELETE FROM tbl_following WHERE \
+                                        Follower_ID = ? AND Following_ID = ? ", [req.user.ID, followingID], (err, rows) => {
+                            callback("unfollowed");
+                        });
+                    }
+                });
+            });
+        }
+
         return {
             getInfoMe,
             getUserByNickname,
             getInfoUser,
             searchUsers,
-            getStatistics
+            getStatistics,
+            followUser
         }
     }
 
@@ -115,7 +146,7 @@ let DB = function(database) {
 
     let networkAPI = {
         table: network_table,
-        query: network_query
+        query: network_query,
     }
 
     let DBSelector = {

@@ -2,9 +2,13 @@ $(document).ready(function() {
     // GET BASIC PROFILE INFO
     let URL = window.location.href;
     let BASIC_INFO;
+    let USER = "";
     if (URL.includes("user")) {
         let userSearchedSplit = URL.split('/');
         let userSearched = userSearchedSplit[userSearchedSplit.length - 1];       
+        
+        USER = userSearched;
+
         getBasicProfileInfo({
             command : 'get-info-user',
             data: {
@@ -19,7 +23,19 @@ $(document).ready(function() {
     }
 
     $("#follow-button").click(() => {
-
+        postAjax('update', {
+            command: "follow-user",
+            data: {
+                Following_User: USER
+            }
+        }).then((resolve) => {
+            console.log(resolve);
+            if (resolve.status === "followed") {
+                $("#follow-button-text").text("UNFOLLOW");
+            } else if (resolve.status === "unfollowed") {
+                $("#follow-button-text").text("FOLLOW");
+            }
+        });
     });
 });
 
