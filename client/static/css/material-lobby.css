@@ -834,9 +834,9 @@ svg.mdc-button__icon {
         background-color: var(--mdc-theme-primary, #1c4b5e); } }
   .mdc-button--raised:not(:disabled),
   .mdc-button--unelevated:not(:disabled) {
-    color: #ffffff;
+    color: #fff;
     /* @alternate */
-    color: var(--mdc-theme-on-primary, #ffffff); }
+    color: var(--mdc-theme-on-primary, #fff); }
 
 .mdc-button--raised {
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
@@ -1012,13 +1012,13 @@ svg.mdc-button__icon {
 .mdc-button--raised .mdc-button__ripple::before, .mdc-button--raised .mdc-button__ripple::after,
 .mdc-button--unelevated .mdc-button__ripple::before,
 .mdc-button--unelevated .mdc-button__ripple::after {
-  background-color: #ffffff; }
+  background-color: #fff; }
   @supports not (-ms-ime-align: auto) {
     .mdc-button--raised .mdc-button__ripple::before, .mdc-button--raised .mdc-button__ripple::after,
     .mdc-button--unelevated .mdc-button__ripple::before,
     .mdc-button--unelevated .mdc-button__ripple::after {
       /* @alternate */
-      background-color: var(--mdc-theme-on-primary, #ffffff); } }
+      background-color: var(--mdc-theme-on-primary, #fff); } }
 
 .mdc-button--raised:hover .mdc-button__ripple::before,
 .mdc-button--unelevated:hover .mdc-button__ripple::before {
@@ -3085,8 +3085,23 @@ svg.mdc-button__icon {
   height: 50px; }
   .mdc-text-field--fullwidth:not(.mdc-text-field--disabled) {
     background-color: rgba(255, 255, 255, 0.288); }
+  .mdc-text-field--fullwidth.mdc-text-field--textarea:not(.mdc-text-field--disabled) {
+    background-color: transparent; }
+  .mdc-text-field--fullwidth.mdc-text-field--textarea:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+  .mdc-text-field--fullwidth.mdc-text-field--textarea:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+  .mdc-text-field--fullwidth.mdc-text-field--textarea:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+    border-color: #ffffff; }
+  .mdc-text-field--fullwidth.mdc-text-field--textarea:not(.mdc-text-field--disabled) .mdc-floating-label {
+    color: #ffffff; }
   .mdc-text-field--fullwidth:not(.mdc-text-field--textarea) .mdc-text-field__input {
     padding-left: 0.6em; }
+  .mdc-text-field--fullwidth .mdc-notched-outline__leading,
+  .mdc-text-field--fullwidth .mdc-notched-outline__notch,
+  .mdc-text-field--fullwidth .mdc-notched-outline__trailing {
+    border-color: #ffffff; }
+  .mdc-text-field--fullwidth:not(.mdc-text-field--disabled) .mdc-text-field-character-counter,
+  .mdc-text-field--fullwidth:not(.mdc-text-field--disabled) + .mdc-text-field-helper-line .mdc-text-field-character-counter {
+    color: #e4efff; }
 
 .mdc-text-field--no-label {
   height: 50px; }

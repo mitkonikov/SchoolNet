@@ -2,6 +2,7 @@ import {MDCRipple} from '@material/ripple/index';
 import {MDCFloatingLabel} from '@material/floating-label';
 import {MDCLineRipple} from '@material/line-ripple';
 import {MDCTextField} from '@material/textfield';
+import {MDCTextFieldCharacterCounter} from '@material/textfield/character-counter';
 
 $(document).ready(() => {
   const selector = '.mdc-button, .mdc-icon-button, .mdc-card__primary-action, .mdc-card';
@@ -17,4 +18,6 @@ $(document).ready(() => {
 
   const lineRipples = Array.from(document.querySelectorAll('.mdc-line-ripple'));
   lineRipples.forEach((el) => new MDCLineRipple(el));
+
+  const characterCounter = new MDCTextFieldCharacterCounter(document.querySelector('.mdc-text-field-character-counter'));
 });

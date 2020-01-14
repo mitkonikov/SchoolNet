@@ -30,22 +30,28 @@
 }
 
 .mdc-text-field {
-	@include mdc-text-field-ink-color($mdc-theme-on-primary);
+	@include mdc-text-field-ink-color($mdc-theme--on-primary);
 	@include mdc-text-field-fill-color(rgba(255, 255, 255, 0.288));
 }
 
 .mdc-text-field__input {
 	&::placeholder {
-		color: $mdc-theme-on-primary;
+		color: $mdc-theme--on-primary;
 	}
 
 	&::placeholder:hover {
-		color: $mdc-theme-on-primary;
+		color: $mdc-theme--on-primary;
 	}
 }
 
 .mdc-text-field--fullwidth {
 	@include mdc-text-field-fill-color(rgba(255, 255, 255, 0.288));
+
+	&.mdc-text-field--textarea {
+		@include mdc-text-field-fill-color(transparent);
+		@include mdc-text-field-outline-color($mdc-theme--on-primary);
+		@include mdc-text-field-label-color($mdc-theme--on-primary);
+	}
 
 	&:not(.mdc-text-field--textarea) {
 		.mdc-text-field__input {
@@ -53,8 +59,12 @@
 		}
 	}
 	
+	@include mdc-notched-outline-color($mdc-theme--on-primary);
+	@include mdc-text-field-character-counter-color(theme-color('on-primary', 'base'));
 	@include mdc-text-field-height(50px);
 }
+
+
 
 .mdc-text-field--no-label {
 	@include mdc-text-field-height(50px);

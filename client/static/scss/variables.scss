@@ -4,6 +4,9 @@ $theme-colors: (
     'light': #e4efff,
     'dark': #183F4F
   ),
+  'on-primary': (
+    'base': #e4efff
+  ),
   'accent': (
     'base': #F2523A,
     // 'base': #D64933,
@@ -38,9 +41,11 @@ $mdc-shape-large-component-radius: 0px;
 
 $mdc-theme-primary: #1c4b5e;
 $mdc-theme-secondary: #c94028;
+$mdc-theme-background: #fff;
 
-$mdc-theme-on-primary: #ffffff;
-$mdc-theme-on-secondary: #ffffff;
+$mdc-theme--on-primary: #ffffff;
+$mdc-theme--on-secondary: #ffffff;
+$mdc-theme--on-surface: #ffffff;
 
 $mdc-elevation-transition-duration: 100ms;
 
