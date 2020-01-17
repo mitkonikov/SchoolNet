@@ -2673,6 +2673,46 @@ svg.mdc-button__icon {
     -webkit-transform: translateX(calc(0 - 0%)) translateY(-130%) scale(0.75);
             transform: translateX(calc(0 - 0%)) translateY(-130%) scale(0.75); } }
 
+.mdc-text-field-character-counter {
+  font-family: Roboto, sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.03333em;
+  text-decoration: inherit;
+  text-transform: inherit;
+  display: block;
+  margin-top: 0;
+  /* @alternate */
+  line-height: normal;
+  /* @noflip */
+  margin-left: auto;
+  /* @noflip */
+  margin-right: 0;
+  /* @noflip */
+  padding-left: 16px;
+  /* @noflip */
+  padding-right: 0;
+  white-space: nowrap; }
+  .mdc-text-field-character-counter::before {
+    display: inline-block;
+    width: 0;
+    height: 16px;
+    content: "";
+    vertical-align: 0; }
+  [dir="rtl"] .mdc-text-field-character-counter, .mdc-text-field-character-counter[dir="rtl"] {
+    /* @noflip */
+    margin-left: 0;
+    /* @noflip */
+    margin-right: auto; }
+  [dir="rtl"] .mdc-text-field-character-counter, .mdc-text-field-character-counter[dir="rtl"] {
+    /* @noflip */
+    padding-left: 0;
+    /* @noflip */
+    padding-right: 16px; }
+
 .mdc-card {
   border-radius: 0px;
   background-color: #fff;
@@ -3045,6 +3085,10 @@ svg.mdc-button__icon {
   .mdc-button:active {
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12); }
 
+.mdc-button__label {
+  font-size: 1em;
+  font-family: 'Roboto-Light'; }
+
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
   color: #ffffff; }
 
@@ -3095,10 +3139,6 @@ svg.mdc-button__icon {
     color: #ffffff; }
   .mdc-text-field--fullwidth:not(.mdc-text-field--textarea) .mdc-text-field__input {
     padding-left: 0.6em; }
-  .mdc-text-field--fullwidth .mdc-notched-outline__leading,
-  .mdc-text-field--fullwidth .mdc-notched-outline__notch,
-  .mdc-text-field--fullwidth .mdc-notched-outline__trailing {
-    border-color: #ffffff; }
   .mdc-text-field--fullwidth:not(.mdc-text-field--disabled) .mdc-text-field-character-counter,
   .mdc-text-field--fullwidth:not(.mdc-text-field--disabled) + .mdc-text-field-helper-line .mdc-text-field-character-counter {
     color: #e4efff; }

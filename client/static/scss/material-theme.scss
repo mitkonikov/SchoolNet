@@ -5,6 +5,7 @@
 @import "@material/button/mdc-button";
 @import "@material/ripple/mdc-ripple";
 @import "@material/textfield/mdc-text-field";
+@import "@material/textfield/character-counter/mdc-text-field-character-counter";
 @import "@material/floating-label/mdc-floating-label";
 @import "@material/line-ripple/mdc-line-ripple";
 @import "@material/card/mdc-card";
@@ -27,6 +28,11 @@
 	&:active {
 		@include mdc-elevation(4);
 	}
+}
+
+.mdc-button__label {
+	font-size: 1em;
+	font-family: 'Roboto-Light';
 }
 
 .mdc-text-field {
@@ -58,13 +64,10 @@
 			padding-left: $mdc-text-field__input-padding;
 		}
 	}
-	
-	@include mdc-notched-outline-color($mdc-theme--on-primary);
+
 	@include mdc-text-field-character-counter-color(theme-color('on-primary', 'base'));
 	@include mdc-text-field-height(50px);
 }
-
-
 
 .mdc-text-field--no-label {
 	@include mdc-text-field-height(50px);

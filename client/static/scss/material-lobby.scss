@@ -340,6 +340,24 @@ body:fullscreen {
     }
 }
 
+#creator-bar {
+    #create-post-textfield {
+        .mdc-notched-outline {
+            @include mdc-notched-outline-color($mdc-theme--on-primary);
+        }
+    }
+
+    margin-bottom: 1em;
+}
+
+#create-post-button {
+    display: inline-block;
+}
+
+#create-course-button {
+    display: inline-block;
+}
+
 @media screen and (max-width: 1300px) and (max-height: 800px) {
     #tatkoBtn {
         font-size: 1.2em;
