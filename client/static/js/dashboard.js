@@ -233,6 +233,8 @@ $(document).ready(function() {
             } else if (response == "empty") {
                 popError();
             } else {
+                GAMES_DATA = response;
+
                 clearDOM("available-games-list");
                 for (r in response) {
                     putGame(response[r]);
@@ -297,27 +299,25 @@ function addStudentsToClass(ids) {
 }
 
 function getClasses() {
-    $.ajax({
-        url: '/client/dashboard/query',
-        type: 'POST',
-        data: { 
-            command : 'list-class',
-            data : null
-        },
-        success: function(response) {
-            if (response) {
-                clearDOM("class-list-lobby");
-                for (var r in response) {
-                    // console.log(response[r]);
-                    putClass(response[r]);
-                }
-
-                clickClass();
-            } else {
-                popError();
-            }
+    postAjax('dashboard/query', { 
+        command : 'list-class',
+        data : null
+    }).then((response) => {
+        if (response == "problem") {
+            popError();
+            return;
         }
-    });
+
+        if (response != "empty") {
+            clearDOM("class-list-lobby");
+            for (var r in response) {
+                // console.log(response[r]);
+                putClass(response[r]);
+            }
+
+            clickClass();
+        }
+    })
 }
 
 function clickClass() {
@@ -374,122 +374,48 @@ function clickGame() {
 }
 
 function playGame(GAME_ID) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/dashboard/query',
-            type: 'POST',
-            data: { 
-                command : 'play-game',
-                data : {
-                    Class_ID : CLASS_ID, 
-                    Game_ID : GAME_ID
-                }
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
+    return postAjax('dashboard/query', { 
+        command : 'play-game',
+        data : {
+            Class_ID : CLASS_ID, 
+            Game_ID : GAME_ID
+        }
     });
 }
 
 function getBestStudents() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/dashboard/query',
-            type: 'POST',
-            data: { 
-                command : 'list-best-students',
-                data : {
-                    Class_ID : CLASS_ID
-                }
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
+    return postAjax('dashboard/query', { 
+        command : 'list-best-students',
+        data : {
+            Class_ID : CLASS_ID
+        }
     });
 }
 
 function getRequestStudents() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/dashboard/query',
-            type: 'POST',
-            data: { 
-                command : 'list-request-students',
-                data : null
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
+    return postAjax('dashboard/query', { 
+        command : 'list-request-students',
+        data : null
     });
 }
 
 function getGames() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/dashboard/query',
-            type: 'POST',
-            data: { 
-                command : 'list-available-games',
-                data : {
-                    Class_ID : CLASS_ID
-                }
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else {
-                        GAMES_DATA = response;
-                        resolve(response);
-                    }
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
+    return postAjax('dashboard/query', { 
+        command : 'list-available-games',
+        data : {
+            Class_ID : CLASS_ID
+        }
     });
 }
 
 function checkGames() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/dashboard/query',
-            type: 'POST',
-            data: { 
-                command : 'started-games'
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
+    return postAjax('dashboard/query', { 
+        command : 'started-games'
     });
 }
 
 function checkStartedGames() {
     checkGames().then((response) => {
-        console.log(response);
         if (response == "problem") {
             popError();
         } else if (response == "empty") {
