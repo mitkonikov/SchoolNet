@@ -15,7 +15,10 @@ let Initialize = function(node_databaseController, node_gameLogic) {
 
 let Query = function(req, res) {
     if (req.isAuthenticated()) {
-        if (typeof req.body.command !== "undefined") {
+
+        if (typeof req.body.game !== "undefined") {
+            gameLogic.Query(req, res, req.body.game);
+        } else if (typeof req.body.command !== "undefined") {
             let commandSanitized = req.sanitize(req.body.command);
 
             let dataSanitized = "";
@@ -35,11 +38,8 @@ let Query = function(req, res) {
                     });
                 }
             }
-        } else if (req.body.game) {
-            gameLogic.Query(req, res, req.body.game);
-        } else {
-            res.send("no game");
         }
+        
     } else if (req.body.command === 'get-main-statistics') {
         network.query("SELECT (SELECT COUNT(*) FROM tbl_students) AS Users", (err, countRows) => {
             if (err) {

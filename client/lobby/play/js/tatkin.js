@@ -383,18 +383,13 @@ function displayWord() {
  * Function that gets a random word for contribution
  */
 function getWord() {
-    $.ajax({
-		url: '/client/query',
-		type: 'POST',
-        data: { 
-            game : 'contribute-tatkin',
-            command : 'get-word'
-        },
-		success: function(response) {
-            WORD = response.Word;
-            WORD_ID = response.ID;
-            displayWord();
-        }
+    return postAjax('query', { 
+        game : 'contribute-tatkin',
+        command : 'get-word'
+    }).then((response) => {
+        WORD = response.Word;
+        WORD_ID = response.ID;
+        displayWord();
     });
 }
 
