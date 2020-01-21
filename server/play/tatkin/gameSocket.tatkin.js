@@ -16,16 +16,15 @@ function getRoom(socket_rooms) {
 
 /**
  * Main function handling the tatkin socket io stuff
- * @param {*} io                The main io module
- * @param {*} gameSocket        The main game socket module
- * @param {JSON} DBs            Database references
+ * @param {JSON} requirements
  */
-var tatkinSocket = function(io, gameSocket, DBs) {
-    const fs = require('fs');
+var tatkinSocket = function(requirements) {
+    let fs = requirements.fs;
+    let gameSocket = requirements.gameSocket;
 
-    let network = DBs.network;
-    let wordsDB = DBs.wordsDB;
-    let records = DBs.records;
+    let network = requirements.databaseController.DB("db_net");
+    let wordsDB = requirements.databaseController.DB("db_words");
+    let records = requirements.databaseController.DB("db_records");
     let template = MSD + "/template_demos/tatkin.json";
     let demo_table = "";
     let demo_path = MSD + "/demos/";
@@ -38,7 +37,7 @@ var tatkinSocket = function(io, gameSocket, DBs) {
     pythonProcess.stdin.write("20\n");
     // pythonProcess.stdin.end();
 
-    var gameTatkinSocket    = io.of('/game/tatkin');
+    var gameTatkinSocket    = requirements.io.of('/game/tatkin');
 
     let obj = {
         network:            network,

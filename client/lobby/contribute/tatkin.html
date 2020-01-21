@@ -8,10 +8,12 @@
 
 		<link rel="stylesheet" href="/client/static/css/foundation.css"/>
 		<link rel="stylesheet" href="/client/static/css/style_common.css"/>
+		<link rel="stylesheet" href="/client/static/css/material-theme.css"/>
 		<link rel="stylesheet" href="/client/lobby/play/css/tatkin.css"/>
         <link rel="manifest" href="/client/manifest.json">
 
         <script src="/client/static/js/jquery-3.3.1.js"> </script>
+		<script src="/client/static/css/material.js" async> </script>
 		<script src="/client/static/js/socket.io.js"> </script>
         <script src="/client/static/js/slide.it.js"> </script>
 		<script src="/client/static/js/foundation.js"> </script>
@@ -21,7 +23,7 @@
 
 	<body>
         <div class="sit-section form-center">
-            <div class="sit-slide" id="sit-slide-0">
+            <div class="sit-slide noselect" id="sit-slide-0">
                 <div id="interface-wrapper">
                     <div id="vertical-align">
                         <div id="game-name">
@@ -52,7 +54,17 @@
                     <div id="other" class="full-option option-contribute"> <div class="option-text"> ДРУГ ВИД </div> </div>
                 </div>
                 <div class="options-wrapper">
-                    <div id="skip" class="full-option option-contribute"> <div class="option-text"> ПРЕСКОКНИ </div> </div>
+                    <div class="full-option option-contribute"> 
+                        <div id="skip" class="full-option mdc-card"> 
+                            <div class="full-option mdc-card__primary-action" tabindex="0">
+                                <div class="full-option mdc-card-content">
+                                    <div class="option-text"> 
+                                        ПРЕСКОКНИ
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="options-wrapper">
                     <div id="mistake" class="full-option option-contribute"> <div class="option-text"> ЗБОРОТ Е ГРЕШКА </div> </div>

@@ -17,12 +17,12 @@ function decodeWord(type) {
     return WORD_TYPES[type];
 }
 
-var Initialize = function(io, gameSocket, DBs) {
+var Initialize = function(requirements) {
     inGameSocket = require("./gameSocket.tatkin");
-    inGameSocket.socket(io, gameSocket, DBs);
+    inGameSocket.socket(requirements);
 
-    let network = DBs.network;
-    let wordsDB = DBs.wordsDB;
+    let network = requirements.databaseController.DB("db_net");
+    let wordsDB = requirements.databaseController.DB("db_words");
 
     var Query = function(req, res) {
         if (req.body.game === 'tatkin') {

@@ -1,9 +1,9 @@
 // CLEAR CONSOLE
 console.clear();
 
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
+let express = require('express');
+let app = express();
+let server = require('http').Server(app);
 
 const pino = require('express-pino-logger')();
 app.use(pino);
@@ -17,25 +17,25 @@ app.use(expressSanitizer());
 const dotenv            = require('dotenv');
 dotenv.config();
 
-var ErrorHandler        = require("./server/ErrorHandler");
+let ErrorHandler        = require("./server/ErrorHandler");
 
-var databases           = require('./server/dbConnection');
+let databases           = require('./server/dbConnection');
 
 /** The Main Controller Module for database access */
-var databaseController  = require('./server/databaseController');
+let databaseController  = require('./server/databaseController');
 databaseController.Connect(databases);
 
-var sess                = require('express-session');
+let sess                = require('express-session');
 
-var crypto              = require('crypto');
+let crypto              = require('crypto');
 
-var network = databases.network;
+let network = databases.network;
 
-var passport_module   = require('./server/passport.logic');
+let passport_module   = require('./server/passport.logic');
 passport_module.Server(app);
 
-var MySQLStore = require('connect-mysql')(sess);
-var MySQLOptions = {
+let MySQLStore = require('connect-mysql')(sess);
+let MySQLOptions = {
     config: {
         user     : process.env.DATABASE_USER,
         password : process.env.DATABASE_PASS,
@@ -43,24 +43,24 @@ var MySQLOptions = {
     }
 };
 
-var bodyParser        = require('body-parser');
-var cookieParser      = require('cookie-parser');
+let bodyParser        = require('body-parser');
+let cookieParser      = require('cookie-parser');
 app.use(bodyParser());
 
-var protectionChecks  = require('./server/protectionChecks');
+let protectionChecks  = require('./server/protectionChecks');
 protectionChecks.Error(ErrorHandler);
 
-var BLOCKED           = require('blocked-at');
+let BLOCKED           = require('blocked-at');
 
 const uuidv4 = require('uuid/v4');
 
-var timer = BLOCKED(function(ms, stack) {
+let timer = BLOCKED(function(ms, stack) {
     // console.log('\x1b[31m%s\x1b[0m', "MAIN THREAD BLOCKED FOR " + ms + "ms");
     //  <= THE THREAD IS STARTED AT: " + stack
 }, {threshold: 10});
 
 // COOKIE
-var store = new MySQLStore(MySQLOptions);
+let store = new MySQLStore(MySQLOptions);
 
 app.use(sess({
     name: process.env.SESSION_NAME,
@@ -75,19 +75,19 @@ app.use(sess({
 }));
 
 // Initializes the passport module
-passport_module = passport_module.Initialize(databases.network, crypto);
+passport_module = passport_module.Initialize(network, crypto);
 
-var passportPass = {
+let passportPass = {
     store           : store,
     passport        : passport_module.passport,
     cookieParser    : cookieParser
 }
 
 // Requires the Main Game Logic Module
-var gameLogic = require('./server/play/main.play').Initialize(server, passportPass, databases);
+let gameLogic = require('./server/play/main.play').Initialize(server, passportPass, databaseController);
 
-var indexRequestsCount = 0;
-var prev_ip = false;
+let indexRequestsCount = 0;
+let prev_ip = false;
 
 app.post('/client/signin', function(req, res, next) {
 
@@ -117,11 +117,11 @@ app.post('/client/signin', function(req, res, next) {
     })(req, res, next);
 });
 
-var student_module = require("./server/student");
-student_module.BuildStudent(app, databases.network, crypto);
+let student_module = require("./server/student");
+student_module.BuildStudent(app, network, crypto);
 
-var professor_module = require("./server/professor");
-professor_module.BuildProfessor(app, databases.network, crypto);
+let professor_module = require("./server/professor");
+professor_module.BuildProfessor(app, network, crypto);
 
 app.post('/client/registerme', function(req, res, next) {
     
@@ -132,7 +132,7 @@ app.post('/client/registerme', function(req, res, next) {
 
     // RECAPTCHA STUFF HERE
     
-    var checks = protectionChecks.registerCheck(req.body, req.clientIp);
+    let checks = protectionChecks.registerCheck(req.body, req.clientIp);
     if (checks != true) {
         res.send(checks);
         return;
@@ -169,15 +169,15 @@ app.get('/favicon.ico', function(req, res) {
     res.sendFile(__dirname + '/favicon.ico');
 });
 
-var QueryModule = require("./server/query");
+let QueryModule = require("./server/query");
 QueryModule.Initialize(databaseController, gameLogic);
 app.post('/client/query', QueryModule.Query);
 
-var UpdateModule = require("./server/update");
+let UpdateModule = require("./server/update");
 UpdateModule.Initialize(databaseController, gameLogic);
 app.post('/client/update', UpdateModule.Update);
 
-var DashboardModule = require('./server/dashboard.js');
+let DashboardModule = require('./server/dashboard.js');
 DashboardModule = DashboardModule.Initialize(databaseController, gameLogic)
 
 let QueryDashboard = DashboardModule.Query;

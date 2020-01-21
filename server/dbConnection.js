@@ -1,8 +1,8 @@
-var mysql = require('mysql');
+const mysql = require('mysql');
 
 console.log('\x1b[32m%s\x1b[0m', "MySQL required successfully!");
 
-var defaultDatabaseSettings = {
+let defaultDatabaseSettings = {
 	supportBigNumbers: true,
 	bigNumberStrings: true,
 	port     : process.env.DATABASE_PORT,
@@ -12,13 +12,13 @@ var defaultDatabaseSettings = {
 }
 
 defaultDatabaseSettings.database = "db_net";
-var network = mysql.createConnection(defaultDatabaseSettings);
+let network = mysql.createConnection(defaultDatabaseSettings);
 
 defaultDatabaseSettings.database = "db_words";
-var wordsDB = mysql.createConnection(defaultDatabaseSettings);
+let wordsDB = mysql.createConnection(defaultDatabaseSettings);
 
 defaultDatabaseSettings.database = "db_records";
-var records = mysql.createConnection(defaultDatabaseSettings);
+let records = mysql.createConnection(defaultDatabaseSettings);
 
 function onConnect(database_name, error) {
 	if (!!error) console.log(error)

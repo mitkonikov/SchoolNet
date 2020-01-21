@@ -127,13 +127,21 @@ let DB = function(database) {
             });
         }
 
+        let getCurrentGameInfo = function(req, data, callback) {
+            currentDB.query("SELECT * FROM tbl_games_current WHERE ID = ?", data.Game_ID, (err, rows) => {
+                if (rows.length == 0) callback("empty");
+                else callback(rows);
+            });
+        }
+
         return {
             getInfoMe,
             getUserByNickname,
             getInfoUser,
             searchUsers,
             getStatistics,
-            followUser
+            followUser,
+            getCurrentGameInfo
         }
     }
 
@@ -150,7 +158,9 @@ let DB = function(database) {
     }
 
     let DBSelector = {
-        "db_net": networkAPI
+        "db_net": networkAPI,
+        "db_words": databases.wordsDB,
+        "db_records": databases.records
     }
 
     return DBSelector[database];
