@@ -4,6 +4,9 @@
  *  It's main goal is control access to the databases
  */
 
+/**
+ * @private
+ */
 let databases;
 
 let Connect = function(databases_connect) {
@@ -127,11 +130,62 @@ let DB = function(database) {
             });
         }
 
-        let getCurrentGameInfo = function(req, data, callback) {
-            currentDB.query("SELECT * FROM tbl_games_current WHERE ID = ?", data.Game_ID, (err, rows) => {
-                if (rows.length == 0) callback("empty");
-                else callback(rows);
-            });
+        let playerScore = {
+            getScore: function(game, playerID, callback) {
+                currentDB.query("SELECT Score_Tatkin FROM tbl_stats WHERE ID = ?", playerID, (err, rows) => {
+                    callback(rows);
+                });
+            }
+        }
+
+        let getCurrentGame = {
+            Info: function(gameID, callback) {
+                currentDB.query("SELECT * FROM tbl_games_current WHERE ID = ?", gameID, (err, rows) => {
+                    if (rows.length == 0) callback("empty");
+                    else callback(rows);
+                });
+            },
+
+            TeacherID: function(gameID, userID, callback) {
+                currentDB.query("SELECT * FROM tbl_games_current WHERE Game_ID = ? AND Teacher_ID = ?", [gameID, userID], (err, rows) => {
+                    callback(rows);
+                });
+            },
+
+            getClassID: function(Room_ID, callback) {
+                callback.query("SELECT Class_ID FROM tbl_games_current WHERE Room_ID = ?", Room_ID, (err, rows) => {           
+                    if (typeof rows !== undefined)
+                        if (rows)
+                            if (rows.length)
+                                if (callback && typeof(callback) === "function")
+                                    callback(rows[0].Class_ID);
+                });
+            }
+        }
+
+        let Game = {
+            setPrivacy: function(privacy, room) {
+                currentDB.query("UPDATE tbl_games_current SET Privacy = ? WHERE Room_ID = ?", [privacy, room]);
+            },
+            setState: function(state, room) {
+                currentDB.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", [state, room]);
+            }
+        }
+
+        let getStudentIDs = {
+            inClass: function(classID, callback) {
+                currentDB.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", classID, (err, students) => {
+                    let STUDENT_IDS = [];
+                    for (s of students) {
+                        STUDENT_IDS.push(parseInt(s.Student_ID));
+                    }
+            
+                    if (typeof students !== undefined)
+                        if (students.length)
+                            if (callback && typeof(callback) === "function")
+                                callback(STUDENT_IDS);
+                });
+            }
         }
 
         return {
@@ -141,7 +195,9 @@ let DB = function(database) {
             searchUsers,
             getStatistics,
             followUser,
-            getCurrentGameInfo
+            getCurrentGame,
+            Game,
+            getStudentIDs
         }
     }
 

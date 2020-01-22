@@ -1,3 +1,7 @@
+/**
+ * Database connection using MySQL
+ */
+
 const mysql = require('mysql');
 
 console.log('\x1b[32m%s\x1b[0m', "MySQL required successfully!");
@@ -29,10 +33,16 @@ network.connect((error) => onConnect("main", error));
 wordsDB.connect((error) => onConnect("words", error));
 records.connect((error) => onConnect("records", error));
 
-module.exports.mySQL = mysql;
+/** The MySql module */
+module.exports.MySQL = mysql;
+
+/** Connection with the network database */
 module.exports.network = network;
+
 module.exports.wordsDB = wordsDB;
 module.exports.records = records;
+
+/** Collection of all the databases */
 module.exports.obj = {
 	"db_net": network,
 	"db_words": wordsDB,
