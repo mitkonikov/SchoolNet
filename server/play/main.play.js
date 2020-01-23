@@ -19,7 +19,7 @@ var Initialize = function(server, passportPass, databaseController) {
             tatkin.Query(req, res);
         } else if (request_game === 'game_info') {
             if (req.body.command === 'get-game-info') {
-                databaseController.DB("db_net").table("tbl_games_current").getCurrentGame.Info(req.body.data.Game_ID, (info) => res.send(info));
+                databaseController.DB("db_net").table("tbl_games_current").getCurrentGame.Info.whereID(req.body.data.Game_ID, (info) => res.send(info));
             }
         }  else {
             res.send("no game");

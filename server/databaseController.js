@@ -139,11 +139,17 @@ let DB = function(database) {
         }
 
         let getCurrentGame = {
-            Info: function(gameID, callback) {
-                currentDB.query("SELECT * FROM tbl_games_current WHERE ID = ?", gameID, (err, rows) => {
-                    if (rows.length == 0) callback("empty");
-                    else callback(rows);
-                });
+            Info: {
+                whereID: function(gameID, callback) {
+                    currentDB.query("SELECT * FROM tbl_games_current WHERE ID = ?", gameID, (err, rows) => {
+                        if (rows.length == 0) callback("empty");
+                        else callback(rows);
+                    });
+                },
+
+                whereDemoID: function(demoID, callback) {
+                    currentDB.query("SELECT * FROM tbl_games_current WHERE Demo_ID = ?", demoID, (err, rows) => callback(rows));
+                }
             },
 
             TeacherID: function(gameID, userID, callback) {
@@ -188,6 +194,29 @@ let DB = function(database) {
             }
         }
 
+        let getOnlineStudents = function(StudentIDs, callback) {
+            let SSIDs = StudentIDs.join();
+            currentDB.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID IN (" + SSIDs + ") AND tbl_students_info.ID = tbl_students.ID", (err, info) => {
+                callback(info);
+            });
+        }
+
+        let getDisplayName = {
+            in: function(StudentIDs, callback) {
+                currentDB.query("SELECT ID, Display_Name FROM tbl_students_info WHERE ID IN (" + StudentIDs.join() + ")", (err, rows) => {
+                    callback(rows);
+                });
+            }
+        }
+
+        let saveGame = function(SAVED) {
+            currentDB.query("INSERT INTO tbl_games_played SET ?", SAVED);
+        }
+
+        let deleteCurrentGame = function(demoTable) {
+            currentDB.query("DELETE FROM tbl_games_current WHERE Demo_ID = ?", demoTable);
+        }
+
         return {
             getInfoMe,
             getUserByNickname,
@@ -196,8 +225,12 @@ let DB = function(database) {
             getStatistics,
             followUser,
             getCurrentGame,
+            deleteCurrentGame,
             Game,
-            getStudentIDs
+            getStudentIDs,
+            getOnlineStudents,
+            getDisplayName,
+            saveGame
         }
     }
 
