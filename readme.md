@@ -4,17 +4,16 @@
 
 SchoolNet is a network which is designed to help teachers and students organize and colaborate together while making the classes and lessons more interactive with fun real-time games, statistics and awards. SchoolNet is and should be seen, only as a tool in the educational process. 
 
-# How does it work?
+## How does it work?
 
 SchoolNet hosts games and its main goals are to connect teachers and students together with interactive real-time games.
 
-# When to play?
+## When to play?
 
 SchoolNet is designed to be used *only* in the school! *(Hell yeah!)*
 Seriosly, you can contribute and make levels from home too, but when you play on the system, everyone (the students and the teacher) should be gathered **together**. It's important to have face-to-face interactions in order to have coordination when starting and finishing levels.
 
-# What do I need to join?
-
+## What do I need to join?
   - Your school needs to be registered in our system [(*why?)](#FAQ)
   - Your teacher needs to have an account
 
@@ -162,7 +161,7 @@ You shouldn't have any problems with the file names when building the SASS files
 * For questions, asked them on Github
 * At the end, you can always search on [YouTube](youtube.com) and [Google](google.com)
 
-#### Contribute?
+## Contribute?
 
 Want to contribute? Our project uses GitHub, so go! Make some changes!
 
@@ -171,32 +170,29 @@ When contributing follow the [Google JavaScript Style Guide](https://google.gith
 
 ### Todos
 
-* Implement Material Design everywhere
-* Work on responsivness
-* Email server
-  * Verification on sign-in
-  * Forgot the password
-* Re-Captcha
-* Sign-in via Facebook
-* Class/students removal
-* Students/teachers search bar
-* Sub-contributions
-* Contributions statistics
-* Add a news-feed dynamic updating
-* Organize color palettes
-* Clear console logs
-* Make a custom back-end admin control unit
-* Picture profile customization
-* Finalize database and file path organization
-* Upload SchoolNet Works repository on GitHub
-* SchoolNet API
-* SEO Optimization
-
-* Implement the Google 4.1.1 syntex rule:
-  * Braces are used for all control structures,
+- Implement Material Design everywhere
+- Work on responsivness
+- Email server
+  - Verification on sign-in
+  - Forgot the password
+- Re-Captcha
+- Sign-in via Facebook
+- Class/students removal
+- Sub-contributions
+- Contributions statistics
+- Add a news-feed dynamic updating
+- Clear console logs
+- Make a custom back-end admin control unit
+- Picture profile customization
+- Finalize database and file path organization
+- Upload SchoolNet Works repository on GitHub
+- SchoolNet API
+- SEO Optimization
+- Implement the Google 4.1.1 syntex rule:
+  - Braces are used for all control structures,
     even if the block contains only one instruction
-* Implement the Google 6.2.5 syntex rule:
-  * Constant names are CONSTANT_CASED
+- Implement the Google 6.2.5 syntex rule:
+  - Constant names are CONSTANT_CASED
 
 License
 ----
