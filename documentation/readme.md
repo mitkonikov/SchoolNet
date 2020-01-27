@@ -23,12 +23,21 @@ If you just want to get started developing SchoolNet, there is much more informa
                 - `TeacherID`
                 - `getClassID`
             - `deleteCurrentGame`
+            - `getStudentIDs`
+                - `inClass`
+            - `getDisplayName`
+                - `in`
+            - `getAllStudentRequests`
+            - `getAvailableGames`
+            - `saveGame`
             - `Game`
                 - `setPrivacy`
                 - `setState`
-            - `getStudentIDs`
-                - `inClass`
-            - `getOnlineStudents`
-            - `getDisplayName`
-                - `in`
-            - `saveGame`
+            - `Class`
+                - `getAll`
+                    - `whereTeacher`
+                - `add`
+            - `Student`
+                - `getOnlineStudents`
+                - `studentsInfoInClass`
+                - `bestStudentsInfoInClass`

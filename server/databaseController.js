@@ -194,13 +194,6 @@ let DB = function(database) {
             }
         }
 
-        let getOnlineStudents = function(StudentIDs, callback) {
-            let SSIDs = StudentIDs.join();
-            currentDB.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID IN (" + SSIDs + ") AND tbl_students_info.ID = tbl_students.ID", (err, info) => {
-                callback(info);
-            });
-        }
-
         let getDisplayName = {
             in: function(StudentIDs, callback) {
                 currentDB.query("SELECT ID, Display_Name FROM tbl_students_info WHERE ID IN (" + StudentIDs.join() + ")", (err, rows) => {
@@ -209,12 +202,104 @@ let DB = function(database) {
             }
         }
 
-        let saveGame = function(SAVED) {
+        let saveGame = (SAVED) => {
             currentDB.query("INSERT INTO tbl_games_played SET ?", SAVED);
         }
 
-        let deleteCurrentGame = function(demoTable) {
+        let deleteCurrentGame = (demoTable) => {
             currentDB.query("DELETE FROM tbl_games_current WHERE Demo_ID = ?", demoTable);
+        }
+
+        let getAllStudentRequests = (email, callback) => {
+            currentDB.query("SELECT * FROM tbl_student_request WHERE Teacher_Email = ?", email, function(err, rows) {
+                if (rows) {
+                    let IDs = [];
+                    for (r in rows) {
+                        IDs.push(parseInt(rows[r].Student_ID));
+                    }
+
+                    // console.log(databases.mySQL.escape(IDs.join()));
+                    
+                    currentDB.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students_info JOIN tbl_students WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + IDs.join() + ") LIMIT 25", IDs.join(), function(err, rows) {
+                        if (err) {
+                            callback("problem");
+                            return;
+                        }
+                        
+                        // console.log(rows);
+                        
+                        if (rows.length) {
+                            callback(rows);
+                        } else {
+                            callback("problem");
+                        }
+                    });
+                } else {
+                    res.send("empty");
+                }
+            });
+        }
+
+        let getAvailableGames = (callback) => {
+            current.query("SELECT * FROM tbl_games", function(err, rows) {
+                if (rows) callback(rows);
+                else callback("empty");
+            });
+        }
+
+        let Class = {
+            getAll: {
+                whereTeacher: (teacherID, callback) => {
+                    currentDB.query("SELECT * FROM tbl_classes WHERE Teacher_ID = ?", teacherID, function(err, rows) {
+                        callback(rows);
+                    });
+                }
+            },
+            add: (classData, callback) => {
+                currentDB.query("INSERT INTO tbl_classes SET ?", classData, function(err, rows) {
+                    if (rows) callback("success");
+                    else callback("failed");
+                });
+            }
+        }
+
+        let Student = {
+            studentsInfoInClass: (classID, callback) => {
+                // get the student IDs in one class
+                getStudentIDs.inClass(classID, (studentIDs) => {
+                    if (studentIDs.length == 0) {
+                        callback("empty");
+                        return;
+                    }
+
+                    // get basic info
+                    currentDB.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + studentIDs.join() + ")", function(err, rows) {
+                        if (rows) callback(rows);
+                        else callback("empty");
+                    });
+                });
+            },
+            bestStudentsInfoInClass: (classID, callback) => {
+                // get the student IDs in one class
+                getStudentIDs.inClass(classID, (studentIDs) => {
+                    if (studentIDs.length == 0) {
+                        callback("empty");
+                        return;
+                    }
+
+                    // get only online
+                    currentDB.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + studentIDs.join() + ") AND Online = ?", '1', function(err, rows) {
+                        if (rows) callback(rows);
+                        else callback("empty");
+                    });
+                });
+            },
+            getOnlineStudents: (StudentIDs, callback) => {
+                let SSIDs = StudentIDs.join();
+                currentDB.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID IN (" + SSIDs + ") AND tbl_students_info.ID = tbl_students.ID", (err, info) => {
+                    callback(info);
+                });
+            }
         }
 
         return {
@@ -226,11 +311,14 @@ let DB = function(database) {
             followUser,
             getCurrentGame,
             deleteCurrentGame,
-            Game,
             getStudentIDs,
-            getOnlineStudents,
             getDisplayName,
-            saveGame
+            getAllStudentRequests,
+            getAvailableGames,
+            saveGame,
+            Game,
+            Class,
+            Student
         }
     }
 

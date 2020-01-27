@@ -18,104 +18,31 @@ let Query = function(req, res) {
         if (typeof req.user !== undefined) {
             if (req.user.Role == 1) { // If it's a teacher
                 if (typeof req.body.command !== undefined) {
-                    if (req.body.command === 'list-class') {
-                        // LIST ALL CLASSES
-                        network.query("SELECT * FROM tbl_classes WHERE Teacher_ID = ?", req.user.ID, function(err, rows) {
-                            res.send(rows);
-                        });
-
-                        return;
+                    if (req.body.command === 'list-class') { // LIST ALL CLASSES
+                        network.table().Class.getAll.whereTeacher(req.user.ID, (rows) => res.send(rows));
                     } else if (req.body.command === 'get-class') {
                         // GET INFO AND STATS ABOUT A SPECIFIC CLASS
                         res.send("success");
                         return;
                     } else if (req.body.command === 'list-students') {
                         // LIST THE STUDENTS IN A SPECIFIC CLASS
-                        network.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", 
-                                        req.body.data.Class_ID, function(err, rows) {
-                            
-                            if (rows.length == 0) {
-                                res.send("empty");
-                                return;
-                            }
-
-                            let STUDENTS = [];
-                            for (r in rows)
-                                STUDENTS.push(parseInt(rows[r].Student_ID));
-
-                            //console.log("requested students in a class: ");
-                            //console.log(STUDENTS);
-                            //console.log(databases.mySQL.escape(STUDENTS.join()));
-                            
-                            network.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + STUDENTS.join() + ")", function(err, rows) {
-                                if (rows) res.send(rows);
-                                else res.send("empty");
-                            });
-                        });
+                        network.table().Student.studentsInfoInClass(req.body.data.Class_ID, (response) => res.send(response));
                     } else if (req.body.command === 'list-best-students') {
                         // LIST THE BEST STUDENTS IN A SPECIFIC CLASS
-                        network.query("SELECT Student_ID FROM tbl_classes_student WHERE Class_ID = ?", 
-                                        req.body.data.Class_ID, function(err, rows) {
-                            
-                            if (rows.length == 0) {
-                                res.send("empty");
-                                return;
-                            }
-
-                            let STUDENTS = [];
-                            for (r in rows)
-                                STUDENTS.push(parseInt(rows[r].Student_ID));
-                            
-                            network.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students JOIN tbl_students_info WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + STUDENTS.join() + ") AND Online = ?", '1', function(err, rows) {
-                                if (rows) res.send(rows);
-                                else res.send("empty");
-                            });
-                        });
+                        network.table().Student.bestStudentsInfoInClass(req.body.data.Class_ID, (response) => res.send(response));
                     } else if (req.body.command === 'list-request-students') {
                         // GET EVERY REQUEST
-                        network.query("SELECT * FROM tbl_student_request WHERE Teacher_Email = ?", req.user.Email, function(err, rows) {
-                            if (rows) {
-                                let IDs = [];
-                                for (r in rows) {
-                                    IDs.push(parseInt(rows[r].Student_ID));
-                                }
-
-                                // console.log(databases.mySQL.escape(IDs.join()));
-                                
-                                network.query("SELECT tbl_students.ID, Display_Name, Online FROM tbl_students_info JOIN tbl_students WHERE tbl_students.ID=tbl_students_info.ID AND tbl_students.ID IN (" + IDs.join() + ") LIMIT 25", IDs.join(), function(err, rows) {
-                                    if (err) {
-                                        res.send("problem");
-                                        return;
-                                    }
-                                    
-                                    // console.log(rows);
-                                    
-                                    if (rows.length) {
-                                        res.send(rows);
-                                    } else {
-                                        res.send("problem");
-                                    }
-                                });
-                            } else {
-                                res.send("empty");
-                            }
-                        });
+                        network.table().getAllStudentRequests(req.user.Email, (rows) => res.send(rows));
                     } else if (req.body.command === 'list-available-games') {
                         // LIST AVAILABLE GAMES
-                        network.query("SELECT * FROM tbl_games", function(err, rows) {
-                            if (rows) res.send(rows);
-                            else res.send("empty");
-                        });
+                        network.table().getAvailableGames((response) => res.send(response));
                     } else if (req.body.command === 'add-class') {
                         // ADD A NEW CLASS
                         var classData = req.body.data;
                         classData["Teacher_ID"] = req.user.ID;
                         classData["Students_IDs"] = "-1";
 
-                        network.query("INSERT INTO tbl_classes SET ?", classData, function(err, rows) {
-                            if (rows) res.send("success");
-                            else res.send("failed");
-                        });
+                        network.table().Class.add(classData, (response) => res.send(response));
 
                         return;
                     } else if (req.body.command === 'add-students-to-class') {
@@ -129,7 +56,8 @@ let Query = function(req, res) {
                             network.query("INSERT INTO tbl_classes_student SET ?", STUDENT_DATA);
                             // network.query("DELETE")
                         }
-/*
+                        
+                        /*
                         console.log(BINDED_DATA);
 
                         network.query("INSERT INTO tbl_classes_student (Class_ID, Student_ID) VALUES ?", BINDED_DATA, (err, rows) => {

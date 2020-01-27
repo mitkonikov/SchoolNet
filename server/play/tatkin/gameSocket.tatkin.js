@@ -738,7 +738,7 @@ function getStudentIDs(obj, Class_ID, callback) {
 function getStudents(obj, socket, Room_ID) {
     getClassID(obj, Room_ID, (ClassID) => {
         getStudentIDs(obj, ClassID, (StudentIDs) => {
-            obj.network.table().getOnlineStudents(StudentIDs, (info) => {
+            obj.network.table().Student.getOnlineStudents(StudentIDs, (info) => {
                 obj.records.query("SELECT Source, Data FROM " + obj.demo_table + " WHERE Command = ?", "score", (err, score) => {
                     getStudentsConnectInfo(obj, (online_students) => {
                         score.sort(function(a, b) { return parseInt(a.Source) - parseInt(b.Source); });
@@ -773,7 +773,7 @@ function getStudents(obj, socket, Room_ID) {
 function getStudentsOnlineInfo(obj, socket, Room_ID) {
     getClassID(obj, Room_ID, (ClassID) => {
         getStudentIDs(obj, ClassID, (STUDENT_IDS) => {
-            obj.network.table().getOnlineStudents(STUDENT_IDS, (result) => {
+            obj.network.table().Student.getOnlineStudents(STUDENT_IDS, (result) => {
                 socket.emit("set students online", result);
             });
         });
