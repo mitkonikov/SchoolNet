@@ -5,8 +5,8 @@ let express = require('express');
 let app = express();
 let server = require('http').Server(app);
 
-const pino = require('express-pino-logger')();
-app.use(pino);
+// const pino = require('express-pino-logger')();
+// app.use(pino);
 
 const requestIp = require('request-ip');
 app.use(requestIp.mw())
@@ -23,7 +23,9 @@ let databases           = require('./server/dbConnection');
 
 /** The Main Controller Module for database access */
 let databaseController  = require('./server/databaseController');
-databaseController.Connect(databases);
+databaseController.Connect(databases, {
+    uuidv4: require('uuid/v4')
+});
 
 let sess                = require('express-session');
 

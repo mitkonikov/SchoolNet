@@ -101,38 +101,12 @@ let Query = function(req, res) {
                         // WHERE Teacher_ID = ? AND ID = ?
                         res.send("success");
                     } else if (req.body.command === 'play-game') {
-                        let TEACHER_ID = req.user.ID;
-                        network.query("SELECT * FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, () => {
-                            let CLASS_ID = parseInt(req.body.data.Class_ID);
-                            let GAME_ID = parseInt(req.body.data.Game_ID);
-
-                            let CURRENT_DATE_TIME = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                            let CURRENT_DATE_TIME_TRIMMED = CURRENT_DATE_TIME.multiReplace({
-                                '-' : '',
-                                ':' : '',
-                                ' ' : '_'
-                            });
-
-                            let UUID = uuidv4().multiReplace({
-                                '-' : '',
-                                ':' : '',
-                                ' ' : '_'
-                            });
-
-                            let GAME_CURRENT = {
-                                Teacher_ID  : TEACHER_ID,
-                                Class_ID    : CLASS_ID,
-                                Game_ID     : GAME_ID,
-                                Date_Time   : CURRENT_DATE_TIME,
-                                Room_ID     : uuidv4().replace(/-/g, ''),
-                                Demo_ID     : CURRENT_DATE_TIME_TRIMMED + "_" + UUID
-                            };
-
-                            network.query("INSERT INTO tbl_games_current SET ?", GAME_CURRENT);
-
-                            res.send("success");
-                        });
-
+                        network.table().playGame(
+                            req.body.data.Game_ID,
+                            req.body.data.Class_ID,
+                            req.body.data.Teacher_ID,
+                            (response) => res.send(response)
+                        );
                     } else if (req.body.command === 'started-games') {
                         let TEACHER_ID = req.user.ID;
                         network.query("SELECT Game_ID FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, (err, rows) => {

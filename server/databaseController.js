@@ -8,9 +8,11 @@
  * @private
  */
 let databases;
+let requirements;
 
-let Connect = function(databases_connect) {
+let Connect = function(databases_connect, requirements_connect) {
     databases = databases_connect;
+    requirements = requirements_connect;
 }
 
 /**
@@ -202,6 +204,41 @@ let DB = function(database) {
             }
         }
 
+        let playGame = (gameID, classID, teacherID, callback) => {
+            let TEACHER_ID = parseInt(teacherID);
+            currentDB.query("SELECT * FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, () => {
+                let GAME_ID = parseInt(gameID);
+                let CLASS_ID = parseInt(classID);
+                let CURRENT_DATE_TIME = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                
+                let CURRENT_DATE_TIME_TRIMMED = CURRENT_DATE_TIME.multiReplace({
+                    '-' : '',
+                    ':' : '',
+                    ' ' : '_'
+                });
+
+                let UUID = requirements.uuidv4().multiReplace({
+                    '-' : '',
+                    ':' : '',
+                    ' ' : '_'
+                });
+
+                let GAME_CURRENT = {
+                    Teacher_ID  : TEACHER_ID,
+                    Class_ID    : CLASS_ID,
+                    Game_ID     : GAME_ID,
+                    Date_Time   : CURRENT_DATE_TIME,
+                    Room_ID     : requirements.uuidv4().replace(/-/g, ''),
+                    Demo_ID     : CURRENT_DATE_TIME_TRIMMED + "_" + UUID
+                };
+
+                currentDB.query("INSERT INTO tbl_games_current SET ?", GAME_CURRENT);
+
+                callback("success");
+            });
+
+        }
+        
         let saveGame = (SAVED) => {
             currentDB.query("INSERT INTO tbl_games_played SET ?", SAVED);
         }
@@ -241,7 +278,7 @@ let DB = function(database) {
         }
 
         let getAvailableGames = (callback) => {
-            current.query("SELECT * FROM tbl_games", function(err, rows) {
+            currentDB.query("SELECT * FROM tbl_games", function(err, rows) {
                 if (rows) callback(rows);
                 else callback("empty");
             });
@@ -315,6 +352,7 @@ let DB = function(database) {
             getDisplayName,
             getAllStudentRequests,
             getAvailableGames,
+            playGame,
             saveGame,
             Game,
             Class,
