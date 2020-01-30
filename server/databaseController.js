@@ -151,6 +151,12 @@ let DB = function(database) {
 
                 whereDemoID: function(demoID, callback) {
                     currentDB.query("SELECT * FROM tbl_games_current WHERE Demo_ID = ?", demoID, (err, rows) => callback(rows));
+                },
+
+                whereTeacherID: function(teacherID, callback) {
+                    currentDB.query("SELECT * FROM tbl_games_current WHERE Teacher_ID = ?", teacherID, (err, rows) => {
+                        callback(rows);
+                    });
                 }
             },
 
@@ -168,15 +174,27 @@ let DB = function(database) {
                                 if (callback && typeof(callback) === "function")
                                     callback(rows[0].Class_ID);
                 });
-            }
-        }
+            },
 
-        let Game = {
+            getStartedGames: function(teacherID, callback) {
+                currentDB.query("SELECT Game_ID FROM tbl_games_current WHERE Teacher_ID = ?", teacherID, (err, rows) => {
+                    callback(rows);
+                });
+            },
+
             setPrivacy: function(privacy, room) {
                 currentDB.query("UPDATE tbl_games_current SET Privacy = ? WHERE Room_ID = ?", [privacy, room]);
             },
             setState: function(state, room) {
                 currentDB.query("UPDATE tbl_games_current SET State = ? WHERE Room_ID = ?", [state, room]);
+            }
+        }
+
+        let Game = {
+            getDashboardPath: function(gameID, callback) {
+                currentDB.query("SELECT Path_Dashboard FROM tbl_games WHERE ID = ?", gameID, (err, rows) => {
+                    callback(rows);
+                });
             }
         }
 
@@ -206,37 +224,34 @@ let DB = function(database) {
 
         let playGame = (gameID, classID, teacherID, callback) => {
             let TEACHER_ID = parseInt(teacherID);
-            currentDB.query("SELECT * FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, () => {
-                let GAME_ID = parseInt(gameID);
-                let CLASS_ID = parseInt(classID);
-                let CURRENT_DATE_TIME = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            let GAME_ID = parseInt(gameID);
+            let CLASS_ID = parseInt(classID);
+            let CURRENT_DATE_TIME = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 
-                let CURRENT_DATE_TIME_TRIMMED = CURRENT_DATE_TIME.multiReplace({
-                    '-' : '',
-                    ':' : '',
-                    ' ' : '_'
-                });
-
-                let UUID = requirements.uuidv4().multiReplace({
-                    '-' : '',
-                    ':' : '',
-                    ' ' : '_'
-                });
-
-                let GAME_CURRENT = {
-                    Teacher_ID  : TEACHER_ID,
-                    Class_ID    : CLASS_ID,
-                    Game_ID     : GAME_ID,
-                    Date_Time   : CURRENT_DATE_TIME,
-                    Room_ID     : requirements.uuidv4().replace(/-/g, ''),
-                    Demo_ID     : CURRENT_DATE_TIME_TRIMMED + "_" + UUID
-                };
-
-                currentDB.query("INSERT INTO tbl_games_current SET ?", GAME_CURRENT);
-
-                callback("success");
+            let CURRENT_DATE_TIME_TRIMMED = CURRENT_DATE_TIME.multiReplace({
+                '-' : '',
+                ':' : '',
+                ' ' : '_'
             });
 
+            let UUID = requirements.uuidv4().multiReplace({
+                '-' : '',
+                ':' : '',
+                ' ' : '_'
+            });
+
+            let GAME_CURRENT = {
+                Teacher_ID  : TEACHER_ID,
+                Class_ID    : CLASS_ID,
+                Game_ID     : GAME_ID,
+                Date_Time   : CURRENT_DATE_TIME,
+                Room_ID     : requirements.uuidv4().replace(/-/g, ''),
+                Demo_ID     : CURRENT_DATE_TIME_TRIMMED + "_" + UUID
+            };
+
+            currentDB.query("INSERT INTO tbl_games_current SET ?", GAME_CURRENT);
+
+            callback("success");
         }
         
         let saveGame = (SAVED) => {

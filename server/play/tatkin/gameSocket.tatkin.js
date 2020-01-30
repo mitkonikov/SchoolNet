@@ -138,7 +138,7 @@ let tatkinSocket = function(requirements) {
 
                 socket.on("make game public", (data) => {
                     let ROOM = getRoom(socket.rooms);
-                    network.table("tbl_games_current").Game.setPrivacy(1, ROOM);
+                    network.table("tbl_games_current").getCurrentGame.setPrivacy(1, ROOM);
 
                     gameSocket.emit("make game public");
 
@@ -168,7 +168,7 @@ let tatkinSocket = function(requirements) {
 
                     if (USER.Role == 1) { // TODO: I DON'T KNOW IF THAT IS NECESSERY
                         let ROOM = getRoom(socket.rooms);
-                        network.table("tbl_games_current").Game.setState("started", ROOM);
+                        network.table("tbl_games_current").getCurrentGame.setState("started", ROOM);
 
                         // when you start the game, you update the level and freeze time
                         resetLevelTime(obj);
@@ -182,7 +182,7 @@ let tatkinSocket = function(requirements) {
 
                 socket.on("game pause", (data) => {
                     let ROOM = getRoom(socket.rooms);
-                    network.table("tbl_games_current").Game.setState("paused", ROOM);
+                    network.table("tbl_games_current").getCurrentGame.setState("paused", ROOM);
 
                     let logData = {Source: "teacher", Command: "game", Data: "pause"};
                     logDemo(records, demo_table, logData);
@@ -192,7 +192,7 @@ let tatkinSocket = function(requirements) {
 
                 socket.on("game resume", (data) => {
                     let ROOM = getRoom(socket.rooms);
-                    network.table("tbl_games_current").Game.setState("started", ROOM);
+                    network.table("tbl_games_current").getCurrentGame.setState("started", ROOM);
 
                     let logData = {Source: "teacher", Command: "game", Data: "resume"};
                     logDemo(records, demo_table, logData);

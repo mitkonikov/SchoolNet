@@ -58,6 +58,7 @@ let Query = function(req, res) {
                         }
                         
                         /*
+                        // TODO: Rethink this part
                         console.log(BINDED_DATA);
 
                         network.query("INSERT INTO tbl_classes_student (Class_ID, Student_ID) VALUES ?", BINDED_DATA, (err, rows) => {
@@ -65,6 +66,7 @@ let Query = function(req, res) {
                         });*/
 
                         // network.query("UPDATE tbl_students SET Valid = ? WHERE ID IN (" + INPUT_DATA.join() + ")", '1');
+                        // TODO: You dont want to delete the students requests
                         // network.query("DELETE FROM tbl_student_request WHERE Teacher_Email = ? AND Student_ID IN (" + INPUT_DATA.join() + ")", req.user.Email);
                         res.send("success");
                     
@@ -101,29 +103,19 @@ let Query = function(req, res) {
                         // WHERE Teacher_ID = ? AND ID = ?
                         res.send("success");
                     } else if (req.body.command === 'play-game') {
-                        network.table().playGame(
-                            req.body.data.Game_ID,
-                            req.body.data.Class_ID,
-                            req.body.data.Teacher_ID,
-                            (response) => res.send(response)
-                        );
+                        let TEACHER_ID = parseInt(req.body.data.Teacher_ID);
+                        network.table().getCurrentGame.Info.whereTeacherID(TEACHER_ID, (rows) => {
+                            network.table().playGame(
+                                req.body.data.Game_ID,
+                                req.body.data.Class_ID,
+                                TEACHER_ID,
+                                (response) => res.send(response)
+                            );
+                        });
                     } else if (req.body.command === 'started-games') {
-                        let TEACHER_ID = req.user.ID;
-                        network.query("SELECT Game_ID FROM tbl_games_current WHERE Teacher_ID = ?", TEACHER_ID, (err, rows) => {
-                            if (err) {
-                                res.send("empty");
-                                console.trace(err);
-                                return;
-                            }
-
+                        network.table().getCurrentGame.getStartedGames(req.user.ID, (rows) => {
                             if (rows.length > 0) {
-                                network.query("SELECT Path_Dashboard FROM tbl_games WHERE ID = ?", rows[0].Game_ID, (err, games) => {
-                                    if (err) {
-                                        res.send("empty");
-                                        console.trace(err);
-                                        return;
-                                    }
-
+                                network.table().Game.getDashboardPath(rows[0].Game_ID, (games) => {
                                     if (rows.length)
                                         res.send(games[0]);
                                     else

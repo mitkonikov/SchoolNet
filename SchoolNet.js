@@ -5,9 +5,6 @@ let express = require('express');
 let app = express();
 let server = require('http').Server(app);
 
-// const pino = require('express-pino-logger')();
-// app.use(pino);
-
 const requestIp = require('request-ip');
 app.use(requestIp.mw())
 

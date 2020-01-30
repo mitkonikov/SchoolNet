@@ -22,6 +22,9 @@ If you just want to get started developing SchoolNet, there is much more informa
                     - `whereDemoID`
                 - `TeacherID`
                 - `getClassID`
+                - `getStartedGames`
+                - `setPrivacy`
+                - `setState`
             - `deleteCurrentGame`
             - `getStudentIDs`
                 - `inClass`
@@ -31,8 +34,6 @@ If you just want to get started developing SchoolNet, there is much more informa
             - `getAvailableGames`
             - `saveGame`
             - `Game`
-                - `setPrivacy`
-                - `setState`
             - `Class`
                 - `getAll`
                     - `whereTeacher`
