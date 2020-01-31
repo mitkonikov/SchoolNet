@@ -20,9 +20,9 @@ var gameSocket = function(server, passportPass, databaseController) {
         fail:           onAuthorizeFail
     }));
 
-    gameSocket          = io.of('/game');
+    mainSocket          = io.of('/game');
     
-    gameSocket.on('connection', (socket) => {
+    mainSocket.on('connection', (socket) => {
         // LOBBY CONNECTION
         let USER = socket.request.user;
         
@@ -62,9 +62,16 @@ var gameSocket = function(server, passportPass, databaseController) {
         console.log(" ====================== ");
     }
 
+    let ioControl = {
+        /** returns the Game Socket of a specific game */
+        of: (gameURL) => {
+            return io.of(gameURL);
+        }
+    }
+
     return {
-        io,
-        gameSocket,
+        ioControl,
+        mainSocket
     }
 }
 

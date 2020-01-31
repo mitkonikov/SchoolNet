@@ -5,14 +5,13 @@ var Initialize = function(server, passportPass, databaseController) {
     var gameSocketModule = require("./gameSocket").init(server, passportPass, databaseController);
     var gameSocket = gameSocketModule;
 
-    let requirements = {
+    let API = {
         fs: require('fs'),
-        io: gameSocketModule.io,
-        gameSocket: gameSocketModule.gameSocket,
+        gameSocket: gameSocketModule,
         databaseController: databaseController
     }
 
-    tatkin = tatkin_module.Initialize(requirements);
+    tatkin = tatkin_module.Initialize(API);
 
     var Query = function(req, res, request_game) {
         if (request_game === 'tatkin' || request_game === 'contribute-tatkin') {

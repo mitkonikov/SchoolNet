@@ -8,11 +8,11 @@
  * @private
  */
 let databases;
-let requirements;
+let API;
 
-let Connect = function(databases_connect, requirements_connect) {
+let Connect = function(databases_connect, API_connect) {
     databases = databases_connect;
-    requirements = requirements_connect;
+    API = API_connect;
 }
 
 /**
@@ -234,7 +234,7 @@ let DB = function(database) {
                 ' ' : '_'
             });
 
-            let UUID = requirements.uuidv4().multiReplace({
+            let UUID = API.uuidv4().multiReplace({
                 '-' : '',
                 ':' : '',
                 ' ' : '_'
@@ -245,7 +245,7 @@ let DB = function(database) {
                 Class_ID    : CLASS_ID,
                 Game_ID     : GAME_ID,
                 Date_Time   : CURRENT_DATE_TIME,
-                Room_ID     : requirements.uuidv4().replace(/-/g, ''),
+                Room_ID     : API.uuidv4().replace(/-/g, ''),
                 Demo_ID     : CURRENT_DATE_TIME_TRIMMED + "_" + UUID
             };
 

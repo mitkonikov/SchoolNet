@@ -3,10 +3,12 @@
 If you just want to get started developing SchoolNet, there is much more information in the main `readme.md` file. We are actively writing the documentation of this project.
 
 ---
-## API Functions
+# API Functions
 
-### **Database Controller (databaseController.js)**
- - `Connect(databases) : function`
+### **Back-end controllers passed in each game**:
+
+### **Database Controller** - (databaseController.js)
+ - `Connect(databases) : function` - *(off-limits)*
  - `DB(database) : function`
     - `network : obj`
         - `table: function`
@@ -32,8 +34,10 @@ If you just want to get started developing SchoolNet, there is much more informa
                 - `in`
             - `getAllStudentRequests`
             - `getAvailableGames`
+            - `playGame`
             - `saveGame`
             - `Game`
+            - `getAvailableGames`
             - `Class`
                 - `getAll`
                     - `whereTeacher`
@@ -42,3 +46,8 @@ If you just want to get started developing SchoolNet, there is much more informa
                 - `getOnlineStudents`
                 - `studentsInfoInClass`
                 - `bestStudentsInfoInClass`
+
+### **Game Socket** - (server/play/gameSocket.js)
+  - `mainSocket`
+  - `ioControl`
+    - `of : function`
