@@ -2,13 +2,15 @@
 tatkin_module = require("./tatkin/main.tatkin");
 
 var Initialize = function(server, passportPass, databaseController) {
-    var gameSocketModule = require("./gameSocket").init(server, passportPass, databaseController);
-    var gameSocket = gameSocketModule;
+    let gameSocketModule = require("./gameSocket").init(server, passportPass, databaseController);
+    let demoLoggerModule = require("./../demoLogger");
 
+    // SYNTHESIZE THE API
     let API = {
         fs: require('fs'),
         gameSocket: gameSocketModule,
-        databaseController: databaseController
+        databaseController: databaseController,
+        demoLogger: demoLoggerModule
     }
 
     tatkin = tatkin_module.Initialize(API);
@@ -26,7 +28,7 @@ var Initialize = function(server, passportPass, databaseController) {
     }
 
     return {
-        gameSocket,
+        gameSocket: gameSocketModule,
         Query
     }
 }

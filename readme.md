@@ -60,6 +60,8 @@ SchoolNet uses a number of open source projects to work properly:
 
 If anyone wants to set up this server on their own computer, he can absolutely do it and here's how! We know that some of you might prefer Sublime, or Notepad++, or Visual Studio, but we **strongly** recommend Visual Studio Code as your main editor. It allows you to run multiple shell consoles inside the editor itself. Also, debugging Node.js app with Visual Studio Code is really easy! You can set breakpoints anywhere in the code! It's just beautiful!
 
+> **PAY ATTENTION**: The **API** for external games is not finished! You should **NOT** develop games for it, without contacting us!
+
 ##### STEP 1: Download the repository
 
 ##### STEP 2: Download dependecies
