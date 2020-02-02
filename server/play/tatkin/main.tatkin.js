@@ -27,7 +27,7 @@ var Initialize = function(API) {
     var Query = function(req, res) {
         if (req.body.game === 'tatkin') {
             if (req.body.command === 'list-games') {
-                network.query("SELECT Class_ID FROM tbl_classes_student WHERE Student_ID = ?", req.user.ID, (err, class_ids) => {
+                network.table().Class.whereStudentID(req.user.ID, (class_ids) => {
                     if (class_ids.length == 0) {
                         res.send("empty");
                         return;

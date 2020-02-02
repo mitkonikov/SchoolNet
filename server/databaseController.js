@@ -307,6 +307,11 @@ let DB = function(database) {
                     });
                 }
             },
+            whereStudentID: (studentID, callback) => {
+                currentDB.query("SELECT Class_ID FROM tbl_classes_student WHERE Student_ID = ?", studentID, (err, rows) => {
+                    callback(rows);
+                });
+            },
             add: (classData, callback) => {
                 currentDB.query("INSERT INTO tbl_classes SET ?", classData, function(err, rows) {
                     if (rows) callback("success");

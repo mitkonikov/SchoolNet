@@ -3,6 +3,8 @@
  * between the games and their demos
  */
 
+let fs = require("fs");
+
 let log = (params) => {
     
 }

@@ -38,9 +38,8 @@ let Query = function(req, res) {
                         network.table().getAvailableGames((response) => res.send(response));
                     } else if (req.body.command === 'add-class') {
                         // ADD A NEW CLASS
-                        var classData = req.body.data;
+                        let classData = req.body.data;
                         classData["Teacher_ID"] = req.user.ID;
-                        classData["Students_IDs"] = "-1";
 
                         network.table().Class.add(classData, (response) => res.send(response));
 

@@ -8,6 +8,7 @@ If you just want to get started developing SchoolNet, there is much more informa
 ### **Back-end controllers passed in each game**:
 
 ### **Database Controller** - (databaseController.js)
+    TODO: Deny access to some functions according to privilages.
  - `Connect(databases) : function` - *(off-limits)*
  - `DB(database) : function`
     - `network : obj`
@@ -41,6 +42,7 @@ If you just want to get started developing SchoolNet, there is much more informa
             - `Class`
                 - `getAll`
                     - `whereTeacher`
+                - `whereStudentID`
                 - `add`
             - `Student`
                 - `getOnlineStudents`
@@ -51,3 +53,7 @@ If you just want to get started developing SchoolNet, there is much more informa
   - `mainSocket`
   - `ioControl`
     - `of : function`
+
+### **Demo Logger** - (server/demoLogger.js)
+    NOTE: Still in contruction!
+  - `log`
