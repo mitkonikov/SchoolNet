@@ -56,4 +56,7 @@ If you just want to get started developing SchoolNet, there is much more informa
 
 ### **Demo Logger** - (server/demoLogger.js)
     NOTE: Still in contruction!
+  - `setUpDemo`
+  - `getDemoFile`
   - `log`
+  - `finishLog`

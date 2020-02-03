@@ -7,7 +7,6 @@ var Initialize = function(server, passportPass, databaseController) {
 
     // SYNTHESIZE THE API
     let API = {
-        fs: require('fs'),
         gameSocket: gameSocketModule,
         databaseController: databaseController,
         demoLogger: demoLoggerModule

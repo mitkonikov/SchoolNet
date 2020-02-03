@@ -1,8 +1,8 @@
 /**
  *  API:
- *      fs:                 require('fs'),
  *      gameSocket:         gameSocketModule.gameSocket,
  *      databaseController: databaseController
+ *      demoLogger:         demoLogger
  */
 
 // MAIN SERVER DIRECTORY
@@ -26,7 +26,6 @@ function getRoom(socket_rooms) {
  * @param {JSON} API
  */
 let tatkinSocket = function(API) {
-    let fs = API.fs;
     let gameSocket = API.gameSocket.mainSocket;
 
     let network = API.databaseController.DB("db_net");
@@ -50,7 +49,6 @@ let tatkinSocket = function(API) {
         network:            network,
         wordsDB:            wordsDB,
         records:            records,
-        fs:                 fs,
         pythonProcess:      pythonProcess,
         gameSocket:         gameSocket,
         gameTatkinSocket:   gameTatkinSocket,
@@ -130,9 +128,9 @@ let tatkinSocket = function(API) {
                         }
                     });
 
-                    // createDemoJSON function first checks if there's a demo
-                    // and if there isnt one, it creates it
-                    createDemoJSON(obj, rows[0].Game_ID, rows[0].Room_ID);
+                    API.demoLogger.setUpDemo(obj, rows[0].Game_ID, rows[0].Room_ID, (APIKey) => {
+
+                    });
                 });
 
                 socket.on("make game public", (data) => {
@@ -140,21 +138,6 @@ let tatkinSocket = function(API) {
                     network.table("tbl_games_current").getCurrentGame.setPrivacy(1, ROOM);
 
                     gameSocket.emit("make game public");
-
-                    // update demo
-                    let current_demo_path = demo_path + demo_table + ".json";
-                    fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
-                        // parse the demo
-                        let thisDemo = JSON.parse(demo_data);
-                        
-                        thisDemo.settings.level.time = data["level-time-txt"];
-                        thisDemo.settings.level["freeze-time"] = data["time-to-start-level"];
-    
-                        // write it
-                        fs.writeFile(current_demo_path, JSON.stringify(thisDemo), 'utf-8', (err) => {
-                            if (err) console.log("error writing header to demo");
-                        });
-                    });
 
                     let logData = [ {Source: "teacher", Command: "options", Data: "game public"},
                                     {Source: "teacher", Command: "global level time", Data: parseInt(data["level-time-txt"])},
@@ -240,16 +223,14 @@ let tatkinSocket = function(API) {
 
                 socket.on("get generated words", (data) => {
                     let current_demo_path = demo_path + demo_table + ".json";
-                    fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
-                        let readDemo = JSON.parse(demo_data);
-
-                        if (!data.Override && readDemo.game.length != 0) {
+                    API.demoLogger.getDemoFile(null, current_demo_path, (demo_data) => {
+                        if (!data.Override && demo_data.game.length != 0) {
                             // if it already contains words
 
                             // if we want to send only the word and the word number
                             /*let justWords = [];
 
-                            for (let word of readDemo.game) {
+                            for (let word of demo_data.game) {
                                 justWords.push({ Number: word.Number, Word: word.Word });
                             }
 
@@ -258,71 +239,7 @@ let tatkinSocket = function(API) {
 
                             // we are sending everything including the truthfulness value
                             // but only to the teacher
-                            socket.emit("set generated words", readDemo.game);
-                        } else {
-                            // it's empty, so fill it from the logDemo :D
-                            if (typeof data.wordCount !== undefined && data.wordCount > 0) {
-                                let pickWordIDs = [];
-                                for (let i = 0; i < data.wordCount; ++i) {
-                                    pickWordIDs.push("pickWord" + i);
-                                }
-
-                                let joined = pickWordIDs.join().replace(/,/g, "','");
-                                joined = "'" + joined + "'";
-
-                                records.query("SELECT Data FROM " + demo_table + " WHERE Command IN (" + joined + ")", (err, rows) => {
-                                    if (err) {
-                                        console.trace(err);
-                                        return;
-                                    }
-                                    
-                                    let words = [];
-                                    let justWords = [];
-                                    
-                                    if (rows.length >= data.wordCount) {
-                                        // console.log("enough rows!");
-
-                                        for (let i = rows.length - data.wordCount; i < rows.length; ++i) {
-                                            let PARSED = JSON.parse(rows[i].Data);
-                                            words.push(PARSED);
-                                        }
-
-                                        words.sort(function(a, b) { return a.Number - b.Number; });
-                                        for (let word of words) {
-                                            justWords.push({ Number: word.Number, Word: word.Word });
-                                        }
-
-                                        //console.log("WORDS: ");
-                                        //console.log(words);
-
-                                        // put the words in the json file
-                                        fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
-                                            if (err) { 
-                                                console.trace("error reading demo file");
-                                                return;
-                                            }
-
-                                            // parse the demo
-                                            let thisDemo = JSON.parse(demo_data);
-                                            
-                                            thisDemo.game = [];
-
-                                            for (let word in words) {
-                                                thisDemo.game.push(words[word]);
-                                            }
-                        
-                                            // write it
-                                            fs.writeFile(current_demo_path, JSON.stringify(thisDemo), 'utf-8', (err) => {
-                                                if (err) console.trace("error writing to demo");
-                                            });
-                                        });
-                                        
-                                        // send the words to the client
-                                        // TODO: think about the truthfulness value
-                                        socket.emit("set generated words", words);
-                                    }
-                                });
-                            }
+                            socket.emit("set generated words", demo_data.game);
                         }
                     });
                 });
@@ -671,44 +588,6 @@ function trueWord(obj, i) {
 }
 
 /**
- * Function that creates the main .json demo file
- * @param {*} obj       Reference to all dependecies
- * @param {*} Game_ID   Game_ID
- * @param {*} Room_ID   Room_ID
- */
-function createDemoJSON(obj, Game_ID, Room_ID) {
-    let current_demo_path = obj.demo_path + obj.demo_table + ".json";
-    obj.fs.access(current_demo_path, obj.fs.F_OK, (err) => {
-        if (err) {
-            // file doesnt exist
-            obj.fs.copyFile(obj.template, current_demo_path, (err) => {
-                if (err) {
-                    console.log("error copying template : " + err);
-                } else {
-                    // file now exists
-                    
-                    // log the basic header
-                    //  - read the demo
-                    obj.fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
-                        // parse the demo
-                        let thisDemo = JSON.parse(demo_data);
-    
-                        // write the Game_ID and Room_ID
-                        thisDemo.header.Game_ID = Game_ID;
-                        thisDemo.header.Room_ID = Room_ID;
-    
-                        // write it
-                        obj.fs.writeFile(current_demo_path, JSON.stringify(thisDemo), 'utf-8', (err) => {
-                            if (err) console.log("error writing header to demo");
-                        });
-                    });
-                }
-            });
-        }
-    });
-}
-
-/**
  * Gets the Class ID according to the Room ID
  * @param {JSON}        obj         Reference to all dependecies
  * @param {String}      Room_ID     Room ID
@@ -920,16 +799,6 @@ function getLevel(obj, callback) {
         obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", ["server", "current-level"], (err, rows) => {
             callback(parseInt(rows[0].Data));
         });
-}
-
-function getLevelInfo(obj, level, callback) {
-    let current_demo_path = obj.demo_path + obj.demo_table + ".json";
-    obj.fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
-        // parse the demo
-        let thisDemo = JSON.parse(demo_data);
-
-        callback(thisDemo.game[level]);
-    });
 }
 
 /**
@@ -1179,6 +1048,7 @@ function HEARTBEAT(obj, socket) {
                         });
 
                         obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", ["server", "demo written"], (err, isWrittenRow) => {
+                            // if the demo is not written
                             if (err || isWrittenRow.length == 0) {
                                 updateGlobalPlayerScore(obj);
                                 writePlaces(obj, () => {
@@ -1189,29 +1059,14 @@ function HEARTBEAT(obj, socket) {
                                         }
 
                                         let current_demo_path = obj.demo_path + obj.demo_table + ".json";
-                                        obj.fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
-                                            // parse the demo
-                                            let thisDemo = JSON.parse(demo_data);
-
-                                            for (let row of rows) {
-                                                thisDemo.log.push(row);
+                                        API.demoLogger.finishLog(null, current_demo_path, () => {
+                                            let logThatItIsLogged = {
+                                                Time: getTime(),
+                                                Source: "server",
+                                                Command: "demo written"
                                             }
 
-                                            // write it
-                                            obj.fs.writeFile(current_demo_path, JSON.stringify(thisDemo), 'utf-8', (err) => {
-                                                if (err) {
-                                                    console.log("error writing header to demo");
-                                                    return;
-                                                }
-
-                                                let logThatItIsLogged = {
-                                                    Time: getTime(),
-                                                    Source: "server",
-                                                    Command: "demo written"
-                                                }
-
-                                                obj.records.query("INSERT INTO " + obj.demo_table + " SET ?", logThatItIsLogged);
-                                            });
+                                            obj.records.query("INSERT INTO " + obj.demo_table + " SET ?", logThatItIsLogged);
                                         });
                                     });
                                 });
@@ -1252,7 +1107,8 @@ function HEARTBEAT(obj, socket) {
                         });
                     } else {
                         // get level info from the .json file
-                        getLevelInfo(obj, level, (info) => {
+                        let current_demo_path = obj.demo_path + obj.demo_table + ".json";
+                        API.demoLogger.getLevelInfo(current_demo_path, level, (info) => {
                             // {
                             //     "Number": 9,
                             //     "Truthfulness": true,
