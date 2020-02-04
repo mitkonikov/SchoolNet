@@ -5,9 +5,6 @@
  *      demoLogger:         demoLogger
  */
 
-// MAIN SERVER DIRECTORY
-let MSD = "./server";
-
 function getTime() {
     let CURRENT_DATE_TIME = new Date().toISOString().replace('T', ' ');
     CURRENT_DATE_TIME = CURRENT_DATE_TIME.replace('Z', '');
@@ -27,20 +24,21 @@ function getRoom(socket_rooms) {
  */
 let tatkinSocket = function(API) {
     let gameSocket = API.gameSocket.mainSocket;
-
     let network = API.databaseController.DB("db_net");
     let wordsDB = API.databaseController.DB("db_words");
     let records = API.databaseController.DB("db_records");
-    let template = MSD + "/template_demos/tatkin.json";
+    let demo = API.demoLogger;
+
     let demo_table = "";
-    let demo_path = MSD + "/demos/";
+    let demo_path = "./server/demos/";
     let HEARTBEAT_INTERVAL;
 
     console.log("Starting AI...");
     const spawn = require("child_process").spawn;
     const pythonProcess = pythonSetup(spawn, wordsDB);
 
-    pythonProcess.stdin.write("20\n");
+    // temporary comments
+    // pythonProcess.stdin.write("20\n");
     // pythonProcess.stdin.end();
 
     let gameTatkinSocket    = API.gameSocket.ioControl.of('/game/tatkin');
@@ -52,9 +50,9 @@ let tatkinSocket = function(API) {
         pythonProcess:      pythonProcess,
         gameSocket:         gameSocket,
         gameTatkinSocket:   gameTatkinSocket,
+        demo:               demo,
         demo_table:         demo_table,
-        demo_path:          demo_path,
-        template:           template
+        demo_path:          demo_path
     }
 
     gameTatkinSocket.on("connection", (socket) => {
@@ -128,7 +126,7 @@ let tatkinSocket = function(API) {
                         }
                     });
 
-                    API.demoLogger.setUpDemo(obj, rows[0].Game_ID, rows[0].Room_ID, (APIKey) => {
+                    demo.setUpDemo(obj, rows[0].Game_ID, rows[0].Room_ID, (APIKey) => {
 
                     });
                 });
@@ -223,7 +221,7 @@ let tatkinSocket = function(API) {
 
                 socket.on("get generated words", (data) => {
                     let current_demo_path = demo_path + demo_table + ".json";
-                    API.demoLogger.getDemoFile(null, current_demo_path, (demo_data) => {
+                    obj.demo.getDemoFile(null, current_demo_path, (demo_data) => {
                         if (!data.Override && demo_data.game.length != 0) {
                             // if it already contains words
 
@@ -431,7 +429,7 @@ function updateDemo(obj, data) {
  * @param {*} wordsDB   Word database
  */
 function pythonSetup(spawn, wordsDB) {
-    const pythonProcess = spawn('python', [MSD + "/python/word_gen.py"], { stdio: 'pipe'});
+    const pythonProcess = spawn('python', ["./server/python/word_gen.py"], { stdio: 'pipe'});
     
     pythonProcess.stdout.on('data', (data) => {
         let bufferOriginal = Buffer.from(data);
@@ -1059,7 +1057,7 @@ function HEARTBEAT(obj, socket) {
                                         }
 
                                         let current_demo_path = obj.demo_path + obj.demo_table + ".json";
-                                        API.demoLogger.finishLog(null, current_demo_path, () => {
+                                        obj.demo.finishLog(null, current_demo_path, () => {
                                             let logThatItIsLogged = {
                                                 Time: getTime(),
                                                 Source: "server",
@@ -1108,7 +1106,7 @@ function HEARTBEAT(obj, socket) {
                     } else {
                         // get level info from the .json file
                         let current_demo_path = obj.demo_path + obj.demo_table + ".json";
-                        API.demoLogger.getLevelInfo(current_demo_path, level, (info) => {
+                        obj.demo.getLevelInfo(current_demo_path, level, (info) => {
                             // {
                             //     "Number": 9,
                             //     "Truthfulness": true,

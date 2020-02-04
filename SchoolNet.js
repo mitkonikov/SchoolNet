@@ -83,7 +83,7 @@ let passportPass = {
 }
 
 // Requires the Main Game Logic Module
-let gameLogic = require('./server/play/main.play').Initialize(server, passportPass, databaseController);
+let gameLogic = require('./server/play/main.play').Initialize(server, passportPass, databaseController, network);
 
 let indexRequestsCount = 0;
 let prev_ip = false;
