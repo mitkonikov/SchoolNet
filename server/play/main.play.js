@@ -5,12 +5,18 @@ var Initialize = function(server, passportPass, databaseController, network) {
     let gameSocketModule = require("./gameSocket").init(server, passportPass, databaseController);
     let demoLoggerModule = require("./demoLogger");
     demoLoggerModule.buildDemoLogger(network);
+    let GameEngineModule = require("./GameEngine");
+    GameEngineModule.buildGameEngine(
+        network, 
+        databaseController.DB("db_records"),
+        demoLoggerModule);
 
     // SYNTHESIZE THE API
     let API = {
         gameSocket: gameSocketModule,
         databaseController: databaseController,
-        demoLogger: demoLoggerModule
+        demoLogger: demoLoggerModule,
+        GameEngine: GameEngineModule
     }
 
     tatkin = tatkin_module.Initialize(API);

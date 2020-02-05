@@ -3,6 +3,7 @@
  *      gameSocket:         gameSocketModule.gameSocket,
  *      databaseController: databaseController
  *      demoLogger:         demoLogger
+ *      GameEngine:         GameEngine
  */
 
 function getTime() {
@@ -28,6 +29,7 @@ let tatkinSocket = function(API) {
     let wordsDB = API.databaseController.DB("db_words");
     let records = API.databaseController.DB("db_records");
     let demo = API.demoLogger;
+    let GameEngine = API.GameEngine;
 
     let demo_table = "";
     let demo_path = "./server/demos/";
