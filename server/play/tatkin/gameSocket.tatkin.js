@@ -65,72 +65,29 @@ let tatkinSocket = function(API) {
             if (USER.Role == 1) {
                 // A TEACHER IS CONNECTED
                 
-                // - WE HAVE THE TEACHER
-                // 1. FIND THE CLASS AND THE GAME STARTED BY THE TEACHER
-                // 2. INITIATE HEARTBEAT
-
-                network.table("tbl_games_current").getCurrentGame.TeacherID(1, USER.ID, (rows) => {
-                    // JOINS THE ROOM
-                    // INITIATE A DEMO
-
-                    // JOIN ROOM
-                    if (!rows.length) {
-                        return;
-                    }
-
-                    socket.join(rows[0].Room_ID);
-
-                    /*setTimeout(() => {
-                        let ROOM = getRoom(socket.rooms);
-                        console.log("Room the teacher's in: " + ROOM);
-                    }, 100);*/
-
-                    // set the demo_table (VERY IMPORTANT!)
-                    demo_table = rows[0].Demo_ID;
-                    obj.demo_table = demo_table;
+                GameEngine.setUpGame(socket, (Demo_ID, firstTime) => {
+                    demo_table = Demo_ID;
+                    obj.demo_table = Demo_ID;
 
                     // send the online students
                     setTimeout(() => {
                         getStudentsOnlineInfo(obj, socket, getRoom(socket.rooms));
                     }, 100);
 
-                    // check if there's already a demo created
-                    records.query("SELECT 1 FROM " + demo_table + " LIMIT 1", (err, rows) => {
-                        if (err) {
-                            // table doesnt exist
-                            createTable(records, demo_table, (err) => {
-                                // now we have a table
-                                // log that the teacher has joined
-                                userJoins(obj, "teacher", false);
+                    // log that the teacher has joined
+                    userJoins(obj, "teacher", false);
+                    
+                    // this is used to tell the teacher that
+                    // the connection is not made for the first time
+                    // so that the teacher should request generated words if they exist 
+                    if (!firstTime) socket.emit("connection setup", { firstTime: false });
 
-                                updateGameState(obj, "wait");
-                                updateLevel(obj, "-1");
-        
-                                // start the heartbeat
-                                console.log("Heartbeat started!");
-                                HEARTBEAT_INTERVAL = setInterval(() => HEARTBEAT(obj, socket), 1000);        
-                            });
-                        } else {
-                            // table exists
-                            // log that the teacher has joined
-                            userJoins(obj, "teacher", false);
-
-                            // this is used to tell the teacher that
-                            // the connection is not made for the first time
-                            // so that the teacher should request generated words if they exist 
-                            socket.emit("connection setup", { firstTime: false });
-
-                            updateGameState(obj, "wait");
-                            updateLevel(obj, "-1");
-        
-                            // start the heartbeat
-                            HEARTBEAT_INTERVAL = setInterval(() => HEARTBEAT(obj, socket), 1000); 
-                        }
-                    });
-
-                    demo.setUpDemo(obj, rows[0].Game_ID, rows[0].Room_ID, (APIKey) => {
-
-                    });
+                    updateGameState(obj, "wait");
+                    updateLevel(obj, "-1");
+                    
+                    // start the heartbeat
+                    console.log("Heartbeat started!");
+                    HEARTBEAT_INTERVAL = setInterval(() => HEARTBEAT(obj, socket), 1000);        
                 });
 
                 socket.on("make game public", (data) => {

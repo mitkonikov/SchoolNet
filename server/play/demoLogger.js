@@ -68,12 +68,12 @@ function createDemoJSON(demo_table, template, Game_ID, Room_ID) {
     });
 }
 
-let setUpDemo = (obj, Game_ID, Room_ID, callback) => {
+let setUpDemo = (Demo_ID, Game_ID, Room_ID, callback) => {
     // find the name of the demo template
     network.query("SELECT Template_Demo FROM tbl_games WHERE ID = ?", Game_ID, (err, rows) => {
         let templateDemo = templateDir + rows[0].Template_Demo + ".json";
     
-        createDemoJSON(obj.demo_table, templateDemo, Game_ID, Room_ID);
+        createDemoJSON(Demo_ID, templateDemo, Game_ID, Room_ID);
     });
 }
 

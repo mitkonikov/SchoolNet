@@ -1,6 +1,6 @@
 ## Getting Started
 
-If you just want to get started developing SchoolNet, there is much more information in the main `readme.md` file. We are actively writing the documentation of this project.
+If you just want to get started developing SchoolNet, there is much more information in the main [readme.md](https://github.com/mitkonikov/SchoolNet/blob/master/readme.md) file. We are actively writing the documentation of this project.
 
 ---
 # API Functions
@@ -8,14 +8,14 @@ If you just want to get started developing SchoolNet, there is much more informa
 ### **Back-end controllers passed in each game**:
 
 Every game is supplied with the connection to the 
-  - [Database Controller][#database-controller---databasecontrollerjs] - which provides an interface with the whole database, so the game can display some information about the user;
-  - [Game Socket][#game-socket---serverplaygamesocketjs] - provides the game, the ability to communicate with the players in real time;
-  - [Game Engine][#game-engine---serverplaygameenginejs] - provides build-in functions that many games can use without rewritting them
-  - [Demo Logger][#demo-logger---serverplaydemologgerjs] - provides the logging capabilities in the demo file (pay attention: this only gets access to the demo file, not the records database) - *TODO: Take this off the API*
+  - [Database Controller](#database-controller---databasecontrollerjs) - which provides an interface with the whole database, so the game can display some information about the user;
+  - [Game Socket](#game-socket---serverplaygamesocketjs) - provides the game, the ability to communicate with the players in real time;
+  - [Game Engine](#game-engine---serverplaygameenginejs) - provides build-in functions that many games can use without rewritting them
+  - [Demo Logger](#demo-logger---serverplaydemologgerjs) - provides the logging capabilities in the demo file (pay attention: this only gets access to the demo file, not the records database) - *TODO: Take this off the API*
 
 There are two types of logs:
-  - `records` - *(they are the same as states in React)* - low latency in-database logs that are also used to keep the state of the game. `Example: player-1 score 1000`
-  - `demo` - file in the `./server/demos` directory that is used for storing the finished game log
+  - [records](#records) - *(they are the same as states in React)* - low latency in-database logs that are also used to keep the state of the game. `Example: player-1 score 1000`
+  - [demo](#demo-template) - file in the `./server/demos` directory that is used for storing the finished game log
 
 ### **Database Controller** - (databaseController.js)
     TODO: Deny access to some functions according to privilages.
@@ -87,6 +87,22 @@ This **Demo_ID** is stored in the **tbl_games_current** and is **read-only**.
 
 Each record consists of:
  - Timestamp
- - Source
+ - Source - this is the source of the records, it can be:
+   - `"server"`
+   - `"teacher"` - the host of the game
+   - `[any player ID]`
  - Command
  - Data
+
+## Demo Template
+---
+### How to create a demo template for your game?
+The following scheme should be used as a starting point when creating a demo template:
+```json
+  {
+    "header"    : { ... },
+    "settings"  : { ... },
+    "levels"    : { ... },
+    "log"       : { ... }
+  }
+```
