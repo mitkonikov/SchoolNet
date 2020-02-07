@@ -107,10 +107,6 @@ let getLevelInfo = (current_demo_path, level, callback) => {
     });
 }
 
-let log = (params) => {
-    
-}
-
 /**
  * When every game finishes you should call the finishLog function
  * to write to the demo file and close the logging process
@@ -140,5 +136,4 @@ module.exports.buildDemoLogger = buildDemoLogger;
 module.exports.setUpDemo = setUpDemo;
 module.exports.getDemoFile = getDemoFile;
 module.exports.getLevelInfo = getLevelInfo;
-module.exports.log = log;
 module.exports.finishLog = finishLog;

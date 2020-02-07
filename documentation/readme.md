@@ -60,7 +60,9 @@ There are two types of logs:
                 - `bestStudentsInfoInClass`
 
 ### **Game Engine** - (server/play/GameEngine.js)
+  - `getTime`
   - `setUpGame`
+  - `record`
 
 ### **Game Socket** - (server/play/gameSocket.js)
   - `mainSocket`
@@ -72,7 +74,6 @@ There are two types of logs:
   - `setUpDemo`
   - `getDemoFile`
   - `getLevelInfo`
-  - `log`
   - `finishLog`
 
 ## Records
@@ -88,7 +89,7 @@ This **Demo_ID** is stored in the **tbl_games_current** and is **read-only**.
 Each record consists of:
  - Timestamp
  - Source - this is the source of the records, it can be:
-   - `"server"`
+   - `"server"` - (default value)
    - `"teacher"` - the host of the game
    - `[any player ID]`
  - Command

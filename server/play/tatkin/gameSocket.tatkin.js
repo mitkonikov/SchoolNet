@@ -54,7 +54,8 @@ let tatkinSocket = function(API) {
         gameTatkinSocket:   gameTatkinSocket,
         demo:               demo,
         demo_table:         demo_table,
-        demo_path:          demo_path
+        demo_path:          demo_path,
+        GameEngine:         GameEngine
     }
 
     gameTatkinSocket.on("connection", (socket) => {
@@ -99,7 +100,7 @@ let tatkinSocket = function(API) {
                     let logData = [ {Source: "teacher", Command: "options", Data: "game public"},
                                     {Source: "teacher", Command: "global level time", Data: parseInt(data["level-time-txt"])},
                                     {Source: "teacher", Command: "global freeze time", Data: parseInt(data["freeze-time"])}];
-                    logDemoLines(records, demo_table, logData);
+                    logDemoLines(GameEngine, demo_table, logData);
                 });
 
                 socket.on("game start", (data) => {
@@ -113,7 +114,7 @@ let tatkinSocket = function(API) {
                         resetLevelTime(obj);
 
                         let logData = {Source: "teacher", Command: "game", Data: "start"};
-                        logDemo(records, demo_table, logData);
+                        GameEngine.record(demo_table, logData);
 
                         updateGameState(obj, "start");
                     }
@@ -124,7 +125,7 @@ let tatkinSocket = function(API) {
                     network.table("tbl_games_current").getCurrentGame.setState("paused", ROOM);
 
                     let logData = {Source: "teacher", Command: "game", Data: "pause"};
-                    logDemo(records, demo_table, logData);
+                    GameEngine.record(demo_table, logData);
 
                     updateGameState(obj, "pause");
                 });
@@ -134,7 +135,7 @@ let tatkinSocket = function(API) {
                     network.table("tbl_games_current").getCurrentGame.setState("started", ROOM);
 
                     let logData = {Source: "teacher", Command: "game", Data: "resume"};
-                    logDemo(records, demo_table, logData);
+                    GameEngine.record(demo_table, logData);
 
                     updateGameState(obj, "start");
                 });
@@ -158,7 +159,7 @@ let tatkinSocket = function(API) {
 
                     // log it in the demo
                     let logData = {Source: "teacher", Command: "words", Data: "generate words"};
-                    logDemo(records, demo_table, logData);
+                    GameEngine.record(demo_table, logData);
 
                     socket.emit("done generating words");
                 });
@@ -208,7 +209,7 @@ let tatkinSocket = function(API) {
                 socket.on('disconnect', (eventData) => {
                     // PAUSE GAME
                     //let logData1 = {Source: "teacher", Command: "game", Data: "pause on disconnect"};
-                    //logDemo(records, demo_table, logData1);
+                    //GameEngine.record(demo_table, logData1);
                     
                     clearInterval(HEARTBEAT_INTERVAL);
                     userLeaves(obj, "teacher", false);
@@ -228,7 +229,7 @@ let tatkinSocket = function(API) {
 
                         records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", [USER.ID, "score"], (err, rows) => {
                             if (rows.length == 0) {
-                                logDemo(records, demo_table, { Source: USER.ID, Command: "score", Data: "0" });
+                                GameEngine.record(demo_table, { Source: USER.ID, Command: "score", Data: "0" });
                             }
                         });
                     });
@@ -251,7 +252,7 @@ let tatkinSocket = function(API) {
                         Data: JSON.stringify(parseData)
                     }
 
-                    logDemo(records, demo_table, logData);
+                    GameEngine.record(demo_table, logData);
 
                     // notify everyone that the some user has submitted
                     gameTatkinSocket.emit("user submitted", { Number: parseData.Number });
@@ -325,33 +326,15 @@ function createTable(records, demo_table, callback) {
 }
 
 /**
- * Log data to the demo
- * @param {*}           records     Database connection
- * @param {String}      demo_table  Table Name
- * @param {JSON}        logData     Data to log
- * @param {Function}    callback    [Callback function]
- */
-function logDemo(records, demo_table, logData, callback) {
-    // write the time
-    logData.Time = getTime();
-
-    // write the log
-    records.query("INSERT INTO " + demo_table + " SET ?", logData, (err) => {
-        if (callback && typeof(callback) === "function")
-            callback(err);
-    });
-}
-
-/**
  * Log data to the demo (multiple lines)
  * @param {*}           records     Database connection
  * @param {String}      demo_table  Table Name
  * @param {Array}       logData    List of demo logs
  * @param {Function}    callback    [Callback function]
  */
-function logDemoLines(records, demo_table, logData, callback) {
+function logDemoLines(GameEngine, demo_table, logData, callback) {
     for (line of logData) {
-        logDemo(records, demo_table, line);
+        GameEngine.record(demo_table, line);
     }
 
     if (callback && typeof(callback) === "function")
@@ -376,8 +359,7 @@ function updateDemo(obj, data) {
                 //    callback(err);
             });
         } else {
-            data.Time = getTime();
-            logDemo(obj.records, obj.demo_table, data);
+            obj.GameEngine.record(obj.demo_table, data);
         }
     });
 }
@@ -938,7 +920,7 @@ function writePlaces(obj, callback) {
                 });
             }
 
-            logDemoLines(obj.records, obj.demo_table, placeboard, () => callback());
+            logDemoLines(obj.GameEngine, obj.demo_table, placeboard, () => callback());
         }
     });
 }
@@ -1078,7 +1060,7 @@ function HEARTBEAT(obj, socket) {
                                     if (level_time == global_level_time) {
                                         // write a stats checkpoint
                                         // so we can compare the submit times
-                                        logDemo(obj.records, obj.demo_table, 
+                                        obj.GameEngine.record(obj.demo_table,
                                             {
                                                 Source: "server",
                                                 Command: "stats checkpoint",
@@ -1117,7 +1099,7 @@ function HEARTBEAT(obj, socket) {
                                                     
                                                     if (dataAnswer.Answer == info.Truthfulness) {
                                                         // its right
-                                                        logDemo(obj.records, obj.demo_table, {
+                                                        obj.GameEngine.record(demo_table, {
                                                             Source: student,
                                                             Command: "correct-" + level, 
                                                             Data: "1"
@@ -1128,14 +1110,14 @@ function HEARTBEAT(obj, socket) {
                                                         });
                                                     } else {
                                                         // wrong
-                                                        logDemo(obj.records, obj.demo_table, {
+                                                        obj.GameEngine.record(demo_table, {
                                                             Source: student,
                                                             Command: "correct-" + level, 
                                                             Data: "0"
                                                         });
                                                     }
 
-                                                    logDemo(obj.records, obj.demo_table, {
+                                                    obj.GameEngine.record(demo_table, {
                                                         Source: student,
                                                         Command: "check-time-" + level, 
                                                         Data: diff.toString()

@@ -29,6 +29,13 @@ let getTime = () => {
     return CURRENT_TIME_TRIMMED;
 }
 
+/**
+ * Gets the Demo_ID and wheather its the
+ * first time that teacher joins the dashboard
+ * @param {*} socket    Socket Connection
+ * @param {*} callback  Callback function with two params
+ * callback(Demo_ID, firstTime) => {}
+ */
 let setUpGame = (socket, callback) => {
     // - WE HAVE THE TEACHER
     // 1. FIND THE CLASS AND THE GAME STARTED BY THE TEACHER
@@ -75,8 +82,21 @@ let setUpGame = (socket, callback) => {
     });
 }
 
-let record = () => {
+let record = (demo_table, logData, callback) => {
+    // write the time
+    logData.Time = getTime();
 
+    if (logData.Source === undefined) logData.Source = "server";
+
+    // write the log
+    records.query("INSERT INTO " + demo_table + " SET ?", logData, (err) => {
+        if (callback && typeof(callback) === "function")
+            callback(err);
+    });
+}
+
+let updateRecord = (demo_table, searchData, logData, callback) => {
+    
 }
 
 let GameOver = () => {
@@ -97,5 +117,6 @@ function createTable(demo_table, callback) {
 module.exports = {
     buildGameEngine,
     getTime,
-    setUpGame
+    setUpGame,
+    record
 }
