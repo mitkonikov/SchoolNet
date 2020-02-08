@@ -76,7 +76,7 @@ let tatkinSocket = function(API) {
                     }, 100);
 
                     // log that the teacher has joined
-                    userJoins(obj, "teacher", false);
+                    GameEngine.userJoins("teacher", false, demo_table);
                     
                     // this is used to tell the teacher that
                     // the connection is not made for the first time
@@ -100,7 +100,7 @@ let tatkinSocket = function(API) {
                     let logData = [ {Source: "teacher", Command: "options", Data: "game public"},
                                     {Source: "teacher", Command: "global level time", Data: parseInt(data["level-time-txt"])},
                                     {Source: "teacher", Command: "global freeze time", Data: parseInt(data["freeze-time"])}];
-                    logDemoLines(GameEngine, demo_table, logData);
+                    obj.GameEngine.recordLines(demo_table, logData);
                 });
 
                 socket.on("game start", (data) => {
@@ -212,7 +212,7 @@ let tatkinSocket = function(API) {
                     //GameEngine.record(demo_table, logData1);
                     
                     clearInterval(HEARTBEAT_INTERVAL);
-                    userLeaves(obj, "teacher", false);
+                    GameEngine.userLeaves("teacher", false, demo_table);
                 });
             } else {
                 // A STUDENT IS CONNECTED
@@ -224,8 +224,9 @@ let tatkinSocket = function(API) {
 
                         demo_table = rows[0].Demo_ID;
                         obj.demo_table = demo_table;
-
-                        userJoins(obj, USER.ID, true);
+                        
+                        // log that the teacher has joined
+                        GameEngine.userJoins(USER.ID, true, demo_table);
 
                         records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", [USER.ID, "score"], (err, rows) => {
                             if (rows.length == 0) {
@@ -303,65 +304,13 @@ let tatkinSocket = function(API) {
                 });
 
                 socket.on('disconnect', (eventData) => {
-                    userLeaves(obj, USER.ID, true);
+                    GameEngine.userLeaves(USER.ID, true, demo_table);
                 });
             }
         }
     });
 
     return gameTatkinSocket;
-}
-
-/**
- * Create table for the demo log
- * @param {*}           records         Database connection
- * @param {String}      demo_table      The table name
- * @param {Function}    callback        Callback function
- */
-function createTable(records, demo_table, callback) {
-    if (callback && typeof(callback) === "function")
-        records.query("CREATE TABLE `db_records`.`" + demo_table + "` ( `ID` INT NOT NULL AUTO_INCREMENT , `Time` INT NOT NULL , `Source` TEXT NOT NULL , `Command` TEXT NOT NULL , `Data` TEXT NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;", (err) => callback(err));
-    else
-        records.query("CREATE TABLE `db_records`.`" + demo_table + "` ( `ID` INT NOT NULL AUTO_INCREMENT , `Time` INT NOT NULL , `Source` TEXT NOT NULL , `Command` TEXT NOT NULL , `Data` TEXT NOT NULL , PRIMARY KEY (`ID`)) ENGINE = InnoDB;");
-}
-
-/**
- * Log data to the demo (multiple lines)
- * @param {*}           records     Database connection
- * @param {String}      demo_table  Table Name
- * @param {Array}       logData    List of demo logs
- * @param {Function}    callback    [Callback function]
- */
-function logDemoLines(GameEngine, demo_table, logData, callback) {
-    for (line of logData) {
-        GameEngine.record(demo_table, line);
-    }
-
-    if (callback && typeof(callback) === "function")
-        callback();
-}
-
-/**
- * Updates the record table, if entry exists it overrides it
- * @param {JSON} obj    Reference to all dependecies
- * @param {JSON} data   Data to update
- */
-function updateDemo(obj, data) {
-    // TODO: IF NEED put a callback
-    obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", [data.Source, data.Command], (err, rows) => {
-        // TODO: put error
-        if (err) return;
-
-        if (rows.length) {
-            let logData = { Time: getTime(), Data: data.Data };
-            obj.records.query("UPDATE " + obj.demo_table + " SET ? WHERE Source = ? AND Command = ?", [logData, data.Source, data.Command], (err) => {
-                //if (callback && typeof(callback) === "function")
-                //    callback(err);
-            });
-        } else {
-            obj.GameEngine.record(obj.demo_table, data);
-        }
-    });
 }
 
 /**
@@ -479,8 +428,12 @@ function randomGeneratedWord(obj, i) {
                                 Word: random_rows[0].Word
                             }
                             
-                            updateDemo(obj, 
-                                    {Source: "server", Command: "pickWord" + i, Data: JSON.stringify(demoData)});
+                            obj.GameEngine.updateRecord(obj.demo_table, 
+                                    {
+                                        Source: "server", 
+                                        Command: "pickWord" + i, 
+                                        Data: JSON.stringify(demoData)
+                                    });
                         }
                     });
                 }
@@ -513,7 +466,7 @@ function trueWord(obj, i) {
 
                 console.log(demoData);
 
-                updateDemo(obj, 
+                obj.GameEngine.updateRecord(obj.demo_table, 
                         {
                             Source: "server", 
                             Command: "pickWord" + i, 
@@ -625,85 +578,9 @@ function emitStudentsConnectInfo(obj, socket, callback) {
     });
 }
 
-/**
- * Log the new time of teacher joining
- * @param {JSON}        obj         Reference to all dependecies
- * @param {String}      user        Source
- * @param {Boolean}      student     True if the user is a student
- * @param {Function}    callback    Callback function
- */
-function userJoins(obj, user, student, callback) {
-    let LEAVE = "left";
-    let JOIN = "join";
-
-    if (student == true) {
-        LEAVE = "student left";
-        JOIN = "student join";
-    }
-
-    obj.records.query("DELETE FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", [user, LEAVE], (err) => {
-        if (callback && typeof(callback) === "function")
-            if (err) callback(err);
-    });
-
-    // update the log
-    obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", [user, JOIN], (err, rows) => {
-        if (rows.length) {
-            obj.records.query("UPDATE " + obj.demo_table + " SET Time = ? WHERE Source = ? AND Command = ?", [getTime(), user, JOIN], (err) => {
-                if (callback && typeof(callback) === "function")
-                    callback(err);
-            });
-        } else {
-            let logData = { Time: getTime(), Source : user, Command: JOIN };
-            obj.records.query("INSERT INTO " + obj.demo_table + " SET ?", logData, (err) => {
-                if (callback && typeof(callback) === "function")
-                    callback(err);
-            });
-        }
-    });
-}
-
-/**
- * Log the new time of teacher joining
- * @param {JSON}        obj         Reference to all dependecies
- * @param {String}      user        Source
- * @param {Boolean}     student     True if the user is a student
- * @param {Function}    callback    Callback function
- */
-function userLeaves(obj, user, student, callback) {
-    let LEAVE = "left";
-    let JOIN = "join";
-
-    if (student == true) {
-        LEAVE = "student left";
-        JOIN = "student join";
-    }
-    
-    obj.records.query("DELETE FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", [user, JOIN], (err) => {
-        if (callback && typeof(callback) === "function")
-            if (err) callback(err);
-    });
-
-    obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", [user, LEAVE], (err, rows) => {
-        if (rows.length) {
-            // update the time of leaving
-            obj.records.query("UPDATE " + obj.demo_table + " SET Time = ? WHERE Source = ? AND Command = ?", [getTime(), user, LEAVE], (err) => {
-                if (callback && typeof(callback) === "function")
-                    callback(err);
-            });
-        } else {
-            let logData = { Time: getTime(), Source : user, Command: LEAVE };
-            obj.records.query("INSERT INTO " + obj.demo_table + " SET ?", logData, (err) => {
-                if (callback && typeof(callback) === "function")
-                    callback(err);
-            });
-        }
-    });
-}
-
 function updateGameState(obj, Game_State) {
     // TODO: IF NEED put callback
-    updateDemo(obj, { Source: "teacher", Command: "game-state", Data: Game_State});
+    obj.GameEngine.updateRecord(obj.demo_table, { Source: "teacher", Command: "game-state", Data: Game_State});
 }
 
 /**
@@ -725,7 +602,7 @@ function getGameState(obj, callback) {
  */
 function updateLevel(obj, currentLevel) {
     // TODO: IF NEED put a callback
-    updateDemo(obj, { Source: "server", Command: "current-level", Data: currentLevel});
+    obj.GameEngine.updateRecord(obj.demo_table, { Source: "server", Command: "current-level", Data: currentLevel});
 }
 
 /**
@@ -806,7 +683,7 @@ function getDemoTime(obj, source, command, data, callback) {
  */
 function resetLevelTime(obj) {
     getDemoRow(obj, "teacher", "global level time", (LEVEL_TIME) => {
-        updateDemo(obj, 
+        obj.GameEngine.updateRecord(obj.demo_table,
             {   
                 Source: "server", 
                 Command: "current-level-time", 
@@ -816,7 +693,7 @@ function resetLevelTime(obj) {
     });
 
     getDemoRow(obj, "teacher", "global freeze time", (FREEZE_TIME) => {
-        updateDemo(obj, 
+        obj.GameEngine.updateRecord(obj.demo_table,
             {   
                 Source: "server", 
                 Command: "current-freeze-time", 
@@ -920,7 +797,7 @@ function writePlaces(obj, callback) {
                 });
             }
 
-            logDemoLines(obj.GameEngine, obj.demo_table, placeboard, () => callback());
+            obj.GameEngine.recordLines(obj.demo_table, placeboard, () => callback());
         }
     });
 }
@@ -1076,7 +953,7 @@ function HEARTBEAT(obj, socket) {
                                     }
                                     
                                     if (level_time > 0) {
-                                        updateDemo(obj, 
+                                        obj.GameEngine.updateRecord(obj.demo_table,
                                             {
                                                 Source: "server", 
                                                 Command: "current-level-time", 
@@ -1106,7 +983,7 @@ function HEARTBEAT(obj, socket) {
                                                         });
 
                                                         getDemoRow(obj, student, "score", (current_score) => {
-                                                            updateDemo(obj, { Source: student, Command: "score", Data: (parseInt(current_score) + 100).toString() });
+                                                            obj.GameEngine.updateRecord(obj.demo_table, { Source: student, Command: "score", Data: (parseInt(current_score) + 100).toString() });
                                                         });
                                                     } else {
                                                         // wrong

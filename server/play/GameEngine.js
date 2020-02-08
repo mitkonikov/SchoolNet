@@ -95,9 +95,95 @@ let record = (demo_table, logData, callback) => {
     });
 }
 
-let updateRecord = (demo_table, searchData, logData, callback) => {
-    
+/**
+ * Log data to the demo (multiple lines)
+ * @param {String}      demo_table  Table Name
+ * @param {Array}       logData    List of demo logs
+ * @param {Function}    callback    [Callback function]
+ */
+let recordLines = (demo_table, logData, callback) => {
+    for (line of logData) {
+        record(demo_table, line);
+    }
+
+    if (callback && typeof(callback) === "function")
+        callback();
 }
+
+let updateRecord = (demo_table, logData, callback) => {
+    // TODO: IF NEED put a callback
+    obj.records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", [logData.Source, logData.Command], (err, rows) => {
+        // TODO: put error
+        if (err) {
+            if (callback && typeof(callback) === "function") {
+                callback(false);
+            }
+            
+            return;
+        };
+
+        if (rows.length) {
+            logData.Time = getTime();
+            obj.records.query("UPDATE " + demo_table + " SET ? WHERE Source = ? AND Command = ?", 
+            [
+                logData, 
+                logData.Source, 
+                logData.Command
+            ], (err) => {
+                if (callback && typeof(callback) === "function") {
+                    if (err) callback(false);
+                    else callback(true);
+                }
+            });
+        } else {
+            record(demo_table, logData, callback);
+        }
+    });
+}
+
+let userJoins = (user, student, demo_table, callback) => {
+    userConnects(user, student, demo_table, true, callback);
+}
+
+let userLeaves = (user, student, demo_table, callback) => {
+    userConnects(user, student, demo_table, false, callback);
+}
+
+let userConnects = (user, student, demo_table, joins, callback) => {
+    let LEAVE = "left";
+    let JOIN = "join";
+
+    if (student == true) {
+        LEAVE = "student left";
+        JOIN = "student join";
+    }
+
+    if (!state) {
+        let temp = LEAVE;
+        LEAVE = JOIN;
+        JOIN = temp;
+    }
+
+    records.query("DELETE FROM " + demo_table + " WHERE Source = ? AND Command = ?", [user, LEAVE], (err) => {
+        if (callback && typeof(callback) === "function")
+            if (err) callback(err);
+    });
+
+    // update the log
+    records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", [user, JOIN], (err, rows) => {
+        if (rows.length) {
+            records.query("UPDATE " + demo_table + " SET Time = ? WHERE Source = ? AND Command = ?", [getTime(), user, JOIN], (err) => {
+                if (callback && typeof(callback) === "function")
+                    callback(err);
+            });
+        } else {
+            record(demo_table, { 
+                Source : user,
+                Command: JOIN 
+            }, () => callback());
+        }
+    });
+} 
 
 let GameOver = () => {
 
@@ -118,5 +204,9 @@ module.exports = {
     buildGameEngine,
     getTime,
     setUpGame,
-    record
+    record,
+    recordLines,
+    updateRecord,
+    userJoins,
+    userLeaves
 }

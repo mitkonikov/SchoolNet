@@ -60,9 +60,14 @@ There are two types of logs:
                 - `bestStudentsInfoInClass`
 
 ### **Game Engine** - (server/play/GameEngine.js)
+  - ### [Full Documentation](./GameEngine.md)
   - `getTime`
   - `setUpGame`
   - `record`
+  - `recordLines`
+  - `updateRecord`
+  - `userJoins`
+  - `userLeaves`
 
 ### **Game Socket** - (server/play/gameSocket.js)
   - `mainSocket`
