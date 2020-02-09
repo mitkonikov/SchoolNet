@@ -78,7 +78,7 @@ let setUpGame = (socket, callback) => {
         });
 
         // Set up the demo
-        demo.setUpDemo(rows[0].Demo_ID, rows[0].Game_ID, rows[0].Room_ID, () => {});
+        demoLogger.setUpDemo(rows[0].Demo_ID, rows[0].Game_ID, rows[0].Room_ID, () => {});
     });
 }
 
