@@ -110,9 +110,49 @@ let recordLines = (demo_table, logData, callback) => {
         callback();
 }
 
+let getRecord = (demo_table, queryData, callback) => {
+    records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
+        [queryData.Source, queryData.Command], (err, rows) => {
+            callback(rows[0].Data);
+        });
+}
+
+/**
+ * Gets anything from the demo table
+ *  - if the queryData.Data is not supplied
+ *      - Returns JSON dict with Time and Data variables (RAW)
+ *  - but if its supplied, 
+ *      - it will just return the time at which that data is set
+ * @param {JSON}        demo_table  Database Table
+ * @param {String}      queryData   Query entry
+ * @param {Function}    callback    Callback function
+ */
+let getRecordTime = (demo_table, queryData, callback) => {
+    if (queryData.Data == undefined) {
+        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
+            [queryData.Source, queryData.Command], (err, rows) => {
+                if (rows?.length)
+                    callback({ Time: rows[0].Time, Data: rows[0].Data });
+            });
+    } else {
+        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ? AND Data = ?",
+            [queryData.Source, queryData.Command, queryData.Data], (err, rows) => {
+                if (rows?.length)
+                    callback(parseInt(rows[0].Time));
+            });
+    }
+}
+
+/**
+ * Updates a given record given an existing Source and Command
+ * and the new Data
+ * @param {JSON}        demo_table  Database Table
+ * @param {String}      logData     Update entry
+ * @param {Function}    callback    Callback function
+ */
 let updateRecord = (demo_table, logData, callback) => {
     // TODO: IF NEED put a callback
-    obj.records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", [logData.Source, logData.Command], (err, rows) => {
+    records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", [logData.Source, logData.Command], (err, rows) => {
         // TODO: put error
         if (err) {
             if (callback && typeof(callback) === "function") {
@@ -124,7 +164,7 @@ let updateRecord = (demo_table, logData, callback) => {
 
         if (rows.length) {
             logData.Time = getTime();
-            obj.records.query("UPDATE " + demo_table + " SET ? WHERE Source = ? AND Command = ?", 
+            records.query("UPDATE " + demo_table + " SET ? WHERE Source = ? AND Command = ?", 
             [
                 logData, 
                 logData.Source, 
@@ -141,14 +181,29 @@ let updateRecord = (demo_table, logData, callback) => {
     });
 }
 
+/**
+ * Remember that a specific user has joined the game
+ * @param {Number}      user                The User ID
+ * @param {Boolean}     student             Whether he is a student or teacher
+ * @param {String}      demo_table          Database table
+ * @param {Function}    callback            Callback function
+ */
 let userJoins = (user, student, demo_table, callback) => {
     userConnects(user, student, demo_table, true, callback);
 }
 
+/**
+ * Remember that a specific user has left the game
+ * @param {Number}      user                The User ID
+ * @param {Boolean}     student             Whether he is a student or teacher
+ * @param {String}      demo_table          Database table
+ * @param {Function}    callback            Callback function
+ */
 let userLeaves = (user, student, demo_table, callback) => {
     userConnects(user, student, demo_table, false, callback);
 }
 
+/** Function only used by the Game Engine itself */
 let userConnects = (user, student, demo_table, joins, callback) => {
     let LEAVE = "left";
     let JOIN = "join";
@@ -200,13 +255,41 @@ function createTable(demo_table, callback) {
     });
 }
 
+/**
+ * Useful Built-in functions
+ */
+
+/**
+ * Update level in records
+ * @param {JSON}    demo_table      The demo table name
+ * @param {String}  currentLevel    The new level state
+ */
+let updateLevel = (demo_table, currentLevel) => {
+    updateRecord(demo_table, 
+        { 
+            Source: "server", 
+            Command: "current-level", 
+            Data: currentLevel
+        });
+}
+
+let getLevel = (demo_table, callback) => {
+    records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", ["server", "current-level"], (err, rows) => {
+        callback(parseInt(rows[0].Data));
+    });
+}
+
 module.exports = {
     buildGameEngine,
     getTime,
     setUpGame,
     record,
     recordLines,
+    getRecord,
+    getRecordTime,
     updateRecord,
     userJoins,
-    userLeaves
+    userLeaves,
+    updateLevel,
+    getLevel
 }

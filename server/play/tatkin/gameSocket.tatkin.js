@@ -84,7 +84,7 @@ let tatkinSocket = function(API) {
                     if (!firstTime) socket.emit("connection setup", { firstTime: false });
 
                     updateGameState(obj, "wait");
-                    updateLevel(obj, "-1");
+                    GameEngine.updateLevel(demo_table, "-1");
                     
                     // start the heartbeat
                     console.log("Heartbeat started!");
@@ -208,9 +208,6 @@ let tatkinSocket = function(API) {
 
                 socket.on('disconnect', (eventData) => {
                     // PAUSE GAME
-                    //let logData1 = {Source: "teacher", Command: "game", Data: "pause on disconnect"};
-                    //GameEngine.record(demo_table, logData1);
-                    
                     clearInterval(HEARTBEAT_INTERVAL);
                     GameEngine.userLeaves("teacher", false, demo_table);
                 });
@@ -260,7 +257,7 @@ let tatkinSocket = function(API) {
                 });
 
                 socket.on("get player score", (eventData) => {
-                    getDemoRow(obj, USER.ID, "score", (demo_score) => {
+                    GameEngine.getRecord(demo_table, { Source: USER.ID, Command: "score" }, (demo_score) => {
                         socket.emit("set player score", { Score: parseInt(demo_score) })
                     });
                 });
@@ -278,10 +275,10 @@ let tatkinSocket = function(API) {
                     awardResult.Level = 1;
                     awardResult.maxLevelXP = 3000;
 
-                    getDemoRow(obj, USER.ID, "place", (place) => {
+                    obj.GameEngine.getRecord(obj.demo_table, { Source: USER.ID, Command: "place" }, (place) => {
                         awardResult.Place = parseInt(place);
 
-                        getDemoRow(obj, USER.ID, "score", (score) => {
+                        obj.GameEngine.getRecord(obj.demo_table,  { Source: USER.ID, Command: "score" }, (score) => {
                             awardResult.gameScore = parseInt(score);
 
                             // TODO: Put it through the databaseController
@@ -589,92 +586,13 @@ function updateGameState(obj, Game_State) {
  * @param {Function}    callback    Callback function
  */
 function getGameState(obj, callback) {
-    if (callback && typeof(callback) === "function")
-        obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", ["teacher", "game-state"], (err, rows) => {
-            callback(rows[0].Data);
-        });
-}
-
-/**
- * Update level in records
- * @param {JSON}    obj             Reference to all dependecies
- * @param {String}  currentLevel    The new level state
- */
-function updateLevel(obj, currentLevel) {
-    // TODO: IF NEED put a callback
-    obj.GameEngine.updateRecord(obj.demo_table, { Source: "server", Command: "current-level", Data: currentLevel});
-}
-
-/**
- * Gets the current level
- * @param {JSON}        obj         Reference to all dependecies
- * @param {Function}    callback    Callback function
- */
-function getLevel(obj, callback) {
-    if (callback && typeof(callback) === "function")
-        obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", ["server", "current-level"], (err, rows) => {
-            callback(parseInt(rows[0].Data));
-        });
-}
-
-/**
- * Returns the rows[0].Data (not parsed to anything - RAW)
- * @param {JSON}        obj         Reference to all dependecies
- * @param {String}      source      Source entry
- * @param {String}      command     Command entry
- * @param {Function}    callback    Callback function
- */
-function getDemoRow(obj, source, command, callback) {
-    // TODO: Put error
-    if (callback && typeof(callback) === "function")
-        obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", [source, command], (err, rows) => {
-            if (err) {
-                console.trace(err);
-                return;
-            }
-
-            if (rows.length)
-                callback(rows[0].Data);
-        });
-}
-
-/**
- * Gets anything from the demo table
- * Returns JSON dict with Time and Data variables (RAW)
- * @param {JSON}        obj         Reference to all dependecies
- * @param {String}      source      Source entry
- * @param {String}      command     Command entry
- * @param {Function}    callback    Callback function
- */
-function getDemoRowAll(obj, source, command, callback) {
-    // TODO: Put error
-    if (callback && typeof(callback) === "function")
-        obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", [source, command], (err, rows) => {
-            if (err) {
-                console.trace(err);
-                return;
-            }
-
-            
-            if (rows.length)
-                callback({ Time: rows[0].Time, Data: rows[0].Data });
-        });
-}
-
-/**
- * Gets time from demo
- * @param {JSON}        obj         Reference to all dependecies
- * @param {String}      source      Source entry
- * @param {String}      command     Command entry
- * @param {String}      data        Data entry
- * @param {Function}    callback    Callback function
- */
-function getDemoTime(obj, source, command, data, callback) {
-    // TODO: Put error
-    if (callback && typeof(callback) === "function")
-        obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ? AND Data = ?", [source, command, data], (err, rows) => {
-            callback(parseInt(rows[0].Time));
-        });
+    obj.GameEngine.getRecord(
+        obj.demo_table, 
+        {
+            Source: "teacher",
+            Command: "game-state"
+        }, 
+        callback);
 }
 
 /**
@@ -682,7 +600,7 @@ function getDemoTime(obj, source, command, data, callback) {
  * @param {JSON} obj   Reference to all dependecies
  */
 function resetLevelTime(obj) {
-    getDemoRow(obj, "teacher", "global level time", (LEVEL_TIME) => {
+    obj.GameEngine.getRecord(obj.demo_table, { Source: "teacher", Command: "global level time" }, (LEVEL_TIME) => {
         obj.GameEngine.updateRecord(obj.demo_table,
             {   
                 Source: "server", 
@@ -692,7 +610,7 @@ function resetLevelTime(obj) {
         );
     });
 
-    getDemoRow(obj, "teacher", "global freeze time", (FREEZE_TIME) => {
+    obj.GameEngine.getRecord(obj.demo_table, { Source: "teacher", Command: "global freeze time" }, (FREEZE_TIME) => {
         obj.GameEngine.updateRecord(obj.demo_table,
             {   
                 Source: "server", 
@@ -817,7 +735,7 @@ function HEARTBEAT(obj, socket) {
                 obj.gameTatkinSocket.to(getRoom(socket.rooms)).emit("game pause");
             } else if (state == "start") {
                 // The show must go on!
-                getLevel(obj, (level) => {
+                obj.GameEngine.getLevel(obj.demo_table, (level) => {
 
                     if (level + 1 == 11) {
                         // get game-finish stats
@@ -915,11 +833,17 @@ function HEARTBEAT(obj, socket) {
 
                     if (level == -1) {
                         // game is not started yet
-                        getDemoRow(obj, "teacher", "global level time", (freeze_time) => {
-                            setTimeout(() => {
-                                updateLevel(obj, "0");
-                                console.log("game started");
-                            }, parseInt(freeze_time) * 100);
+                        obj.GameEngine.getRecord(obj.demo_table, 
+                            {
+                                Source: "teacher", 
+                                Command: "global level time"
+                            }, 
+                            (freeze_time) => {
+
+                                setTimeout(() => {
+                                    obj.GameEngine.updateLevel(obj.demo_table, "0");
+                                    console.log("game started");
+                                }, parseInt(freeze_time) * 100);
                         });
                     } else {
                         // get level info from the .json file
@@ -932,8 +856,14 @@ function HEARTBEAT(obj, socket) {
                             //     "Word": "номинирана"
                             // }
 
-                            getDemoRow(obj, "server", "current-level-time", (level_time) => {
-                                getDemoRow(obj, "teacher", "global level time", (global_level_time) => {
+                            obj.GameEngine.getRecord(obj.demo_table, {
+                                Source: "server", Command: "current-level-time" 
+                            }, (level_time) => {
+
+                                obj.GameEngine.getRecord(obj.demo_table, {
+                                    Source: "teacher", Command: "global level time" 
+                                }, (global_level_time) => {
+
                                     if (level_time == global_level_time) {
                                         // write a stats checkpoint
                                         // so we can compare the submit times
@@ -963,12 +893,15 @@ function HEARTBEAT(obj, socket) {
 
                                         obj.gameTatkinSocket.emit("level start", LEVEL_DATA);  
                                     } else {
-                                        getDemoTime(obj, "server", "stats checkpoint", "level start " + level, (stat_time) => {
+                                        obj.GameEngine.getRecordTime(obj.demo_table, {
+                                            Source: "server", Command: "stats checkpoint", Data: "level start " + level }, (stat_time) => {
                                             console.log("level start time: " + stat_time);
                                             // ran out of time [level finished]
                                             for (let student of connected_students) {
                                                 // student is an ID
-                                                getDemoRowAll(obj, student, "submit-" + level, (answer) => {
+                                                obj.GameEngine.getRecordTime(obj.demo_table, {
+                                                    Source: student, Command: "submit-" + level }, (answer) => {
+                                                    
                                                     let dataAnswer = JSON.parse(answer.Data);
                                                     let timeAnswer = answer.Time;
                                                     
@@ -982,7 +915,7 @@ function HEARTBEAT(obj, socket) {
                                                             Data: "1"
                                                         });
 
-                                                        getDemoRow(obj, student, "score", (current_score) => {
+                                                        obj.GameEngine.getRecord(obj.demo_table, { Source: student, Command: "score" }, (current_score) => {
                                                             obj.GameEngine.updateRecord(obj.demo_table, { Source: student, Command: "score", Data: (parseInt(current_score) + 100).toString() });
                                                         });
                                                     } else {
@@ -1006,7 +939,7 @@ function HEARTBEAT(obj, socket) {
 
                                             sendStats(obj, socket, level);
                                             resetLevelTime(obj);
-                                            updateLevel(obj, (level+1).toString());
+                                            obj.GameEngine.updateLevel(obj.demo_table, (level+1).toString());
                                         });
                                     }
                                 });

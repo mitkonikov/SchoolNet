@@ -88,6 +88,27 @@ Parameters:
 
 <br>
 
+### **`getRecord ( demoTable, queryData, callback )`**
+Function that gets just the record **Data** given a specific **Source** and **Command** in the **queryData** JSON object. *(**queryData** is the same as **logData**)*
+
+Parameters:
+ - **demoTable**
+ - **queryData**
+    ```javascript
+        let queryData = {
+            Source:     "",
+            Command:    "",
+        }
+    ```
+ - **callback**
+    - `Data`       <span style="color: #239B56; font-family: Consolas, monospace; font-weight: bold;">\<string\><span>
+
+<br>
+
+### **`getRecordTime ( demoTable, queryData, callback )`**
+
+<br>
+
 ### **`updateRecord ( demoTable, logData, callback )`**
 Function to update certain record's data.
 
