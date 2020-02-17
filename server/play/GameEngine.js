@@ -10,15 +10,20 @@
 let network;
 let records;
 let demoLogger;
+let built = false;
 
 let buildGameEngine = (
     network_connect,
     records_connect,
-    demoLogger_connect) => {
+    demoLogger_connect) => 
+{
+    if (!built) {
         network = network_connect;
         records = records_connect;
         demoLogger = demoLogger_connect;
+        built = true;
     }
+}
 
 let getTime = () => {
     let CURRENT_DATE_TIME = new Date().toISOString().replace('T', ' ');
@@ -98,7 +103,7 @@ let record = (demo_table, logData, callback) => {
 /**
  * Log data to the demo (multiple lines)
  * @param {String}      demo_table  Table Name
- * @param {Array}       logData    List of demo logs
+ * @param {Array}       logData     List of demo logs
  * @param {Function}    callback    [Callback function]
  */
 let recordLines = (demo_table, logData, callback) => {
@@ -110,11 +115,21 @@ let recordLines = (demo_table, logData, callback) => {
         callback();
 }
 
+/**
+ * Gets a specific record
+ * @param {String}      demo_table  The demo table
+ * @param {JSON}        queryData   JSON formatted query data
+ * @param {Function}    callback    Callback function
+ */
 let getRecord = (demo_table, queryData, callback) => {
     records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
         [queryData.Source, queryData.Command], (err, rows) => {
             callback(rows[0].Data);
         });
+}
+
+let getAllRecords = (demo_table, queryData, callback) => {
+    
 }
 
 /**
@@ -131,13 +146,13 @@ let getRecordTime = (demo_table, queryData, callback) => {
     if (queryData.Data == undefined) {
         records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
             [queryData.Source, queryData.Command], (err, rows) => {
-                if (rows?.length)
+                if (typeof rows != "undefined")
                     callback({ Time: rows[0].Time, Data: rows[0].Data });
             });
     } else {
         records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ? AND Data = ?",
             [queryData.Source, queryData.Command, queryData.Data], (err, rows) => {
-                if (rows?.length)
+                if (typeof rows != "undefined")
                     callback(parseInt(rows[0].Time));
             });
     }

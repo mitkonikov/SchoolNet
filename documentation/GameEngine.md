@@ -106,6 +106,25 @@ Parameters:
 <br>
 
 ### **`getRecordTime ( demoTable, queryData, callback )`**
+Function that gets **Time** and **Data** of a record given a specific **Source** and **Command** in the **queryData** JSON object. *(**queryData** is the same as **logData**)*
+
+Parameters:
+ - **demoTable**
+ - **queryData**
+    ```javascript
+        let queryData = {
+            Source:     "",
+            Command:    "",
+        }
+    ```
+ - **callback**
+    - `JSON`       <span style="color: #239B56; font-family: Consolas, monospace; font-weight: bold;">\<json\><span>
+        ```javascript
+            let response = {
+                Time: "",
+                Data: ""
+            }
+        ```
 
 <br>
 
