@@ -116,20 +116,35 @@ let recordLines = (demo_table, logData, callback) => {
 }
 
 /**
- * Gets a specific record
+ * Gets only the data of a specific record
  * @param {String}      demo_table  The demo table
  * @param {JSON}        queryData   JSON formatted query data
  * @param {Function}    callback    Callback function
  */
 let getRecord = (demo_table, queryData, callback) => {
-    records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
-        [queryData.Source, queryData.Command], (err, rows) => {
-            callback(rows[0].Data);
-        });
+    getAllRecords(demo_table, queryData, (record) => {
+        callback(record.Data);
+    });
 }
 
+/**
+ * Gets a specific record with all the data
+ * @param {String}      demo_table  The demo table
+ * @param {JSON}        queryData   JSON formatted query data
+ * @param {Function}    callback    Callback function
+ */
 let getAllRecords = (demo_table, queryData, callback) => {
-    
+    if (queryData.Source == undefined) {
+        records.query("SELECT * FROM " + demo_table + "WHERE AND Command = ?",
+            [queryData.Command], (err, rows) => {
+                callback(rows[0]);
+            });
+    } else {
+        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
+            [queryData.Source, queryData.Command], (err, rows) => {
+                callback(rows[0]);
+            });
+    }
 }
 
 /**
