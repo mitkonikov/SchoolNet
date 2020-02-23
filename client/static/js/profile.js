@@ -42,8 +42,12 @@ $(document).ready(function() {
 function setBasicInfo(BASIC_INFO) {
     console.log(BASIC_INFO);
 
-    if (BASIC_INFO["Following"]) {
+    if (BASIC_INFO["Following"] == "following") {
+        $("#follow-button").show();
         $("#follow-button-text").text("UNFOLLOW");
+    } else if (BASIC_INFO["Following"] == "not-following") {
+        $("#follow-button").show();
+        $("#follow-button-text").text("FOLLOW");
     }
 
     if (BASIC_INFO["Role"] == "1") {

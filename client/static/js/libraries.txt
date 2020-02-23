@@ -1,7 +1,6 @@
 # I have no right to distribute these dependencies, so you have to download them yourself.
 # NOTE: The file names must be the same too!
 
-foundation.js
 jquery-3.3.1.js
 jquery.fullpage.js
 p5.min.js

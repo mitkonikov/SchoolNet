@@ -506,7 +506,7 @@ function getStudents(obj, socket, Room_ID) {
     getClassID(obj, Room_ID, (ClassID) => {
         getStudentIDs(obj, ClassID, (StudentIDs) => {
             obj.network.table().Student.getOnlineStudents(StudentIDs, (info) => {
-                obj.records.query("SELECT Source, Data FROM " + obj.demo_table + " WHERE Command = ?", "score", (err, score) => {
+                obj.GameEngine.getAllRecords(obj.demo_table, { Command: "score" }, (score) => {
                     getStudentsConnectInfo(obj, (online_students) => {
                         score.sort(function(a, b) { return parseInt(a.Source) - parseInt(b.Source); });
                         info.sort(function(a, b) { return a.ID - b.ID; });
@@ -553,7 +553,7 @@ function getStudentsOnlineInfo(obj, socket, Room_ID) {
  * @param {Function}    callback    Callback function
  */
 function getStudentsConnectInfo(obj, callback) {
-    obj.records.query("SELECT Source FROM " + obj.demo_table + " WHERE Command = 'student join'", (err, rows) => {
+    obj.GameEngine.getAllRecords(obj.demo_table, { Command: 'student join' }, (rows) => {
         let IDs = [];
         for (row of rows) IDs.push(parseInt(row.Source));
 
@@ -735,7 +735,7 @@ function HEARTBEAT(obj, socket) {
                 obj.gameTatkinSocket.to(getRoom(socket.rooms)).emit("game pause");
             } else if (state == "start") {
                 // The show must go on!
-                obj.GameEngine.getLevel(obj.demo_table, (level) => {
+                obj.GameEngine.getCurrentLevel(obj.demo_table, (level) => {
 
                     if (level + 1 == 11) {
                         // get game-finish stats

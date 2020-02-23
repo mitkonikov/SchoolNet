@@ -123,26 +123,31 @@ let recordLines = (demo_table, logData, callback) => {
  */
 let getRecord = (demo_table, queryData, callback) => {
     getAllRecords(demo_table, queryData, (record) => {
-        callback(record.Data);
+        callback(record[0].Data);
     });
 }
 
 /**
- * Gets a specific record with all the data
+ * Gets all of the records matching a certain criteria
  * @param {String}      demo_table  The demo table
  * @param {JSON}        queryData   JSON formatted query data
  * @param {Function}    callback    Callback function
  */
 let getAllRecords = (demo_table, queryData, callback) => {
-    if (queryData.Source == undefined) {
+    if (queryData.Source == undefined && queryData.Data == undefined) {
         records.query("SELECT * FROM " + demo_table + "WHERE AND Command = ?",
             [queryData.Command], (err, rows) => {
-                callback(rows[0]);
+                callback(rows);
             });
-    } else {
+    } else if (queryData.Data == undefined) {
         records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
             [queryData.Source, queryData.Command], (err, rows) => {
-                callback(rows[0]);
+                callback(rows);
+            });
+    } else {
+        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ? AND Data = ?",
+            [queryData.Source, queryData.Command, queryData.Data], (err, rows) => {
+                callback(rows);
             });
     }
 }
@@ -303,10 +308,14 @@ let updateLevel = (demo_table, currentLevel) => {
         });
 }
 
-let getLevel = (demo_table, callback) => {
+let getCurrentLevel = (demo_table, callback) => {
     records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", ["server", "current-level"], (err, rows) => {
         callback(parseInt(rows[0].Data));
     });
+}
+
+let countAnswers = (demo_table, level, callback) => {
+    
 }
 
 module.exports = {
@@ -316,10 +325,11 @@ module.exports = {
     record,
     recordLines,
     getRecord,
+    getAllRecords,
     getRecordTime,
     updateRecord,
     userJoins,
     userLeaves,
     updateLevel,
-    getLevel
+    getCurrentLevel
 }

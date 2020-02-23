@@ -15,7 +15,8 @@
 #registerBtn {
   width: 100%;
   font-size: 0.9em;
-  padding-bottom: 1em; }
+  padding-bottom: 1em;
+  color: white; }
 
 #loggingBtn, #pickSchoolBtn {
   width: 100%;
@@ -43,6 +44,12 @@
 
 #login-password {
   margin-top: -0.5em; }
+
+#nickname {
+  width: 100%; }
+
+#password {
+  width: 100%; }
 
 .info-form {
   padding: 0.7em 0.7em 0.7em 1em;

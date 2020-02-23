@@ -12,20 +12,25 @@ The Game Engine is simple a small module that has deals with the records (states
   - [getTime](#gettime-)
   - [setUpGame](#setupgame--socket-callback-)
   - [record](#record--demotable-logdata-callback-)
-  - `recordLines`
-  - `updateRecord`
-  - `userJoins`
-  - `userLeaves`
+  - [recordLines](#recordlines--demotable-logdata-callback-)
+  - [getRecord](#getrecord--demotable-querydata-callback-)
+  - [getAllRecords](#getallrecords--demotable-querydata-callback-)
+  - [getRecordTime](#getrecordtime--demotable-querydata-callback-)
+  - [updateRecord](#updaterecord--demotable-logdata-callback-)
+  - [userJoins](#userjoins)
+  - [userLeaves](#userleaves)
+  - [updateLevel](#updatelevel)
+  - [getCurrentLevel](#getcurrentlevel)
   - [GameOver](#gameover)
 
 <br>
 
-### **`getTime ()`**
+### **getTime ()**
 Function that returns string compatible time for storage in the records. Mostly used for timestamping the records.
 
 <br>
 
-### **`setUpGame ( socket, callback )`**
+### **setUpGame ( socket, callback )**
 > Required Function
 
 Required function that sets up a lot of initial parameters about the game such as the demo table.
@@ -42,7 +47,7 @@ GameEngine.setUpGame(socket, (Demo_ID, firstTime) => { ... });
 
 <br>
 
-### **`record ( demoTable, logData, callback )`**
+### **record ( demoTable, logData, callback )**
 Remember some state in the database. The record/state is clearly defined as a json format of object, consisting of 3 Containers:
  - **Source** - To whom this record relates?
  - **Command** - What is the command, purpose or name of this record?
@@ -62,7 +67,7 @@ Parameters:
 
 <br>
 
-### **`recordLines ( demoTable, logData, callback )`**
+### **recordLines ( demoTable, logData, callback )**
 The same function as [`record()`](#record--demotable-logdata-callback-), only with multiple lines of log data.
 
 Parameters:
@@ -88,7 +93,7 @@ Parameters:
 
 <br>
 
-### **`getRecord ( demoTable, queryData, callback )`**
+### **getRecord ( demoTable, queryData, callback )**
 Function that gets just the record **Data** given a specific **Source** and **Command** in the **queryData** JSON object. *(**queryData** is the same as **logData**)*
 
 Parameters:
@@ -105,7 +110,25 @@ Parameters:
 
 <br>
 
-### **`getRecordTime ( demoTable, queryData, callback )`**
+### **getAllRecords ( demoTable, queryData, callback )**
+Function that gets all the records mathing a certain criteria given in the queryData. *(**queryData** is the same as **logData**)*
+
+Parameters:
+ - **demoTable**
+ - **queryData**
+    ```javascript
+        let queryData = {
+            Source:     "", // (optional)
+            Command:    "",
+            Data:       ""  // (optional)
+        }
+    ```
+ - **callback**
+    - `rows`       <span style="color: #239B56; font-family: Consolas, monospace; font-weight: bold;">\<array/list\><span>
+
+<br>
+
+### **getRecordTime ( demoTable, queryData, callback )**
 Function that gets **Time** and **Data** of a record given a specific **Source** and **Command** in the **queryData** JSON object. *(**queryData** is the same as **logData**)*
 
 Parameters:
@@ -128,7 +151,7 @@ Parameters:
 
 <br>
 
-### **`updateRecord ( demoTable, logData, callback )`**
+### **updateRecord ( demoTable, logData, callback )**
 Function to update certain record's data.
 
 Parameters:
@@ -146,7 +169,7 @@ Parameters:
 
 <br>
 
-### **`userJoins`**
+### **userJoins**
 Built-in way of recording when a user has joined the game.
 
 Parameters:
@@ -157,7 +180,7 @@ Parameters:
 
 <br>
 
-### **`userLeaves`**
+### **userLeaves**
 Built-in way of recording when a user has left the game.
 
 Parameters:
@@ -165,6 +188,14 @@ Parameters:
  - **student**
  - **demoTable**
  - **callback**
+
+<br>
+
+### **updateLevel**
+
+<br>
+
+### **getCurrentLevel**
 
 <br>
 

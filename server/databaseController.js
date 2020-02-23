@@ -39,15 +39,21 @@ let DB = function(database) {
          */
         let getUserByNickname = function(nickname, callback) {
             currentDB.query("SELECT ID FROM tbl_students WHERE Nickname = ?", nickname, (err, rows) => {
-                callback(rows[0].ID);
+                if (typeof rows != "undefined")
+                    callback(rows[0].ID);
             });
         }
 
         let isFollowing = function(Follower_ID, Following_ID, callback) {
+            if (Follower_ID == Following_ID) {
+                callback("error");
+                return false;
+            }
+
             currentDB.query("SELECT ID FROM tbl_following WHERE Follower_ID = ? AND Following_ID = ?", [Follower_ID, Following_ID], (err, rows) => {                
                 if (typeof rows !== undefined)
-                    if (rows.length > 0) callback(true);
-                else callback(false);
+                    if (rows.length > 0) callback("following");
+                else callback("not-following");
             });
         }
 
@@ -64,7 +70,7 @@ let DB = function(database) {
                     isFollowing(req.user.ID, ID, (following) => {
                         rows[0].Following = following;
                         callback(rows[0]);
-                    })
+                    });
                 });
             });
         }
@@ -81,6 +87,12 @@ let DB = function(database) {
             WHERE (LOWER(Firstname) LIKE ? OR LOWER(Lastname) LIKE ?) AND Role = ?\
                 \
             ", [req.user.ID, name_search, name_search, '1'], (err, rows) => {
+                for (let i = 0; i < rows.length; ++i) {
+                    if (rows[i].ID == req.user.ID) {
+                        rows.splice(i, 1);
+                    }
+                }
+                
                 callback(rows);
             });
         }
@@ -112,7 +124,12 @@ let DB = function(database) {
         let followUser = function(req, data, callback) {
             getUserByNickname(data.Following_User, (followingID) => {
                 isFollowing(req.user.ID, followingID, (follow) => {
-                    if (follow == false) {
+                    if (follow == "error") {
+                        callback("error");
+                        return false;
+                    }
+
+                    if (follow == "not-following") {
                         let followData = { 
                             Follower_ID: req.user.ID, 
                             Following_ID: followingID

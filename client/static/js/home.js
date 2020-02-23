@@ -9,8 +9,6 @@ $(document).ready(function() {
         scrollBar: false,
         navigation: true
     });
-
-    $(document).foundation();
     
     if (localStorage.getItem('schoolnet-recent-school') !== null) {
         school = localStorage.getItem('schoolnet-recent-school');
@@ -23,13 +21,16 @@ $(document).ready(function() {
         }, 500);
     }
 
+    /*
+    WE ARE NOT USING FOUNDATION ANY MORE, CHANGE THIS
+    
     $("#password-alert-img").mouseenter(function() {
         if (!beenIncorrect) $('#password-tooltip').foundation('show');
     });
     
     $("#password-alert-img").mouseleave(function() {
         if (!beenIncorrect) $('#password-tooltip').foundation('hide');
-    });
+    });*/
 
     $(document.body).css("display", "block");
 

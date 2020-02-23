@@ -38,7 +38,6 @@ SchoolNet uses a number of open source projects to work properly:
 * **[node.js](https://nodejs.org)** - The **BEST** Javascript platform for dynamic servers!
 * [passport.js](http://passportjs.org) - The simplest and most reliable **authorization** platform
 * [socket.io](http://socket.io/) - The fastest websocket platform for node.js
-* [Foundation.Zurb](https://foundation.zurb.com) - Great UI boilerplate for modern web apps
 * [Express](http://expressjs.com) - Fast static serving system for node.js
 * [jQuery](http://jquery.com) - duh
 * [Fullpage.js](https://alvarotrigo.com/fullPage/) - An older open source version used just for the home screen
@@ -50,7 +49,7 @@ SchoolNet uses a number of open source projects to work properly:
 * [p5.js](http://p5js.org) - Amazing library for fast dynamic animations and design
 * [Sweetalert2](https://sweetalert2.github.io) - Modern pop-ups
 * [SASS](https://sass-lang.com/documentation) - Easier CSS
-* [MaterialDesign](https://material.io/) - Modern look
+* [MaterialDesign](https://material.io/) - The Modern look
 * [VisualStudioCode](https://code.visualstudio.com/) - Top-of-the-line free open source editor
 * and finally, can a project be done without [StackOverflow](http://stackoverflow.com)?
 
@@ -79,10 +78,8 @@ $ node SchoolNet.js
 You would also need the missing libraries from the `/client/static/js` and the `/client/static/css` folder. Because we don't have the rights to distribute these dependencies in our repository, you would need to download them yourself.
 
 ```
-/client/static/css/foundation.css
 /client/static/css/jquery.fullPage.css
 
-/client/static/js/foundation.js
 /client/static/js/jquery-3.3.1.js
 /client/static/js/jquery.fullpage.js
 /client/static/js/p5.min.js
