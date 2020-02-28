@@ -5,7 +5,7 @@
 //          it's empty, so fill it from the logDemo :D      
 //          WE NEED TO FILL THE DEMO WITH THIS INFO AT THE END OF THE GAME
 
-                            /*if (typeof data.wordCount !== undefined && data.wordCount > 0) {
+                            /*if (typeof data.wordCount !== "undefined" && data.wordCount > 0) {
                                 let pickWordIDs = [];
                                 for (let i = 0; i < data.wordCount; ++i) {
                                     pickWordIDs.push("pickWord" + i);

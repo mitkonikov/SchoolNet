@@ -101,7 +101,7 @@ $(document).ready(function() {
     // checkbox handler
     $(".checkbox").click(function() {
         let ID = $(this).attr("id");
-        if (typeof CHECKBOXES[ID] === undefined) {
+        if (typeof CHECKBOXES[ID] === "undefined") {
             CHECKBOXES[ID] = true;
             $(this).addClass("check");
             $("#time-to-start-level").hide();

@@ -30,8 +30,6 @@ var Register = function(req, res) {
         var salt = process.env.PASSPORT_SALT;
         salt = salt + '' + req.body.password;
         var encPassword = crypto.createHash('sha256').update(salt).digest('hex');
-
-        // var values = ['', req.body.username, encPassword, 0, req.body.firstname, req.body.lastname, req.body.school, req.body.email, req.body.gender, '0'
         
         var values = {
             ID : '',

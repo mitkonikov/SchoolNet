@@ -51,7 +51,7 @@ let DB = function(database) {
             }
 
             currentDB.query("SELECT ID FROM tbl_following WHERE Follower_ID = ? AND Following_ID = ?", [Follower_ID, Following_ID], (err, rows) => {                
-                if (typeof rows !== undefined)
+                if (typeof rows !== "undefined")
                     if (rows.length > 0) callback("following");
                 else callback("not-following");
             });
@@ -185,7 +185,7 @@ let DB = function(database) {
 
             getClassID: function(Room_ID, callback) {
                 callback.query("SELECT Class_ID FROM tbl_games_current WHERE Room_ID = ?", Room_ID, (err, rows) => {           
-                    if (typeof rows !== undefined)
+                    if (typeof rows !== "undefined")
                         if (rows)
                             if (rows.length)
                                 if (callback && typeof(callback) === "function")
@@ -223,7 +223,7 @@ let DB = function(database) {
                         STUDENT_IDS.push(parseInt(s.Student_ID));
                     }
             
-                    if (typeof students !== undefined)
+                    if (typeof students !== "undefined")
                         if (students.length)
                             if (callback && typeof(callback) === "function")
                                 callback(STUDENT_IDS);

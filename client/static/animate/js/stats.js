@@ -12,6 +12,9 @@ var prevHEIGHT = 0;
 
 let robotoLight, robotoThin;
 
+let gotServerData = false;
+let cacheServerData;
+
 function preload() {
     robotoLight = loadFont('/client/static/res/Roboto-Light.ttf');
     robotoThin = loadFont('/client/static/res/Roboto-Thin.ttf');
@@ -160,28 +163,37 @@ function drawStatsText() {
     textSize(HEIGHT / 20.00);
     text('Real-time Statistics', WIDTH / 2, HEIGHT / 2);
 
-    getStatistics().then((response) => {
-        let MAIN_STATS = "";
+    if (!gotServerData) {
+        getStatistics().then((response) => {
+            printTextStats(response);
 
-        console.log(response);
+            cacheServerData = response;
+            gotServerData = true;
+        });
+    } else {
+        printTextStats(cacheServerData);
+    }
+}
 
-        textFont(robotoLight);
-        textAlign(CENTER, CENTER);
-        textSize(HEIGHT / 40.00);
+function printTextStats(response) {
+    let MAIN_STATS = "";
 
-        if (typeof response.Users !== undefined && response.Users != "") {
-            MAIN_STATS = "Корисници: " + response.Users;
-            text(MAIN_STATS, WIDTH / 2, HEIGHT / 5);
-        }
+    textFont(robotoLight);
+    textAlign(CENTER, CENTER);
+    textSize(HEIGHT / 40.00);
 
-        if (typeof response.Contributions_Tatkin !== undefined && response.Contributions_Tatkin != "") {
-            MAIN_STATS = "Придонеси: " + response.Contributions_Tatkin;
-            text(MAIN_STATS, WIDTH / 2, HEIGHT / 5 + HEIGHT / 40.00 * 1.5);
-        }
+    if (typeof response.Users !== "undefined" && response.Users != "") {
+        MAIN_STATS = "Корисници: " + response.Users;
+        text(MAIN_STATS, WIDTH / 2, HEIGHT / 5);
+    }
 
-        if (typeof response.Index_Requests !== undefined && response.Index_Requests != "") {
-            MAIN_STATS = "Посети: " + response.Index_Requests;
-            text(MAIN_STATS, WIDTH / 2, HEIGHT / 5 + HEIGHT / 40.00 * 3);
-        }
-    });
+    if (typeof response.Contributions_Tatkin !== "undefined" && response.Contributions_Tatkin != "") {
+        MAIN_STATS = "Придонеси: " + response.Contributions_Tatkin;
+        text(MAIN_STATS, WIDTH / 2, HEIGHT / 5 + HEIGHT / 40.00 * 1.5);
+    }
+
+    if (typeof response.Index_Requests !== "undefined" && response.Index_Requests != "") {
+        MAIN_STATS = "Посети: " + response.Index_Requests;
+        text(MAIN_STATS, WIDTH / 2, HEIGHT / 5 + HEIGHT / 40.00 * 3);
+    }
 }

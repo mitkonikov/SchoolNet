@@ -15,9 +15,9 @@ let Initialize = function(node_databaseController, node_gameLogic) {
 
 let Query = function(req, res) {
     if (req.isAuthenticated()) {
-        if (typeof req.user !== undefined) {
+        if (typeof req.user !== "undefined") {
             if (req.user.Role == 1) { // If it's a teacher
-                if (typeof req.body.command !== undefined) {
+                if (typeof req.body.command !== "undefined") {
                     if (req.body.command === 'list-class') { // LIST ALL CLASSES
                         network.table().Class.getAll.whereTeacher(req.user.ID, (rows) => res.send(rows));
                     } else if (req.body.command === 'get-class') {

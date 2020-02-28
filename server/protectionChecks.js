@@ -28,7 +28,7 @@ var regexCheck = function(field, data, userinfo) {
  * @param {*} userinfo      Information about the user that submits the data
  */
 var emptyCheck = function(field, data, userinfo) {
-    if (!(typeof data !== undefined)) {
+    if (!(typeof data !== "undefined")) {
         var errorDesc = "Tried to send an empty POST request bypassing the client-side Javascript! \n " + field + " is not defined!";
         logErrorHandler("POST", userinfo.ip, null, errorDesc, userinfo);
         return false;
@@ -116,7 +116,10 @@ var emailCheck = function(email) {
  * @param {*} body Body of the req
  * @param {*} ip   IP of the user
  */
-var registerCheck = function(body, ip) {
+var registerCheck = function(req) {
+    let body = req.body;
+    let ip = req.clientIp;
+
     var data = {
         firstname: body.firstname,
         lastname: body.lastname,
@@ -133,7 +136,7 @@ var registerCheck = function(body, ip) {
         ip: ip
     }
 
-    if (!signinCheck(body.username, body.password, body.school, ip)) {
+    if (!signinCheck(req)) {
         return false;
     }
 

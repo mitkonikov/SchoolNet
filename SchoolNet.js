@@ -131,7 +131,7 @@ app.post('/client/registerme', function(req, res, next) {
 
     // RECAPTCHA STUFF HERE
     
-    let checks = protectionChecks.registerCheck(req.body, req.clientIp);
+    let checks = protectionChecks.registerCheck(req);
     if (checks != true) {
         res.send(checks);
         return;

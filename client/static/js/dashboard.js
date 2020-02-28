@@ -497,7 +497,7 @@ function putStudentRequest(data) {
 
     let STUDENT_NAME = createDIV("center-v");
     STUDENT_NAME.id = "student-name";
-    if (typeof data.Display_Name !== undefined) {
+    if (typeof data.Display_Name !== "undefined") {
         STUDENT_NAME.innerHTML = data.Display_Name;
         
         STUDENT.appendChild(STUDENT_ICON).appendChild(STUDENT_CHECK);
@@ -519,7 +519,7 @@ function putStudent(data) {
 
     let STUDENT_NAME = createDIV("center-v");
     STUDENT_NAME.id = "student-name";
-    if (typeof data.Display_Name !== undefined) {
+    if (typeof data.Display_Name !== "undefined") {
         STUDENT_NAME.innerHTML = data.Display_Name;
         
         STUDENT.appendChild(STUDENT_ICON);
@@ -539,7 +539,7 @@ function putBestStudent(data) {
 
     let STUDENT_NAME = createDIV("center-v");
     STUDENT_NAME.id = "student-small-name";
-    if (typeof data.Display_Name !== undefined) {
+    if (typeof data.Display_Name !== "undefined") {
         STUDENT_NAME.innerHTML = data.Display_Name;
         
         STUDENT.appendChild(STUDENT_ICON);
@@ -557,7 +557,7 @@ function putGame(data) {
 
     let GAME_NAME = createDIV("center-v");
     GAME_NAME.id = "avail-game-net";
-    if (typeof data.Name !== undefined) {
+    if (typeof data.Name !== "undefined") {
         GAME_NAME.innerHTML = data.Name;
         
         GAME.appendChild(GAME_ICON);

@@ -382,7 +382,7 @@ function insertBeforeDiv(div, element) {
     return new Promise((resolve, reject) => {
         var inNode = div.insertBefore(element);
         while(true) {
-            if (typeof inNode !== undefined) {
+            if (typeof inNode !== "undefined") {
                 resolve();
                 break;
             }

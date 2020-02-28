@@ -141,7 +141,7 @@ let tatkinSocket = function(API) {
                 });
 
                 socket.on("pick words", (data) => {
-                    if (typeof data.wordCount === undefined) data.wordCount = 10;
+                    if (typeof data.wordCount === "undefined") data.wordCount = 10;
                     if (data.wordCount > 10) data.wordCount = 10;
                     
                     for (let i = 0; i < data.wordCount; ++i) {
