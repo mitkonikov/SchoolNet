@@ -84,7 +84,7 @@ let tatkinSocket = function(API) {
                     if (!firstTime) socket.emit("connection setup", { firstTime: false });
 
                     updateGameState(obj, "wait");
-                    GameEngine.updateLevel(demo_table, "-1");
+                    GameEngine.updateCurrentLevel(demo_table, "-1");
                     
                     // start the heartbeat
                     console.log("Heartbeat started!");
@@ -180,25 +180,8 @@ let tatkinSocket = function(API) {
                 });
 
                 socket.on("get generated words", (data) => {
-                    let current_demo_path = demo_path + demo_table + ".json";
-                    obj.demo.getDemoFile(null, current_demo_path, (demo_data) => {
-                        if (!data.Override && demo_data.game.length != 0) {
-                            // if it already contains words
-
-                            // if we want to send only the word and the word number
-                            /*let justWords = [];
-
-                            for (let word of demo_data.game) {
-                                justWords.push({ Number: word.Number, Word: word.Word });
-                            }
-
-                            // send the words to the client
-                            socket.emit("set generated words", justWords);*/
-
-                            // we are sending everything including the truthfulness value
-                            // but only to the teacher
-                            socket.emit("set generated words", demo_data.game);
-                        }
+                    GameEngine.getAllLevels(demo_table, (levels) => {
+                        socket.emit("set generated words", levels);
                     });
                 });
 
@@ -428,7 +411,7 @@ function randomGeneratedWord(obj, i) {
                             obj.GameEngine.updateRecord(obj.demo_table, 
                                     {
                                         Source: "server", 
-                                        Command: "pickWord" + i, 
+                                        Command: "level-data-" + i, 
                                         Data: JSON.stringify(demoData)
                                     });
                         }
@@ -466,7 +449,7 @@ function trueWord(obj, i) {
                 obj.GameEngine.updateRecord(obj.demo_table, 
                         {
                             Source: "server", 
-                            Command: "pickWord" + i, 
+                            Command: "level-data-" + i, 
                             Data: JSON.stringify(demoData)
                         });
             } else {
@@ -555,7 +538,8 @@ function getStudentsOnlineInfo(obj, socket, Room_ID) {
 function getStudentsConnectInfo(obj, callback) {
     obj.GameEngine.getAllRecords(obj.demo_table, { Command: 'student join' }, (rows) => {
         let IDs = [];
-        for (row of rows) IDs.push(parseInt(row.Source));
+
+        for (let row of rows) IDs.push(parseInt(row.Source));
 
         if (callback && typeof(callback) === "function")
             callback(IDs);
@@ -737,7 +721,7 @@ function HEARTBEAT(obj, socket) {
                 // The show must go on!
                 obj.GameEngine.getCurrentLevel(obj.demo_table, (level) => {
 
-                    if (level + 1 == 11) {
+                    if (level + 1 == 10) {
                         // get game-finish stats
                         obj.records.query("(SELECT Source, Data FROM " + obj.demo_table + " WHERE Command = ? ORDER BY Data DESC) LIMIT 5", "score", (err, scoreboard) => {
                             if (err) {
@@ -762,10 +746,6 @@ function HEARTBEAT(obj, socket) {
 
                             obj.network.table().getDisplayName.in(studentIDs, (display_names) => {
                                 // { Source : ID , Data : SCORE , Place : PLACE, Display_Name : NAME }
-                                if (err) {
-                                    obj.gameTatkinSocket.emit("game finish", scoreboard);
-                                    return;
-                                }
                                 
                                 // TODO: See if it can be optimized (maybe sort?)
                                 for (let names of display_names) {
@@ -783,7 +763,7 @@ function HEARTBEAT(obj, socket) {
 
                         obj.records.query("SELECT * FROM " + obj.demo_table + " WHERE Source = ? AND Command = ?", ["server", "demo written"], (err, isWrittenRow) => {
                             // if the demo is not written
-                            if (err || isWrittenRow.length == 0) {
+                            if (err || typeof isWrittenRow === "undefined" || isWrittenRow.length == 0) {
                                 updateGlobalPlayerScore(obj);
                                 writePlaces(obj, () => {
                                     // copy log to demo file
@@ -793,7 +773,7 @@ function HEARTBEAT(obj, socket) {
                                         }
 
                                         let current_demo_path = obj.demo_path + obj.demo_table + ".json";
-                                        obj.demo.finishLog(null, current_demo_path, () => {
+                                        obj.demo.finishLog(null, rows, current_demo_path, () => {
                                             let logThatItIsLogged = {
                                                 Time: getTime(),
                                                 Source: "server",
@@ -809,11 +789,6 @@ function HEARTBEAT(obj, socket) {
 
                         // TODO: Put this in the previous brackets
                         obj.network.table().getCurrentGame.Info.whereDemoID(obj.demo_table, (rows) => {
-                            if (err) {
-                                console.trace(err);
-                                return;
-                            }
-
                             if (rows.length) {
                                 let SAVED = {
                                     Teacher_ID: rows[0].Teacher_ID,
@@ -841,20 +816,20 @@ function HEARTBEAT(obj, socket) {
                             (freeze_time) => {
 
                                 setTimeout(() => {
-                                    obj.GameEngine.updateLevel(obj.demo_table, "0");
+                                    obj.GameEngine.updateCurrentLevel(obj.demo_table, "0");
                                     console.log("game started");
                                 }, parseInt(freeze_time) * 100);
                         });
                     } else {
-                        // get level info from the .json file
-                        let current_demo_path = obj.demo_path + obj.demo_table + ".json";
-                        obj.demo.getLevelInfo(current_demo_path, level, (info) => {
+                        obj.GameEngine.getLevelData(level, obj.demo_table, (info) => {
                             // {
                             //     "Number": 9,
                             //     "Truthfulness": true,
                             //     "Word_ID": 7960,
                             //     "Word": "номинирана"
                             // }
+
+                            console.log("Level Data: " + info);
 
                             obj.GameEngine.getRecord(obj.demo_table, {
                                 Source: "server", Command: "current-level-time" 
@@ -863,6 +838,8 @@ function HEARTBEAT(obj, socket) {
                                 obj.GameEngine.getRecord(obj.demo_table, {
                                     Source: "teacher", Command: "global level time" 
                                 }, (global_level_time) => {
+                                    
+                                    console.log("current-level-time: " + level_time + ", global level time: " + global_level_time);
 
                                     if (level_time == global_level_time) {
                                         // write a stats checkpoint
@@ -893,10 +870,12 @@ function HEARTBEAT(obj, socket) {
 
                                         obj.gameTatkinSocket.emit("level start", LEVEL_DATA);  
                                     } else {
+                                        console.log("level time = 0");
                                         obj.GameEngine.getRecordTime(obj.demo_table, {
                                             Source: "server", Command: "stats checkpoint", Data: "level start " + level }, (stat_time) => {
-                                            console.log("level start time: " + stat_time);
                                             // ran out of time [level finished]
+                                            console.log("stat_time = " + stat_time);
+                                            console.log(connected_students);
                                             for (let student of connected_students) {
                                                 // student is an ID
                                                 obj.GameEngine.getRecordTime(obj.demo_table, {
@@ -907,8 +886,11 @@ function HEARTBEAT(obj, socket) {
                                                     
                                                     let diff = timeAnswer - stat_time;
                                                     
+                                                    console.log("Client Answer: " + dataAnswer.Answer + " at time diff of " + diff);
                                                     if (dataAnswer.Answer == info.Truthfulness) {
                                                         // its right
+
+                                                        console.log("got it right");
                                                         obj.GameEngine.record(demo_table, {
                                                             Source: student,
                                                             Command: "correct-" + level, 
@@ -939,7 +921,7 @@ function HEARTBEAT(obj, socket) {
 
                                             sendStats(obj, socket, level);
                                             resetLevelTime(obj);
-                                            obj.GameEngine.updateLevel(obj.demo_table, (level+1).toString());
+                                            obj.GameEngine.updateCurrentLevel(obj.demo_table, (level+1).toString());
                                         });
                                     }
                                 });

@@ -19,8 +19,10 @@ The Game Engine is simple a small module that has deals with the records (states
   - [updateRecord](#updaterecord--demotable-logdata-callback-)
   - [userJoins](#userjoins)
   - [userLeaves](#userleaves)
-  - [updateLevel](#updatelevel)
+  - [updateCurrentLevel](#updatecurrentlevel)
   - [getCurrentLevel](#getcurrentlevel)
+  - [getLevelData](#getleveldata)
+  - [getAllLevels](#getalllevels)
   - [GameOver](#gameover)
 
 <br>
@@ -191,11 +193,19 @@ Parameters:
 
 <br>
 
-### **updateLevel**
+### **updateCurrentLevel**
 
 <br>
 
 ### **getCurrentLevel**
+
+<br>
+
+### **getLevelData**
+
+<br>
+
+### **getAllLevels**
 
 <br>
 

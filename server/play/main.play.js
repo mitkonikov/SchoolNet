@@ -7,8 +7,8 @@ var Initialize = function(server, passportPass, databaseController, network) {
     demoLoggerModule.buildDemoLogger(network);
     let GameEngineModule = require("./GameEngine");
     GameEngineModule.buildGameEngine(
-        network, 
-        databaseController.DB("db_records"),
+        network,
+        databaseController,
         demoLoggerModule);
 
     // SYNTHESIZE THE API

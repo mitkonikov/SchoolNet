@@ -78,7 +78,6 @@ There are two types of logs:
     NOTE: Still in contruction!
   - `setUpDemo`
   - `getDemoFile`
-  - `getLevelInfo`
   - `finishLog`
 
 ## Records

@@ -206,15 +206,13 @@
     width: calc(100% + 1em);
     position: absolute;
     float: left;
-    transform: translate(0, -67%);
-
+    transform: translate(0, -50%);
     background-image: url(../img/slide-animation.png);
     background-position: center;
     background-repeat: no-repeat;
+    background-size: cover;
     margin-left: -1em;
-    
     opacity: 0.6;
-
     animation: gradient-animation 7s ease-in-out infinite;
 }
 

@@ -9,17 +9,19 @@
 
 let network;
 let records;
+let dbController;
 let demoLogger;
 let built = false;
 
 let buildGameEngine = (
     network_connect,
-    records_connect,
+    databaseController_connect,
     demoLogger_connect) => 
 {
     if (!built) {
         network = network_connect;
-        records = records_connect;
+        dbController = databaseController_connect;
+        records = databaseController_connect.DB("db_records");
         demoLogger = demoLogger_connect;
         built = true;
     }
@@ -50,7 +52,7 @@ let setUpGame = (socket, callback) => {
     let USER = socket.request.user;
     
     // find the Demo_ID (demo_table)
-    network.table("tbl_games_current").getCurrentGame.TeacherID(1, USER.ID, (rows) => {
+    dbController.DB("db_net").table("tbl_games_current").getCurrentGame.TeacherID(1, USER.ID, (rows) => {
         // JOINS THE ROOM
         // INITIATE A DEMO
 
@@ -123,7 +125,8 @@ let recordLines = (demo_table, logData, callback) => {
  */
 let getRecord = (demo_table, queryData, callback) => {
     getAllRecords(demo_table, queryData, (record) => {
-        callback(record[0].Data);
+        if (typeof record[0] === "undefined") callback(null);
+        else callback(record[0].Data);
     });
 }
 
@@ -135,18 +138,48 @@ let getRecord = (demo_table, queryData, callback) => {
  */
 let getAllRecords = (demo_table, queryData, callback) => {
     if (queryData.Source == undefined && queryData.Data == undefined) {
-        records.query("SELECT * FROM " + demo_table + "WHERE AND Command = ?",
+        records.query("SELECT * FROM " + demo_table + " WHERE Command = ?",
             [queryData.Command], (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    return;
+                }
+
+                if (typeof rows === "undefined") {
+                    callback(false);
+                    return;
+                }
+
                 callback(rows);
             });
     } else if (queryData.Data == undefined) {
-        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
+        records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?",
             [queryData.Source, queryData.Command], (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    return;
+                }
+
+                if (typeof rows === "undefined") {
+                    callback(false);
+                    return;
+                }
+
                 callback(rows);
             });
     } else {
-        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ? AND Data = ?",
+        records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ? AND Data = ?",
             [queryData.Source, queryData.Command, queryData.Data], (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    return;
+                }
+                
+                if (typeof rows === "undefined") {
+                    callback(false);
+                    return;
+                }
+
                 callback(rows);
             });
     }
@@ -164,13 +197,13 @@ let getAllRecords = (demo_table, queryData, callback) => {
  */
 let getRecordTime = (demo_table, queryData, callback) => {
     if (queryData.Data == undefined) {
-        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ?",
+        records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?",
             [queryData.Source, queryData.Command], (err, rows) => {
                 if (typeof rows != "undefined")
                     callback({ Time: rows[0].Time, Data: rows[0].Data });
             });
     } else {
-        records.query("SELECT * FROM " + demo_table + "WHERE Source = ? AND Command = ? AND Data = ?",
+        records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ? AND Data = ?",
             [queryData.Source, queryData.Command, queryData.Data], (err, rows) => {
                 if (typeof rows != "undefined")
                     callback(parseInt(rows[0].Time));
@@ -248,7 +281,7 @@ let userConnects = (user, student, demo_table, joins, callback) => {
         JOIN = "student join";
     }
 
-    if (!state) {
+    if (!joins) {
         let temp = LEAVE;
         LEAVE = JOIN;
         JOIN = temp;
@@ -261,16 +294,18 @@ let userConnects = (user, student, demo_table, joins, callback) => {
 
     // update the log
     records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", [user, JOIN], (err, rows) => {
-        if (rows.length) {
+        if (typeof rows == "undefined" || rows.length == 0) {
+            record(demo_table, { 
+                Source : user,
+                Command: JOIN 
+            }, () => {
+                if (callback && typeof(callback) === "function") callback();
+            });
+        } else {
             records.query("UPDATE " + demo_table + " SET Time = ? WHERE Source = ? AND Command = ?", [getTime(), user, JOIN], (err) => {
                 if (callback && typeof(callback) === "function")
                     callback(err);
             });
-        } else {
-            record(demo_table, { 
-                Source : user,
-                Command: JOIN 
-            }, () => callback());
         }
     });
 } 
@@ -299,7 +334,7 @@ function createTable(demo_table, callback) {
  * @param {JSON}    demo_table      The demo table name
  * @param {String}  currentLevel    The new level state
  */
-let updateLevel = (demo_table, currentLevel) => {
+let updateCurrentLevel = (demo_table, currentLevel) => {
     updateRecord(demo_table, 
         { 
             Source: "server", 
@@ -310,7 +345,26 @@ let updateLevel = (demo_table, currentLevel) => {
 
 let getCurrentLevel = (demo_table, callback) => {
     records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?", ["server", "current-level"], (err, rows) => {
-        callback(parseInt(rows[0].Data));
+        if (typeof rows !== "undefined")
+            callback(parseInt(rows[0].Data));
+    });
+}
+
+let getLevelData = (level, demo_table, callback) => {
+    records.query("SELECT Data FROM " + demo_table + " WHERE Source = ? AND Command = ?", ["server", "level-data-" + parseInt(level)], (err, rows) => {
+        if (typeof rows !== "undefined")
+            callback(JSON.parse(rows[0].Data));
+    });
+}
+
+let getAllLevels = (demo_table, callback) => {
+    records.query("SELECT Data FROM " + demo_table + " WHERE Source = ? AND Command LIKE ?", ["server", "level-data-%"], (err, rows) => {
+        let levels = [];
+        for (let row of rows) {
+            levels.push(JSON.parse(row.Data));
+        }
+
+        callback(levels);
     });
 }
 
@@ -330,6 +384,8 @@ module.exports = {
     updateRecord,
     userJoins,
     userLeaves,
-    updateLevel,
-    getCurrentLevel
+    updateCurrentLevel,
+    getCurrentLevel,
+    getLevelData,
+    getAllLevels
 }

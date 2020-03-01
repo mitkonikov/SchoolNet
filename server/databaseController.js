@@ -184,7 +184,7 @@ let DB = function(database) {
             },
 
             getClassID: function(Room_ID, callback) {
-                callback.query("SELECT Class_ID FROM tbl_games_current WHERE Room_ID = ?", Room_ID, (err, rows) => {           
+                currentDB.query("SELECT Class_ID FROM tbl_games_current WHERE Room_ID = ?", Room_ID, (err, rows) => {           
                     if (typeof rows !== "undefined")
                         if (rows)
                             if (rows.length)

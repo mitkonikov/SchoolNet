@@ -277,26 +277,12 @@ function setPlayerAwards(data) {
 }
 
 function getGameInfo(GAME_ID) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/query',
-            type: 'POST',
-            data: {
-                game : 'game-info',
-                command : 'get-game-info',
-                data : {
-                    Game_ID: GAME_ID
-                }
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
+    return postAjax('query', {
+        game : 'game-info',
+        command : 'get-game-info',
+        data : {
+            Game_ID: GAME_ID
+        }
     });
 }
 
@@ -304,23 +290,9 @@ function getGameInfo(GAME_ID) {
  * Ajax request that lists the public games from the profesors
  */
 function getGames() {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: '/client/query',
-            type: 'POST',
-            data: {
-                game    : 'tatkin',
-                command : 'list-games'
-            },
-            success: function(response) {
-                if (response) {
-                    if (response == 'empty') resolve("empty");
-                    else resolve(response);
-                } else {
-                    resolve("problem");
-                }
-            }
-        });
+    return postAjax('query', {
+        game    : 'tatkin',
+        command : 'list-games'
     });
 }
 
@@ -451,24 +423,19 @@ function contribute(element) {
         return;
     }
 
-    $.ajax({
-		url: '/client/query',
-		type: 'POST',
-        data: { 
-            game : 'contribute-tatkin',
-            command : 'contribute',
-            data: {
-                word : WORD,
-                word_id: WORD_ID,
-                type: WHAT
-            }
-        },
-		success: function(response) {
-            if (response == 'success') {
-                getWord();
-            } else if (response == 'failed') {
-                alert('We have some problems, please try later...');
-            }
+    postAjax('query', { 
+        game : 'contribute-tatkin',
+        command : 'contribute',
+        data: {
+            word : WORD,
+            word_id: WORD_ID,
+            type: WHAT
+        }
+    }).then((response) => {
+        if (response == 'success') {
+            getWord();
+        } else if (response == 'failed') {
+            alert('We have some problems, please try later...');
         }
     });
 }

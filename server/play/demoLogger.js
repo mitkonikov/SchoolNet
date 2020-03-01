@@ -33,7 +33,7 @@ function createDemoJSON(demo_table, template, Game_ID, Room_ID) {
             // demo file for the current game doesnt exist
             
             // try to access the template demo
-            fs.access(current_demo_path, fs.F_OK, (err) => {
+            fs.access(template, fs.F_OK, (err) => {
                 
                 if (err) {
                     console.trace("Template demo for Game_ID = " + Game_ID + " doesn't exist!");
@@ -93,35 +93,20 @@ let getDemoFile = (APIKey, current_demo_path, callback) => {
 }
 
 /**
- * Each level is written to the demo file on the system
- * @param {String}      current_demo_path 
- * @param {Number}      level 
- * @param {Function}    callback 
- */
-let getLevelInfo = (current_demo_path, level, callback) => {
-    fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
-        // parse the demo
-        let thisDemo = JSON.parse(demo_data);
-
-        callback(thisDemo.game[level]);
-    });
-}
-
-/**
  * When every game finishes you should call the finishLog function
  * to write to the demo file and close the logging process
  */
-let finishLog = (APIKey, current_demo_path, callback) => {
+let finishLog = (APIKey, record_rows, current_demo_path, callback) => {
     fs.readFile(current_demo_path, {encoding: 'utf8'}, (err, demo_data) => {
         // parse the demo
         let thisDemo = JSON.parse(demo_data);
 
-        for (let row of rows) {
+        for (let row of record_rows) {
             thisDemo.log.push(row);
         }
 
         // write it
-        obj.fs.writeFile(current_demo_path, JSON.stringify(thisDemo), 'utf-8', (err) => {
+        fs.writeFile(current_demo_path, JSON.stringify(thisDemo), 'utf-8', (err) => {
             if (err) {
                 console.log("error writing header to demo");
                 return;
@@ -135,5 +120,4 @@ let finishLog = (APIKey, current_demo_path, callback) => {
 module.exports.buildDemoLogger = buildDemoLogger;
 module.exports.setUpDemo = setUpDemo;
 module.exports.getDemoFile = getDemoFile;
-module.exports.getLevelInfo = getLevelInfo;
 module.exports.finishLog = finishLog;

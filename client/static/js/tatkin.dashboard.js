@@ -227,7 +227,7 @@ function addStudent(data) {
 
     document.getElementById("students").appendChild(STUDENT);
 
-    if (data.Connected) {
+    if (data.Online) {
         $("#student-" + data.ID).children(".rank-icon").addClass("connected");
     } else
         $("#student-" + data.ID).children(".rank-icon").removeClass("connected");
