@@ -1,13 +1,13 @@
-var app;
+let app;
 
-var Server = function(node_app) {
+let Server = function(node_app) {
     app = node_app;
 }
 
-var Initialize = function(network, crypto) {
-    var flash             = require('connect-flash');
-    var passport          = require('passport');
-    var LocalStrategy     = require('passport-local').Strategy;
+let Initialize = function(network, crypto) {
+    let flash             = require('connect-flash');
+    let passport          = require('passport');
+    let LocalStrategy     = require('passport-local').Strategy;
     
     // PASSPORT
     app.use(flash());
@@ -18,15 +18,19 @@ var Initialize = function(network, crypto) {
         usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true
-        } , function (req, username, password, done){
-            var salt = process.env.PASSPORT_SALT;
+        } , function (req, username, password, done) {
+            let salt = process.env.PASSPORT_SALT;
             
-            var school = req.body.school;
+            let school = req.body.school;
             
-            network.query("select * from tbl_students where Nickname = ? and School_ID = ?", [username, school], function(err, rows){
+            network.query("SELECT * FROM tbl_students WHERE Nickname = ? AND School_ID = ?", [username, school], function(err, rows) {
                 if (err != null) console.log(err);
                 if (err) return done(err);
                 
+                if (typeof rows === "undefined") {
+                    return done(null, false);
+                }
+
                 if (!rows.length) {
                     return done(null, false);
                 }
@@ -36,7 +40,7 @@ var Initialize = function(network, crypto) {
                 let encPassword = crypto.createHash('sha256').update(salt).digest('hex');
                 let dbPassword  = rows[0].Password;
 
-                if(!(dbPassword == encPassword)){
+                if(!(dbPassword == encPassword)) {
                     return done(null, false);
                 }
 
@@ -46,12 +50,12 @@ var Initialize = function(network, crypto) {
         }
     ));
 
-    passport.serializeUser(function(user, done){
+    passport.serializeUser(function(user, done) {
         done(null, user.ID);
     });
 
-    passport.deserializeUser(function(ID, done){
-        network.query("select * from tbl_students where ID = ?", [ID], function (err, rows){
+    passport.deserializeUser(function(ID, done) {
+        network.query("SELECT * FROM tbl_students WHERE ID = ?", [ID], function (err, rows) {
             done(err, rows[0]);
         });
     });

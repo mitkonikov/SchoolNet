@@ -721,7 +721,7 @@ function HEARTBEAT(obj, socket) {
                 // The show must go on!
                 obj.GameEngine.getCurrentLevel(obj.demo_table, (level) => {
 
-                    if (level + 1 == 10) {
+                    if (level + 1 == 11) {
                         // get game-finish stats
                         obj.records.query("(SELECT Source, Data FROM " + obj.demo_table + " WHERE Command = ? ORDER BY Data DESC) LIMIT 5", "score", (err, scoreboard) => {
                             if (err) {
@@ -829,8 +829,6 @@ function HEARTBEAT(obj, socket) {
                             //     "Word": "номинирана"
                             // }
 
-                            console.log("Level Data: " + info);
-
                             obj.GameEngine.getRecord(obj.demo_table, {
                                 Source: "server", Command: "current-level-time" 
                             }, (level_time) => {
@@ -838,8 +836,6 @@ function HEARTBEAT(obj, socket) {
                                 obj.GameEngine.getRecord(obj.demo_table, {
                                     Source: "teacher", Command: "global level time" 
                                 }, (global_level_time) => {
-                                    
-                                    console.log("current-level-time: " + level_time + ", global level time: " + global_level_time);
 
                                     if (level_time == global_level_time) {
                                         // write a stats checkpoint
@@ -875,7 +871,6 @@ function HEARTBEAT(obj, socket) {
                                             Source: "server", Command: "stats checkpoint", Data: "level start " + level }, (stat_time) => {
                                             // ran out of time [level finished]
                                             console.log("stat_time = " + stat_time);
-                                            console.log(connected_students);
                                             for (let student of connected_students) {
                                                 // student is an ID
                                                 obj.GameEngine.getRecordTime(obj.demo_table, {
@@ -889,9 +884,7 @@ function HEARTBEAT(obj, socket) {
                                                     console.log("Client Answer: " + dataAnswer.Answer + " at time diff of " + diff);
                                                     if (dataAnswer.Answer == info.Truthfulness) {
                                                         // its right
-
-                                                        console.log("got it right");
-                                                        obj.GameEngine.record(demo_table, {
+                                                        obj.GameEngine.record(obj.demo_table, {
                                                             Source: student,
                                                             Command: "correct-" + level, 
                                                             Data: "1"
@@ -902,14 +895,14 @@ function HEARTBEAT(obj, socket) {
                                                         });
                                                     } else {
                                                         // wrong
-                                                        obj.GameEngine.record(demo_table, {
+                                                        obj.GameEngine.record(obj.demo_table, {
                                                             Source: student,
                                                             Command: "correct-" + level, 
                                                             Data: "0"
                                                         });
                                                     }
 
-                                                    obj.GameEngine.record(demo_table, {
+                                                    obj.GameEngine.record(obj.demo_table, {
                                                         Source: student,
                                                         Command: "check-time-" + level, 
                                                         Data: diff.toString()

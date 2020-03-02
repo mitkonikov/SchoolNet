@@ -196,17 +196,43 @@ let getAllRecords = (demo_table, queryData, callback) => {
  * @param {Function}    callback    Callback function
  */
 let getRecordTime = (demo_table, queryData, callback) => {
-    if (queryData.Data == undefined) {
+    if (typeof queryData.Data == "undefined") {
         records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ?",
             [queryData.Source, queryData.Command], (err, rows) => {
-                if (typeof rows != "undefined")
-                    callback({ Time: rows[0].Time, Data: rows[0].Data });
+                if (err) {
+                    console.trace(err);
+                    callback(null);
+                    return;
+                }
+
+                if (typeof rows != "undefined") {
+                    if (rows.length == 0) {
+                        callback(null);
+                    } else {
+                        callback({ Time: rows[0].Time, Data: rows[0].Data });
+                    }
+                } else {
+                    callback(null);
+                }
             });
     } else {
         records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ? AND Data = ?",
             [queryData.Source, queryData.Command, queryData.Data], (err, rows) => {
-                if (typeof rows != "undefined")
-                    callback(parseInt(rows[0].Time));
+                if (err) {
+                    console.trace(err);
+                    callback(null);
+                    return;
+                }
+                
+                if (typeof rows != "undefined") {
+                    if (rows.length == 0) {
+                        callback(null);
+                    } else {
+                        callback(parseInt(rows[0].Time));
+                    }
+                } else {
+                    callback(null);
+                }
             });
     }
 }

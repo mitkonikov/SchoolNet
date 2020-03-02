@@ -226,6 +226,10 @@ app.get('/', function(req, res) {
     }
 });
 
+app.get('/pin', (req, res) => {
+    res.sendFile(__dirname + '/client/guest/index.html');
+});
+
 app.get('/client/lobby/dashboard*', function(req, res) {
     if (req.isAuthenticated()) {
         if (req.user.Role == '1') {

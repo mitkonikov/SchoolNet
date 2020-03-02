@@ -43,7 +43,8 @@ module.exports = [{
         // <---->
         './client/static/scss/style_common.scss',
         './client/static/scss/style_register.scss',
-        './client/static/scss/style_home.scss'
+        './client/static/scss/style_home.scss',
+        './client/static/scss/style_pin.scss'
       ],
       lobby : [
         './client/static/scss/material-lobby.scss',
