@@ -51,7 +51,7 @@ protectionChecks.Error(ErrorHandler);
 
 let BLOCKED           = require('blocked-at');
 
-const uuidv4 = require('uuid/v4');
+let fetch = require('node-fetch');
 
 let timer = BLOCKED(function(ms, stack) {
     // console.log('\x1b[31m%s\x1b[0m', "MAIN THREAD BLOCKED FOR " + ms + "ms");
@@ -89,31 +89,47 @@ let indexRequestsCount = 0;
 let prev_ip = false;
 
 app.post('/client/signin', function(req, res, next) {
+    const secret_key = process.env.CAPTCHA_SECRET;
+    const token = req.body.token;
+    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
 
-    if (!protectionChecks.signinCheck(req)) {
-        res.send('incorrect');
-        return;
-    }
+    /*fetch(url, {
+        method: 'post'
+    })
+        .then(response => response.json())
+        .then(google_response => {
+            if (typeof google_response === "undefined") {
+                res.redirect('/');
+                return;
+            }*/
 
-    passport_module.passport.authenticate('local', function(err, user, info) {
-        if (err) {
-            ErrorHandler.log("SQL", req.clientIp, null, err);
-            // further print the username entered
-            res.send(err);
-        }
-
-        if (!user) { return res.send("incorrect"); }
-        
-        req.logIn(user, function(err) {
-            if (err) { 
-                ErrorHandler.log("SQL", req.clientIp, null, err);
-                // further print the username entered
-                res.send(err);
-            }
+            if (google_response.success) {
+                if (!protectionChecks.signinCheck(req)) {
+                    res.send('incorrect');
+                    return;
+                }
             
-            res.send("success");
-        });
-    })(req, res, next);
+                passport_module.passport.authenticate('local', function(err, user, info) {
+                    if (err) {
+                        ErrorHandler.log("SQL", req.clientIp, null, err);
+                        // further print the username entered
+                        res.send(err);
+                    }
+            
+                    if (!user) { return res.send("incorrect"); }
+                    
+                    req.logIn(user, function(err) {
+                        if (err) { 
+                            ErrorHandler.log("SQL", req.clientIp, null, err);
+                            // further print the username entered
+                            res.send(err);
+                        }
+                        
+                        res.send("success");
+                    });
+                })(req, res, next);
+            }
+//        });
 });
 
 let student_module = require("./server/student");

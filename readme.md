@@ -170,12 +170,12 @@ When contributing follow the [Google JavaScript Style Guide](https://google.gith
 ### Todos
 
 - Implement Material Design everywhere
+- Switch the Dashboard to React.js
 - Work on responsivness
 - Email server
   - Verification on sign-in
   - Forgot the password
-- Re-Captcha
-- Sign-in via Facebook
+- Sign-in via Google and Facebook
 - Class/students removal
 - Sub-contributions
 - Contributions statistics
