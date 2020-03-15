@@ -103,7 +103,9 @@ app.post('/client/signin', function(req, res, next) {
                 return;
             }*/
 
-            if (google_response.success) {
+            //if (google_response.success) {
+            if (true) {
+            
                 if (!protectionChecks.signinCheck(req)) {
                     res.send('incorrect');
                     return;
