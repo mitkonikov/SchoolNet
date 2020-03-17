@@ -1,0 +1,55 @@
+body {
+  	background-color: #fe671f;
+}
+
+.App {
+  	text-align: center;
+}
+
+.center-vh {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.form-center {
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+}
+
+#main-form {
+	width: 100%;
+    padding: 0;
+    margin: 0 auto 0 auto;
+    top: 14%;
+    position: relative;
+}
+
+#login-buttons {
+	position: relative;
+	height: 6em;
+}
+
+#facebook-signin {
+	width: 3em;
+	height: 3em;
+	color: white;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+}

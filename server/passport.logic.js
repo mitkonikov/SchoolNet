@@ -50,6 +50,29 @@ let Initialize = function(network, crypto) {
         }
     ));
 
+    FacebookStrategy = require('passport-facebook').Strategy;
+    
+    passport.use(new FacebookStrategy({
+        clientID: process.env.FACEBOOK_APP_ID,
+        clientSecret: process.env.FACEBOOK_APP_SECRET,
+        callbackURL: process.env.FACEBOOK_CALLBACK_URL
+        },
+        function(accessToken, refreshToken, profile, done) {
+       /* User.findOrCreate(..., function(err, user) {
+          if (err) { return done(err); }
+          done(null, user);
+        });*/
+
+        const { email, first_name, last_name } = profile._json;
+        console.log("Access Token: ", accessToken);
+        console.log("Refresh Token: ", refreshToken);
+        console.log("Profile: ", profile._json);
+        
+        /*network.query("SELECT ")*/
+
+        }
+    ));
+
     passport.serializeUser(function(user, done) {
         done(null, user.ID);
     });
