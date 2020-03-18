@@ -1,0 +1,36 @@
+#question-container {
+    width: 100%;
+    height: 100%;
+}
+
+#question {
+    position: relative;
+    height: 40%;
+    text-align: center;
+}
+
+#answers-container {
+    text-align: center;
+    position: relative;
+    height: 60%;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.answer {
+    position: relative;
+    margin: 2%;
+    width: 46%;
+    height: 46%;
+}
+
+.card-base, .button-base, .card-content {
+    width: 100%;
+    height: 100%;
+}

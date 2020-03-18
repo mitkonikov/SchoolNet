@@ -4,23 +4,21 @@ import './App.css';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 
-import FacebookIcon from '@material-ui/icons/Facebook';
-import { IconButton } from '@material-ui/core';
-
-import { Alert } from '@material-ui/lab';
+import Authentication from './components/authentication';
+import Question from './components/question';
 
 const theme = createMuiTheme({
 	palette: {
 		primary: {
-			light: '#dd531d',
+			light: '#34e5eb',
 			main: '#dd531d',
-			dark: '#dd531d',
+			dark: '#34e5eb',
 			contrastText: '#fff',
 		},
 		secondary: {
-			light: '#ff7961',
-			main: '#f44336', // #34e5eb
-			dark: '#ba000d',
+			light: '#34e5eb',
+			main: '#34e5eb', // #34e5eb
+			dark: '#34e5eb',
 			contrastText: '#fff',
 		},
 	},
@@ -30,16 +28,7 @@ function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<div class="form-center">
-				<div id="main-form">
-					<Alert severity="warning">
-						<span class="noselect">Поради спем, мора да се најавите преку Facebook</span>
-					</Alert>
-					<div id="login-buttons">
-						<div class="center-vh">
-							<IconButton> <FacebookIcon id="facebook-signin"/> </IconButton>
-						</div>
-					</div>
-				</div>
+				<Question/>
 			</div>
 		</ThemeProvider>
 	);

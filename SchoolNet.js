@@ -1,21 +1,27 @@
+// SETUP THE HTTP AND HTTPS SERVERS
 const fs = require('fs');
+const keywords = require('keywords');
 
 const SSLSettings = {
     pfx: fs.readFileSync('C://cert//certificate.pfx'),
-    passphrase: '$!$Tp{MjSehS4p?*'
+    passphrase: keywords.SSLPass
 };
 
-let https = require('https');
-
 let express = require('express');
-let app = express();
+let HTTPApp = new express();
+let app = new express();
 
-app.get('/hello', (req, res) => {
-    res.send("hello!");
-});
+let http = require('http').createServer(HTTPApp);
 
-let server = https.createServer(SSLSettings, app);
+HTTPApp.get('*', function(req, res) {  
+    res.redirect('https://schoolnet.mk');
+})
 
+http.listen(80);
+
+let server = require('https').createServer(SSLSettings, app);
+
+// EXPRESS THINGS
 const requestIp = require('request-ip');
 app.use(requestIp.mw())
 

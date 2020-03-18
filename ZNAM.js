@@ -2,19 +2,25 @@ const fs = require('fs');
 
 const SSLSettings = {
     pfx: fs.readFileSync('C://cert//certificate.pfx'),
-    passphrase: '$!$Tp{MjSehS4p?*'
+    passphrase: keywords.SSLPass
 };
 
 let express = require('express');
-let app = express();
+let HTTPApp = new express();
+let app = new express();
+
+let http = require('http').createServer(HTTPApp);
+
+HTTPApp.get('*', function(req, res) {  
+    res.redirect('https://schoolnet.mk');
+})
+
+http.listen(80);
 
 let server = require('https').createServer(SSLSettings, app);
 
 app.get('/', (req, res) => {
-    console.log("here");
-    res.send('Hello HTTPS!');
-    res.end();
+    res.sendFile(__dirname + "./znam/build/index.html");
 })
 
-
-server.listen(443, (err) => console.log(err));
+server.listen(process.env.PORT);
