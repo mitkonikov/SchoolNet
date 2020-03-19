@@ -1,4 +1,11 @@
 
+let server, network;
+
+let Initialize = (server_connect, network_connect) => {
+    server = server_connect;
+    network = network_connect;
+}
+
 String.prototype.multiReplace = function(array) {
     let result = "";
     
@@ -30,3 +37,5 @@ process.on('SIGINT', () => {
         });
     });
 });
+
+module.exports.Initialize = Initialize;

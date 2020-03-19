@@ -1,10 +1,10 @@
 // SETUP THE HTTP AND HTTPS SERVERS
 const fs = require('fs');
-const keywords = require('keywords');
+const keywords = require('./keywords');
 
 const SSLSettings = {
     pfx: fs.readFileSync('C://cert//certificate.pfx'),
-    passphrase: keywords.SSLPass
+    passphrase: keywords.SSLPass()
 };
 
 let express = require('express');
@@ -218,3 +218,4 @@ server.listen(process.env.PORT);
 console.log('\x1b[32m%s\x1b[0m', "SchoolNet Server Started.");
 
 let misc = require('./server/misc');
+misc.Initialize(server, network);

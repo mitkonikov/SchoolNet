@@ -1,12 +1,22 @@
 #question-container {
     width: 100%;
-    height: 100%;
+    height: 95%;
+    position: relative;
 }
 
 #question {
     position: relative;
-    height: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 38%;
     text-align: center;
+    padding: 2%;
+}
+
+#question-content {
+    padding: 0.8em;
 }
 
 #answers-container {
@@ -26,11 +36,6 @@
 .answer {
     position: relative;
     margin: 2%;
-    width: 46%;
-    height: 46%;
-}
-
-.card-base, .button-base, .card-content {
-    width: 100%;
-    height: 100%;
+    width: 96%;
+    height: 21%;
 }

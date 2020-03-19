@@ -58,18 +58,54 @@ let Initialize = function(network, crypto) {
         callbackURL: process.env.FACEBOOK_CALLBACK_URL
         },
         function(accessToken, refreshToken, profile, done) {
-       /* User.findOrCreate(..., function(err, user) {
-          if (err) { return done(err); }
-          done(null, user);
-        });*/
+            /*console.log("Access Token: ", accessToken);
+            console.log("Refresh Token: ", refreshToken);
+            console.log("Profile: ", profile._json);*/
 
-        const { email, first_name, last_name } = profile._json;
-        console.log("Access Token: ", accessToken);
-        console.log("Refresh Token: ", refreshToken);
-        console.log("Profile: ", profile._json);
-        
-        /*network.query("SELECT ")*/
+            let FB_NAME = profile._json.name;
+            let FB_ID = profile._json.id;
+            
+            network.query("SELECT * FROM tbl_students WHERE FB_ID = ?", [FB_ID], (err, qfb_id) => {          
+                if (err) console.trace(err);
+                
+                if (typeof qfb_id != "undefined" && qfb_id.length != 0) {
+                    if (accessToken == qfb_id[0].FB_AccessToken) {
+                        network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, qfb_id[0].ID]);
+                        done(null, qfb_id[0]);
+                    }
+                } else {
+                    network.query("SELECT * FROM tbl_students WHERE FB_AccessToken = ?", [accessToken], (err, rows) => {            
+                        if (err) console.trace(err);
 
+                        if (typeof rows != "undefined" && rows.length != 0) {
+                            // user exists
+                            network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, rows[0].ID]);
+                            done(null, rows[0])
+                        } else {
+                            // create a user
+                            let values = {
+                                ID: '',
+                                Role: 0,
+                                Valid: 1,
+                                Online: 1,
+                                FB_ProfileName: FB_NAME,
+                                FB_AccessToken: accessToken,
+                                FB_ID: FB_ID
+                            };
+
+                            if (typeof refreshToken != "undefined") {
+                                values[FB_RefreshToken] = refreshToken;
+                            }
+
+                            network.query("INSERT INTO tbl_students SET ?", values, () => {
+                                network.query("SELECT * FROM tbl_students WHERE FB_AccessToken = ? AND FB_ID = ?", [accessToken, FB_ID], (err, newRows) => {
+                                    done(null, newRows[0]);
+                                });
+                            });
+                        }
+                    });
+                }
+            });
         }
     ));
 

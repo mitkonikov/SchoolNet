@@ -8,7 +8,7 @@ import { Alert } from '@material-ui/lab';
 class Authentication extends Component {
     render() {
         return (
-            <div>
+            <React.Fragment>
                 <Alert severity="warning">
                     <span class="noselect">Поради спем, мора да се најавите преку Facebook</span>
                 </Alert>
@@ -17,7 +17,7 @@ class Authentication extends Component {
                         <IconButton> <FacebookIcon id="facebook-signin"/> </IconButton>
                     </div>
                 </div>
-            </div>
+            </React.Fragment>
         );
     }
 }

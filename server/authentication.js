@@ -97,11 +97,15 @@ let Initialize = (app, network, req) => {
     app.get('/auth/facebook/callback',
         passport_module.passport.authenticate('facebook', 
             {
-                successRedirect: '/sucess',
-                failureRedirect: '/login' 
+                successRedirect: '/success',
+                failureRedirect: '/' 
             }
         )
     );
+
+    app.get('/deauth/facebook/callback', (req, res) => {
+        
+    });
 
     return {
         passport_module,
