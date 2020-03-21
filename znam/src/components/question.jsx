@@ -21,8 +21,7 @@ class Question extends Component {
         for (let i = 0; i < 4; i++) {
             result.push(
             <div class="answer" key={i+1}>
-                <Card 
-                    disableElevation
+                <Card
                     variant="outlined">
                     <ButtonBase
                         onClick={event => { console.log(i+1); }}
@@ -60,9 +59,7 @@ class Question extends Component {
             <div id="question-container" class="noselect">
                 <div id="question">
                     <div>
-                    <Typography>
                         Прашање број {this.state.questionNumber}
-                    </Typography>
                     </div>
                     <div id="question-content">
                         <Typography variant="h5">

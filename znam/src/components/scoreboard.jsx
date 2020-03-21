@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import { Card, CardContent } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import { List, ListItem, ListItemText } from '@material-ui/core';
+
+import LeaderboardPlayer from './leaderboardPlayer';
+
+import './../styles/scoreboard.css';
 
 class Scoreboard extends Component {
     renderPlayers() {
@@ -7,13 +12,12 @@ class Scoreboard extends Component {
 
         for (let i = 0; i < 10; i++) {
             playersDOM.push(
-                <div class="scoreboard-player">
-                    <Card>
-                        <CardContent>
-                            {i}
-                        </CardContent>
-                    </Card>
-                </div>
+                <ListItem button>
+                    <div class="list-number">
+                        #{i}
+                    </div>
+                    <ListItemText primary={"Player" + i}/>
+                </ListItem>
             );
         }
 
@@ -23,13 +27,21 @@ class Scoreboard extends Component {
     render() {
         return (
             <div id="scoreboard-container">
+                <div id="congrats-message">
+                    <Typography variant="h5"> Честитки! </Typography>
+                </div>
                 <div id="leaderboard">
-                    <div class="leaderboard-player">
-
-                    </div>
+                    <LeaderboardPlayer></LeaderboardPlayer>
+                    <LeaderboardPlayer></LeaderboardPlayer>
+                    <LeaderboardPlayer></LeaderboardPlayer>
                 </div>
                 <div id="scoreboard">
-                    { this.renderPlayers() }
+                    <List>
+                        { this.renderPlayers() }
+                    </List>
+                </div>
+                <div id="nav-footer">
+
                 </div>
             </div>
         );

@@ -99,14 +99,6 @@ app.post('/client/registerme', function(req, res, next) {
     });
 });
 
-app.get('/client/logout', function(req, res) {
-    if (req.isAuthenticated()) {
-        network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, req.user.ID]);
-        req.logout();
-    }
-    res.redirect('/');
-});
-
 // REDIRECTING
 app.get('/favicon.ico', function(req, res) {
     res.sendFile(__dirname + '/favicon.ico');
@@ -140,11 +132,14 @@ app.get('/p/:pageCalled/:subPageCalled', function(req, res) {
 });
 
 // this is for another project
-app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));
+//app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));
 
 app.use('/client/static', express.static(__dirname + '/client/static'));
 app.use('/client/dynamics', express.static(__dirname + '/client/dynamics'));
 app.use('/client/home', express.static(__dirname + '/client/home'));
+
+app.use('/client/common', express.static(__dirname + '/client/common'));
+
 
 app.get('/', function(req, res) {
     if (req.isAuthenticated()) {

@@ -107,6 +107,14 @@ let Initialize = (app, network, req) => {
         
     });
 
+    app.get('/client/logout', function(req, res) {
+        if (req.isAuthenticated()) {
+            network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, req.user.ID]);
+            req.logout();
+        }
+        res.redirect('/');
+    });
+
     return {
         passport_module,
         passportPass,

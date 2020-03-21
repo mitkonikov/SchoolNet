@@ -1,0 +1,34 @@
+#selector-subject-container {
+    width: 100%;
+    height: 100%;
+}
+
+#selector-subject {
+    width: 100%;
+    height: 52%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.subject {
+    width: 29%;
+    height: 29%;
+    margin: 2%;
+}
+
+.subject-content {
+    height: 100%;
+    padding: 0.3em;
+}
+
+.subject-icon {
+    height: 70%;
+}
+
+.subject-name {
+    width: 100%;
+    bottom: 0;
+    font-size: 0.5em;
+    text-align: center;
+}
