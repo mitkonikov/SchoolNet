@@ -43,7 +43,12 @@ class Contribute extends Component {
                                 answersDOM.push(
                                     <TextField 
                                         id="question-input" 
-                                        label={"Одговор бр. " + (i + 1)}
+                                        label={(() => {
+                                            if (i === 0) {
+                                                return "Точен одговор";
+                                            }
+                                            return "Одговор бр. " + (i + 1);
+                                        })()}
                                         inputProps={{
                                             maxLength: 150
                                         }}
