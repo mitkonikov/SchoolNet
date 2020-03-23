@@ -5,6 +5,11 @@ import { TextField, Button } from '@material-ui/core';
 import './../styles/contribute.css';
 
 class Contribute extends Component {
+    componentDidMount() {
+        if (typeof this.props.onMount == "function")
+            this.props.onMount();
+    }
+    
     render() {
         return(
             <div class="contribute-container center-vh">

@@ -1,27 +1,29 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 
-const theme = createMuiTheme({
-    palette: {
-        type: "dark",
-        primary: {
-            light: "#dd531d",
-            main: "#dd531d",
-            dark: "#dd531d",
-            contrastText: "#fff"
-        },
-        secondary: {
-            light: "#34e5eb",
-            main: "#34e5eb", // #34e5eb
-            dark: "#34e5eb",
-            contrastText: "#fff"
-        },
-        text: {
-            secondary: "#fff"
-        },
-        action: {
-            selected: "rgba(255, 255, 255, 0.9)"
-        }
+const palette = { // #ef6834
+    type: "dark",
+    primary: {
+        light: "#dd531d",
+        main: "#dd531d",
+        dark: "#dd531d",
+        contrastText: "#fff"
     },
+    secondary: {
+        light: "#01354b",
+        main: "#01354b", // #34e5eb
+        dark: "#01354b",
+        contrastText: "#fff"
+    },
+    text: {
+        secondary: "#fff"
+    },
+    action: {
+        selected: "rgba(255, 255, 255, 0.9)"
+    }
+};
+
+const theme = createMuiTheme({
+    palette: palette,
     overrides: {
         MuiTypography: {
             root: {
@@ -31,7 +33,9 @@ const theme = createMuiTheme({
         MuiButton: {
 			root: {
 				marginLeft: "1em",
-				marginRight: "1em"
+				marginRight: "1em",
+                borderRadius: 0,
+                padding: "6px 30px"
 			},
 			text: {
                 color: "#fff"
@@ -46,7 +50,7 @@ const theme = createMuiTheme({
                 text: {
                     color: "#fff"
                 },
-                backgroundColor: "#dd531d"
+                backgroundColor: "#b84518"
             }
         },
         MuiCardContent: {
@@ -54,14 +58,28 @@ const theme = createMuiTheme({
                 width: "100%",
                 height: "100%",
                 padding: "0",
-                backgroundColor: "#dd531d",
+                backgroundColor: "#b84518",
                 color: "white",
                 fontSize: "2em",
                 cursor: "pointer",
                 position: "absolute",
                 "&&:hover": {
-                    backgroundColor: "#b84518"
+                    backgroundColor: "#9d3d18"
+                    // backgroundColor: "#b84518"
+                    // backgroundColor: "#002c3f"
                 }
+            }
+        },
+        MuiPaper: {
+            root: {
+                backgroundColor: "#fff",
+                color: "#1a1a1a"
+            }
+        },
+        MuiAlert: {
+            standardWarning: {
+                backgroundColor: "#fff",
+                color: "#1a1a1a"
             }
         },
         MuiButtonBase: {
@@ -70,12 +88,6 @@ const theme = createMuiTheme({
                 height: "100%",
                 borderWidth: "0",
                 borderRadius: 0
-            }
-        },
-        MuiButton: {
-            root: {
-                borderRadius: 0,
-                padding: "6px 30px"
             }
         },
 		MuiTextField: {
@@ -105,6 +117,11 @@ const theme = createMuiTheme({
                         color: "#fff"
                     }
                 }
+            }
+        },
+        MuiBottomNavigation: {
+            root: {
+                backgroundColor: "#01354b"
             }
         },
         MuiBottomNavigationAction: {

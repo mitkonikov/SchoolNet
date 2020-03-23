@@ -7,6 +7,11 @@ import LeaderboardPlayer from './leaderboardPlayer';
 import './../styles/scoreboard.css';
 
 class Scoreboard extends Component {
+    componentDidMount() {
+        if (typeof this.props.onMount == "function")
+            this.props.onMount();
+    }
+    
     renderPlayers() {
         let playersDOM = [];
 

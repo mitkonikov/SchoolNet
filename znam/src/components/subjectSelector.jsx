@@ -1,15 +1,29 @@
 import React, { Component } from "react";
 
-import { Card, CardContent, ButtonBase } from '@material-ui/core';
+import { Card, CardContent, ButtonBase } from "@material-ui/core";
 
-import LockIcon from '@material-ui/icons/Lock';
+import LockIcon from "@material-ui/icons/Lock";
 
-import './../styles/subject_selector.css';
+import "./../styles/subject_selector.css";
 
 class SubjectSelector extends Component {
+    componentDidMount() {
+        if (typeof this.props.onMount == "function") this.props.onMount();
+    }
+
     renderSubjects() {
         let subjectDOM = [];
-        let subjectName = ["МАТЕМАТИКА", "ИСТОРИЈА"];
+        let subjectName = [
+            "МАКЕДОНСКИ ЈАЗИК",
+            "МАТЕМАТИКА",
+            "АНГЛИСКИ",
+            "ФИЗИКА",
+            "ХЕМИЈА",
+            "БИОЛОГИЈА",
+            "ИНФОРМАТИКА",
+            "ГЕОГРАФИЈА",
+            "ИСТОРИЈА"
+        ];
 
         for (let i = 0; i < 9; i++) {
             subjectDOM.push(
@@ -22,13 +36,18 @@ class SubjectSelector extends Component {
                         >
                             <CardContent>
                                 <div class="subject-content">
-                                    <div class="subject-icon">
+                                    <div class="subject-icon" style={(() => {
+                                        if (i === 0) return {
+                                            height: "70%"
+                                        }
+                                    })()}>
                                         <div class="center-vh">
-                                            <LockIcon style={
-                                                {
-                                                    width: "1.5em", 
+                                            <LockIcon
+                                                style={{
+                                                    width: "1.5em",
                                                     height: "1.5em"
-                                                }}/>
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                     <div class="subject-name">
@@ -48,9 +67,7 @@ class SubjectSelector extends Component {
     render() {
         return (
             <div id="selector-subject-container">
-                <div id="selector-subject">
-                    { this.renderSubjects() }
-                </div>
+                <div id="selector-subject">{this.renderSubjects()}</div>
             </div>
         );
     }

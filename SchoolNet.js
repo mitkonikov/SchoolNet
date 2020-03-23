@@ -140,7 +140,6 @@ app.use('/client/home', express.static(__dirname + '/client/home'));
 
 app.use('/client/common', express.static(__dirname + '/client/common'));
 
-
 app.get('/', function(req, res) {
     if (req.isAuthenticated()) {
         res.sendFile(__dirname + '/client/lobby/index.html');

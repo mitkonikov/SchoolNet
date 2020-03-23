@@ -9,11 +9,13 @@ import Question from "./components/question";
 import SubjectSelector from "./components/subjectSelector";
 
 import SchoolIcon from "@material-ui/icons/School";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+// import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import AddIcon from "@material-ui/icons/Add";
+import InfoIcon from '@material-ui/icons/Info';
 
-import { Switch, Route, MemoryRouter, Link } from "react-router-dom";
+import { Switch, Route, Link, Router } from "react-router-dom";
+import { createBrowserHistory } from 'history';
 
 import theme from "./theme";
 
@@ -37,64 +39,78 @@ class App extends Component {
         this.state = {
             currentPage: 0
         };
+
+        this.history = createBrowserHistory();
     }
 
     render() {
         return (
-            <MemoryRouter>
+            <Router history={this.history}>
                 <ThemeProvider theme={theme}>
-                    <div class="form-center">
-                        <Switch>
-                            <Suspense fallback={<Loading/>}>
-                                <Route exact path="/">
-                                    <SubjectSelector />
-                                </Route>
-                                <Route path="/score">
-                                    <Scoreboard />
-                                </Route>
-                                <Route path="/contribute">
-                                    <Contribute />
-                                </Route>
-                            </Suspense>
-                        </Switch>
-                    </div>
+                    <Switch>
+                        <Route path="/auth">
+                            <div class="form-center">
+                                <Authentication/>
+                            </div>
+                        </Route>
+                        <Route path="/">
+                            <div class="form-center">
+                                <Switch>
+                                    <Suspense fallback={<Loading/>}>
+                                        <Route exact path="/">
+                                            <SubjectSelector onMount={() => this.setState({currentPage: 0})}/>
+                                        </Route>
+                                        <Route path="/score">
+                                            <Scoreboard onMount={() => this.setState({currentPage: 1})}/>
+                                        </Route>
+                                        <Route path="/contribute">
+                                            <Contribute onMount={() => this.setState({currentPage: 2})}/>
+                                        </Route>
+                                        <Route path="/about">
+                                            
+                                        </Route>
+                                    </Suspense>
+                                </Switch>
+                            </div>
 
-                    <div class="navbar-container">
-                        <BottomNavigation
-                            value={this.state.currentPage}
-                            onChange={(event, newValue) => {
-                                this.setState({ currentPage: newValue });
-                            }}
-                            showLabels
-                        >
-                            <BottomNavigationAction
-                                component={Link}
-                                label="Choose"
-                                icon={<SchoolIcon />}
-                                to="/"
-                            />
-                            <BottomNavigationAction
-                                component={Link}
-                                label="Play"
-                                icon={<PlayArrowIcon />}
-                                to="/play"
-                            />
-                            <BottomNavigationAction
-                                component={Link}
-                                label="Statistics"
-                                icon={<BarChartIcon />}
-                                to="/score"
-                            />
-                            <BottomNavigationAction
-                                component={Link}
-                                label="Contribute"
-                                icon={<AddIcon />}
-                                to="/contribute"
-                            />
-                        </BottomNavigation>
-                    </div>
+                            <div class="navbar-container">
+                                <BottomNavigation
+                                    value={this.state.currentPage}
+                                    onChange={(event, newValue) => {
+                                        this.setState({ currentPage: newValue });
+                                    }}
+                                    showLabels
+                                >
+                                    <BottomNavigationAction
+                                        component={Link}
+                                        label="Play"
+                                        icon={<SchoolIcon />}
+                                        to="/"
+                                    />
+                                    <BottomNavigationAction
+                                        component={Link}
+                                        label="Statistics"
+                                        icon={<BarChartIcon />}
+                                        to="/score"
+                                    />
+                                    <BottomNavigationAction
+                                        component={Link}
+                                        label="Contribute"
+                                        icon={<AddIcon />}
+                                        to="/contribute"
+                                    />
+                                    <BottomNavigationAction
+                                        component={Link}
+                                        label="About"
+                                        icon={<InfoIcon />}
+                                        to="/about"
+                                    />
+                                </BottomNavigation>
+                            </div>
+                        </Route>
+                    </Switch>
                 </ThemeProvider>
-            </MemoryRouter>
+            </Router>
         );
     }
 }
