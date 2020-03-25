@@ -4,23 +4,24 @@ import "./App.css";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { BottomNavigation, BottomNavigationAction } from "@material-ui/core";
 
-import Authentication from "./components/authentication";
 import Question from "./components/question";
-import SubjectSelector from "./components/subjectSelector";
 
 import SchoolIcon from "@material-ui/icons/School";
 // import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import AddIcon from "@material-ui/icons/Add";
-import InfoIcon from '@material-ui/icons/Info';
+import FaceIcon from '@material-ui/icons/Face';
 
 import { Switch, Route, Link, Router } from "react-router-dom";
 import { createBrowserHistory } from 'history';
 
 import theme from "./theme";
 
+const Authentication = React.lazy(() => import("./components/authentication"));
+const SubjectSelector = React.lazy(() => import("./components/subjectSelector"));
 const Scoreboard = React.lazy(() => import("./components/scoreboard"));
 const Contribute = React.lazy(() => import("./components/contribute"));
+const Profile = React.lazy(() => import("./components/profile"));
 
 class Loading extends Component {
     render() { 
@@ -66,8 +67,8 @@ class App extends Component {
                                         <Route path="/contribute">
                                             <Contribute onMount={() => this.setState({currentPage: 2})}/>
                                         </Route>
-                                        <Route path="/about">
-                                            
+                                        <Route path="/profile">
+                                            <Profile onMount={() => this.setState({currentPage: 3})}/>
                                         </Route>
                                     </Suspense>
                                 </Switch>
@@ -101,9 +102,9 @@ class App extends Component {
                                     />
                                     <BottomNavigationAction
                                         component={Link}
-                                        label="About"
-                                        icon={<InfoIcon />}
-                                        to="/about"
+                                        label="Profile"
+                                        icon={<FaceIcon />}
+                                        to="/profile"
                                     />
                                 </BottomNavigation>
                             </div>

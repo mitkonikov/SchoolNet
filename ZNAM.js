@@ -29,6 +29,13 @@ let ErrorHandler        = require("./server/ErrorHandler");
 
 let databases           = require('./server/dbConnection');
 
+
+/** The Main Controller Module for database access */
+let databaseController  = require('./server/databaseController');
+databaseController.Connect(databases, {
+    uuidv4: require('uuid/v4')
+});
+
 let network = databases.network;
 let authenticationModule = require('./server/authentication');
 let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });

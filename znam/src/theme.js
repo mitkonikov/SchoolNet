@@ -128,6 +128,11 @@ const theme = createMuiTheme({
             root: {
                 height: "initial"
             }
+        },
+        MuiCheckbox: {
+            root: {
+                width: "initial"
+            }
         }
     }
 });

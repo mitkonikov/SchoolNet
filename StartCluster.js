@@ -3,6 +3,16 @@ const numCPUs = require('os').cpus().length;
 
 const fs = require('fs');
 
+let argsRaw = process.argv;
+let args = {};
+
+for (let i = 0; i < argsRaw.length; ++i) {
+    if (argsRaw[i].startsWith('-')) {
+        args[argsRaw[i]] = argsRaw[i+1];
+        i++;
+    }
+}
+
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
   
@@ -21,7 +31,7 @@ if (cluster.isMaster) {
         console.log("Restart received, reloading workers");
 
         // delete the cached module, so we can reload the app
-        delete require.cache[require.resolve("./SchoolNet")];
+        delete require.cache[require.resolve("./" + args['-server'])];
 
         // only reload one worker at a time
         // otherwise, we'll have a time when no request handlers are running
@@ -54,5 +64,5 @@ if (cluster.isMaster) {
 } else {
     console.log(`Worker ${process.pid} Starting...`);
 
-    let SchoolNet = require('./SchoolNet');
+    let SchoolNet = require("./" + args['-server']);
 }

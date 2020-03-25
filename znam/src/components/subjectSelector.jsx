@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 
 import { Card, CardContent, ButtonBase } from "@material-ui/core";
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import LockIcon from "@material-ui/icons/Lock";
 
@@ -36,11 +38,15 @@ class SubjectSelector extends Component {
                         >
                             <CardContent>
                                 <div class="subject-content">
-                                    <div class="subject-icon" style={(() => {
-                                        if (i === 0) return {
-                                            height: "70%"
-                                        }
-                                    })()}>
+                                    <div
+                                        class="subject-icon"
+                                        style={(() => {
+                                            if (i === 0)
+                                                return {
+                                                    height: "70%"
+                                                };
+                                        })()}
+                                    >
                                         <div class="center-vh">
                                             <LockIcon
                                                 style={{
@@ -68,6 +74,18 @@ class SubjectSelector extends Component {
         return (
             <div id="selector-subject-container">
                 <div id="selector-subject">{this.renderSubjects()}</div>
+                <div id="game-options">
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                //checked={state.checkedA}
+                                //onChange={handleChange}
+                                name="checkedA"
+                            />
+                        }
+                        label="Сакам да ми се регистрираат поените во Статистика"
+                    />
+                </div>
             </div>
         );
     }
