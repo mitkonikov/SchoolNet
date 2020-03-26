@@ -44,3 +44,16 @@
 #profile-greeting {
     font-size: 0.8em;
 }
+/*
+#feedback-container {
+    height: 10%;
+}*/
+
+#request-feature {
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+#feedback {
+    margin-bottom: 0.5em;
+}

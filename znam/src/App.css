@@ -136,7 +136,12 @@ body {
 @media only screen and (max-height: 720px) {
     .form-center {
         width: 30em;
-        height: 30em;
+        height: 90vh;
+        position: relative;
+        top: 0%;
+        left: 50%;
+        -webkit-transform: translate(-50%, 0%);
+        transform: translate(-50%, 0%);
     }
     
     #introduction {

@@ -3,14 +3,14 @@
  */
 
 /** database Controller */
-var database;
-var network;
-var gameLogic
+let database;
+let ZNAMDBC;
+let network;
 
-let Initialize = function(node_databaseController, node_gameLogic) {
+let Initialize = function(node_databaseController, node_ZNAMDBC) {
     database = node_databaseController;
+    ZNAMDBC = node_ZNAMDBC;
     network = database.DB("db_net");
-    gameLogic = node_gameLogic;
 }
 
 let Update = function(req, res) {
@@ -19,6 +19,10 @@ let Update = function(req, res) {
 
         switch (req.body.command) {
             // Display Name
+            case 'contribute':
+                console.log(data);
+
+                break;
             case 'display-name-change':
                 if (data.displayname && data.displayname.length >= 5 && data.displayname.length <= 100) {
                     network.query("UPDATE tbl_students_info SET Display_Name = ? WHERE ID = ? ", [data.displayname.trim(), req.user.ID], function(err, rows) {

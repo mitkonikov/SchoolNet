@@ -16,6 +16,7 @@ import { Switch, Route, Link, Router } from "react-router-dom";
 import { createBrowserHistory } from 'history';
 
 import theme from "./theme";
+import { queryFetch } from "./js/common";
 
 const Authentication = React.lazy(() => import("./components/authentication"));
 const SubjectSelector = React.lazy(() => import("./components/subjectSelector"));
@@ -38,10 +39,21 @@ class App extends Component {
         super(props);
 
         this.state = {
-            currentPage: 0
+            currentPage: 0,
+            inGame: false
         };
 
         this.history = createBrowserHistory();
+        this.onPlay = this.onPlay.bind(this);
+    }
+
+    onPlay() {
+        this.setState({inGame: true});
+        queryFetch({
+            command: 'get-question'
+        }).then(data => {
+            console.log(data);
+        });
     }
 
     render() {
@@ -51,7 +63,9 @@ class App extends Component {
                     <Switch>
                         <Route path="/auth">
                             <div class="form-center">
-                                <Authentication/>
+                                <Suspense fallback={<Loading/>}>
+                                    <Authentication/>
+                                </Suspense>
                             </div>
                         </Route>
                         <Route path="/">
@@ -59,7 +73,8 @@ class App extends Component {
                                 <Switch>
                                     <Suspense fallback={<Loading/>}>
                                         <Route exact path="/">
-                                            <SubjectSelector onMount={() => this.setState({currentPage: 0})}/>
+                                            <SubjectSelector onMount={() => this.setState({currentPage: 0})}
+                                                onPlay={this.onPlay}/>
                                         </Route>
                                         <Route path="/score">
                                             <Scoreboard onMount={() => this.setState({currentPage: 1})}/>

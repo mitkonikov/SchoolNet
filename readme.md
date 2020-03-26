@@ -39,6 +39,8 @@ SchoolNet uses a number of open source projects to work properly:
 * [passport.js](http://passportjs.org) - The simplest and most reliable **authorization** platform
 * [socket.io](http://socket.io/) - The fastest websocket platform for node.js
 * [Express](http://expressjs.com) - Fast static serving system for node.js
+* [React](https://reactjs.org/) - The world's simplest dynamic front-end
+* [MaterialUI](https://material-ui.com/) - Google's modern design
 * [jQuery](http://jquery.com) - duh
 * [Fullpage.js](https://alvarotrigo.com/fullPage/) - An older open source version used just for the home screen
 * [MySQL](https://www.mysql.com/) - The world's most popular open source database
@@ -57,7 +59,9 @@ SchoolNet uses a number of open source projects to work properly:
 
 ### Development
 
-If anyone wants to set up this server on their own computer, he can absolutely do it and here's how! We know that some of you might prefer Sublime, or Notepad++, or Visual Studio, but we **strongly** recommend Visual Studio Code as your main editor. It allows you to run multiple shell consoles inside the editor itself. Also, debugging Node.js app with Visual Studio Code is really easy! You can set breakpoints anywhere in the code! It's just beautiful!
+> Because of the latest developments, SchoolNet officially implemented an *SSL* protocol which is much more secure. All you need to do is revert back to the HTTP server protocol. *We are building a guide on how to do that properly.*
+
+If anyone wants to set up this server on their own computer, he can absolutely do it and here's how! We know that some of you might prefer Sublime, or Notepad++, or Visual Studio, but we **strongly** recommend **Visual Studio Code** as your main editor. It allows you to run multiple shell consoles inside the editor itself. Also, debugging Node.js app with Visual Studio Code is really easy! You can set breakpoints anywhere in the code! It's just beautiful!
 
 > **PAY ATTENTION**: The **API** for external games is not finished! You should **NOT** develop games for it, without contacting us!
 
@@ -110,10 +114,11 @@ TATKIN_WORD_COUNT = 50000
 
 ##### STEP 4: Database setup
 
-There are 3 databases that SchoolNet uses:
+There are 4 databases that SchoolNet uses:
 * **db_net** - Main database where everything about the users is stored *(PRIVATE)*
 * **db_records** - Database where records of games that are currently played are stored *(PRIVATE)*
 * **db_words** - Database filled with words from Wikipedia and contributions from the users *(PUBLIC)*
+* **db_znam** - Database for the ZNAM platform *(PRIVATE)* *(LACK OF EXAMPLE DATABASE)*
 
 We have example databases that will help you set up this project, private informations (such as account info. or statistical user information) will never be made public!
 
@@ -145,11 +150,15 @@ You shouldn't have any problems with the file names when building the SASS files
 * SchoolNet is a **really complex** network, you are going to need a couple of hours if not days to set it up...
 * Ok, so, here are some things you should know:
 * SchoolNet uses [.env](https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786) variables
+* The *StartCluster.js* module is used only in production, don't use it. Start the server by running directly `node [server]`.
+* The SSL Port we are using is 443
+* We are using SCSS for the main SchoolNet project, but yet there's no implementation for it in the React frontends (including ZNAM)
 
 ##### Sources, useful links:
 
 * Node.js [docs](https://nodejs.org/api/)
 * NPM [docs](https://docs.npmjs.com/)
+* React [docs](https://reactjs.org/docs/getting-started.html)
 * jQuery [docs](https://api.jquery.com/)
 * Socket.io official [docs](https://socket.io/docs/)
 * Socket.io rooms and namespaces -> [link](https://socket.io/docs/rooms-and-namespaces/)

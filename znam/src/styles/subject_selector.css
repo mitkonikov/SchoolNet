@@ -19,7 +19,6 @@
 
 .subject-content {
     height: 88%;
-    padding: 0.3em;
 }
 
 .subject-icon {
@@ -28,7 +27,8 @@
 
 .subject-name {
     width: 100%;
-    bottom: 0;
+    position: absolute;
+    bottom: 0.5em;
     font-size: 0.5em;
     text-align: center;
 }

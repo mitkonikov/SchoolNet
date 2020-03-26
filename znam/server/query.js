@@ -3,14 +3,14 @@
  */
 
 /** Database Controller */
-var database;
-var network;
-var gameLogic;
+let database;
+let ZNAMDBC;
+let network;
 
-let Initialize = function(node_databaseController, node_gameLogic) {
+let Initialize = function(node_databaseController, node_ZNAMDBC) {
     database = node_databaseController;
+    ZNAMDBC = node_ZNAMDBC;
     network = database.DB("db_net");
-    gameLogic = node_gameLogic;
 }
 
 let Query = function(req, res) {
@@ -25,6 +25,16 @@ let Query = function(req, res) {
 
             if (commandSanitized === 'play-znam') {
                 
+            } else if (commandSanitized === 'submit-answer') {
+                
+            } else if (commandSanitized === 'profile-info') {
+                network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => {
+                    let response = {
+                        profileName: rows.Display_Name
+                    }
+
+                    res.send(response);
+                });
             } else if (commandSanitized === 'get-info-me') {
                 network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => res.send(rows));
             } else if (commandSanitized === 'get-info-user') {

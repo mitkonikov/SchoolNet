@@ -99,7 +99,26 @@ let Initialize = function(network, crypto) {
 
                             network.query("INSERT INTO tbl_students SET ?", values, () => {
                                 network.query("SELECT * FROM tbl_students WHERE FB_AccessToken = ? AND FB_ID = ?", [accessToken, FB_ID], (err, newRows) => {
-                                    done(null, newRows[0]);
+                                    let Registered_ID = newRows[0].ID;
+                                                 
+                                    let valuesINFO = {
+                                        ID : Registered_ID,
+                                        Display_Name : FB_NAME,
+                                    }
+
+                                    // INSERT AT STUDENTS INFO
+                                    network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
+                                        // STATISTICS
+                                        let valuesStats = {
+                                            ID : ID,
+                                            Last_Date_Login : new Date().toISOString().slice(0, 19).replace('T', ' '),
+                                            Successive_Logins : 1
+                                        }
+
+                                        network.query("INSERT INTO tbl_stats SET ?", valuesStats);
+                                        
+                                        done(null, newRows[0]);
+                                    });
                                 });
                             });
                         }

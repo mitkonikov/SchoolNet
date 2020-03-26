@@ -32,8 +32,6 @@ const theme = createMuiTheme({
         },
         MuiButton: {
 			root: {
-				marginLeft: "1em",
-				marginRight: "1em",
                 borderRadius: 0,
                 padding: "6px 30px"
 			},

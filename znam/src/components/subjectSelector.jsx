@@ -7,13 +7,19 @@ import Checkbox from '@material-ui/core/Checkbox';
 import LockIcon from "@material-ui/icons/Lock";
 
 import "./../styles/subject_selector.css";
+import { queryFetch } from "../js/common";
 
 class SubjectSelector extends Component {
+    state = {
+        rated: false
+    }
+
     componentDidMount() {
         if (typeof this.props.onMount == "function") this.props.onMount();
     }
 
     renderSubjects() {
+
         let subjectDOM = [];
         let subjectName = [
             "МАКЕДОНСКИ ЈАЗИК",
@@ -29,11 +35,22 @@ class SubjectSelector extends Component {
 
         for (let i = 0; i < 9; i++) {
             subjectDOM.push(
-                <div class="subject">
+                <div class="subject" key={i}>
                     <Card>
                         <ButtonBase
                             onClick={event => {
-                                console.log("clicked");
+                                // start game
+                                queryFetch({
+                                    command: 'play-znam',
+                                    data: {
+                                        subject: i,
+                                        rated: this.state.rated
+                                    }
+                                })
+                                .then(data => {
+                                    if (typeof this.props.onMount == "function")
+                                        this.props.onPlay(data);
+                                });
                             }}
                         >
                             <CardContent>
@@ -78,7 +95,7 @@ class SubjectSelector extends Component {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                //checked={state.checkedA}
+                                checked={this.state.rated}
                                 //onChange={handleChange}
                                 name="checkedA"
                             />
