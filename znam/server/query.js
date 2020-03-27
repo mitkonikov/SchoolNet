@@ -6,14 +6,17 @@
 let database;
 let ZNAMDBC;
 let network;
+let GameLogic;
 
-let Initialize = function(node_databaseController, node_ZNAMDBC) {
+let Initialize = function(node_databaseController, node_ZNAMDBC, node_GameLogic) {
     database = node_databaseController;
     ZNAMDBC = node_ZNAMDBC;
+    GameLogic = node_GameLogic;
     network = database.DB("db_net");
 }
 
 let Query = function(req, res) {
+    let API = { ZNAMDB: ZNAMDBC.ZNAMDB };
     if (req.isAuthenticated()) {
 
         if (typeof req.body.command !== "undefined") {
@@ -24,9 +27,11 @@ let Query = function(req, res) {
                 dataSanitized = req.sanitize(req.body.data);
 
             if (commandSanitized === 'play-znam') {
-                
+                GameLogic.createGame(API, req.user.ID, data, (response) => res.send(response));
             } else if (commandSanitized === 'submit-answer') {
-                
+                GameLogic.submitAnswer(API, req.user.ID, data, (response) => res.send(response));
+            } else if (commandSanitized === 'get-question') {
+                GameLogic.getNextQuestion(API, req.user.ID, (response) => res.send(response));
             } else if (commandSanitized === 'profile-info') {
                 network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => {
                     let response = {

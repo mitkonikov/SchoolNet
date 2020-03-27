@@ -5,11 +5,13 @@
 /** database Controller */
 let database;
 let ZNAMDBC;
+let GameLogic;
 let network;
 
-let Initialize = function(node_databaseController, node_ZNAMDBC) {
+let Initialize = function(node_databaseController, node_ZNAMDBC, node_GameLogic) {
     database = node_databaseController;
     ZNAMDBC = node_ZNAMDBC;
+    GameLogic = node_GameLogic;
     network = database.DB("db_net");
 }
 
@@ -20,8 +22,7 @@ let Update = function(req, res) {
         switch (req.body.command) {
             // Display Name
             case 'contribute':
-                console.log(data);
-
+                ZNAMDBC.contribute(req.user.ID, req.body.command, (response) => res.send(response));
                 break;
             case 'display-name-change':
                 if (data.displayname && data.displayname.length >= 5 && data.displayname.length <= 100) {

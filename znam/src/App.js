@@ -4,8 +4,6 @@ import "./App.css";
 import { ThemeProvider } from "@material-ui/core/styles";
 import { BottomNavigation, BottomNavigationAction } from "@material-ui/core";
 
-import Question from "./components/question";
-
 import SchoolIcon from "@material-ui/icons/School";
 // import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import BarChartIcon from "@material-ui/icons/BarChart";
@@ -23,6 +21,7 @@ const SubjectSelector = React.lazy(() => import("./components/subjectSelector"))
 const Scoreboard = React.lazy(() => import("./components/scoreboard"));
 const Contribute = React.lazy(() => import("./components/contribute"));
 const Profile = React.lazy(() => import("./components/profile"));
+const Question = React.lazy(() => import("./components/question"));
 
 class Loading extends Component {
     render() { 
@@ -40,20 +39,31 @@ class App extends Component {
 
         this.state = {
             currentPage: 0,
-            inGame: false
+            inGame: false,
+            currentQuestion: {
+                question: "",
+                answers: []
+            }
         };
 
         this.history = createBrowserHistory();
         this.onPlay = this.onPlay.bind(this);
+        this.submitAnswer = this.submitAnswer.bind(this);
     }
 
-    onPlay() {
+    onPlay(response) {
+        console.log(response);
+
         this.setState({inGame: true});
         queryFetch({
             command: 'get-question'
         }).then(data => {
             console.log(data);
         });
+    }
+
+    submitAnswer(data) {
+        console.log("submitting answer: ", data);
     }
 
     render() {
@@ -73,8 +83,14 @@ class App extends Component {
                                 <Switch>
                                     <Suspense fallback={<Loading/>}>
                                         <Route exact path="/">
-                                            <SubjectSelector onMount={() => this.setState({currentPage: 0})}
-                                                onPlay={this.onPlay}/>
+                                            {(() => {
+                                                if (this.state.inGame) {
+                                                    return <Question data={this.state.currentQuestion} submitAnswer={this.submitAnswer}/>
+                                                } else {
+                                                    return <SubjectSelector onMount={() => this.setState({currentPage: 0})}
+                                                    onPlay={this.onPlay}/>
+                                                }
+                                            })()}
                                         </Route>
                                         <Route path="/score">
                                             <Scoreboard onMount={() => this.setState({currentPage: 1})}/>

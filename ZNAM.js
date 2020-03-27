@@ -44,12 +44,14 @@ let network = databases.network;
 let authenticationModule = require('./server/authentication');
 let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });
 
+let GameLogic = require("./znam/server/gameLogic");
+
 let QueryModule = require("./znam/server/query");
-QueryModule.Initialize(databaseController, ZNAMDBC);
+QueryModule.Initialize(databaseController, ZNAMDBC, GameLogic);
 app.post('/query', QueryModule.Query);
 
 let UpdateModule = require("./znam/server/update");
-UpdateModule.Initialize(databaseController, ZNAMDBC);
+UpdateModule.Initialize(databaseController, ZNAMDBC, GameLogic);
 app.post('/update', UpdateModule.Update);
 
 app.use('/client/common', express.static(__dirname + '/client/common'));

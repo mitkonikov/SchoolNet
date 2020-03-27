@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import { TextField, Button } from "@material-ui/core";
 
+import swal from 'sweetalert';
+
 import "./../styles/contribute.css";
 import { updateFetch } from './../js/common';
 
@@ -11,12 +13,13 @@ class Contribute extends Component {
         answers: []
     };
 
-    componentDidMount() {
+    componentDidMount() {        
         if (typeof this.props.onMount == "function") this.props.onMount();
     }
 
     render() {
         return (
+            
             <div class="contribute-container center-vh">
                 <form noValidate autoComplete="off">
                     <TextField
@@ -89,7 +92,11 @@ class Contribute extends Component {
                                         question: this.state.question,
                                         answers: this.state.answers
                                     }
-                                })
+                                }).then(data => {
+                                    if (data.status === "success") {
+                                        swal("Благодариме на придонесот!", "Нè прави многу среќни!", "success");
+                                    }
+                                });
                             }}
                         >
                             ПРИДОНЕСИ

@@ -6,7 +6,7 @@ let Connect = function(databases_connect) {
     ZNAMDB = databases.ZNAM;
 }
 
-let Contribute = (user, data, callback) => {
+let contribute = (user, data, callback) => {
     let entry = {
         Subject: data.subject,
         Question: data.question,
@@ -31,7 +31,8 @@ let Contribute = (user, data, callback) => {
 }
 
 module.exports = {
-    Contribute
+    contribute,
+    ZNAMDB
 }
 
 module.exports.Connect = Connect;
