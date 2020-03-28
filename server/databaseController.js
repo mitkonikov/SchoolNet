@@ -34,6 +34,21 @@ let DB = function(database) {
             });
         }
 
+        let isFirstTimeLogIn = function(user, callback) {
+            currentDB.query("SELECT Logins FROM tbl_stats WHERE ID = ?", user, (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    return;
+                }
+        
+                if (rows[0].Logins == 1) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            });
+        }
+
         /**
          * Callbacks the function with one ID String
          */
@@ -378,6 +393,7 @@ let DB = function(database) {
 
         return {
             getInfoMe,
+            isFirstTimeLogIn,
             getUserByNickname,
             getInfoUser,
             searchUsers,

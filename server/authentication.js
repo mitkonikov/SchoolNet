@@ -92,15 +92,18 @@ let Initialize = (app, network, req) => {
     //        });
     });
 
-    app.get('/auth/facebook', passport_module.passport.authenticate('facebook'));
+    app.get('/auth/facebook', (req, res) => {
+        passport_module.passport.authenticate('facebook')(req, res);
+    });
 
-    app.get('/auth/facebook/callback',
-        passport_module.passport.authenticate('facebook', 
-            {
-                successRedirect: '/success',
-                failureRedirect: '/' 
-            }
-        )
+    app.get('/auth/facebook/callback', (req, res) => {
+            passport_module.passport.authenticate('facebook', (err, user, info) => {
+                req.logIn(user, (err) => {
+                    network.query("UPDATE tbl_stats AS tbl1 SET tbl1.Logins = (SELECT tbl1.Logins WHERE tbl1.ID = ?)+1 WHERE tbl1.ID = ?", [req.user.ID, req.user.ID]);
+                    res.redirect('/');
+                })
+            })(req, res);
+        }
     );
 
     app.get('/deauth/facebook/callback', (req, res) => {

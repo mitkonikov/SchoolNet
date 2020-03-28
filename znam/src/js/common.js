@@ -1,16 +1,25 @@
 import { useRef, useState, useEffect } from "react";
 
 let queryFetch = body => {
-    return fetch("./query", {
+
+    return fetch("query", {
         method: "POST",
-        body: body
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
     }).then(response => response.json());
 };
 
 let updateFetch = body => {
-    return fetch("./update", {
+    return fetch("update", {
         method: "POST",
-        body: body
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
     }).then(response => response.json());
 };
 

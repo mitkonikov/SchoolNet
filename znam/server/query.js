@@ -17,6 +17,22 @@ let Initialize = function(node_databaseController, node_ZNAMDBC, node_GameLogic)
 
 let Query = function(req, res) {
     let API = { ZNAMDB: ZNAMDBC.ZNAMDB };
+    if (req.body.command === "isAuth") {
+        let userIsAuth = req.isAuthenticated();
+        if (userIsAuth) {
+            network.table().isFirstTimeLogIn(req.user.ID, (firstTime) => {
+                res.send({
+                    isAuth: 1,
+                    firstTime: firstTime
+                });
+            });
+        } else {
+            res.send({ isAuth: 0 });
+        }
+
+        return;
+    }
+
     if (req.isAuthenticated()) {
 
         if (typeof req.body.command !== "undefined") {

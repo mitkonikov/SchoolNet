@@ -56,7 +56,14 @@ app.post('/update', UpdateModule.Update);
 
 app.use('/client/common', express.static(__dirname + '/client/common'));
 
-app.get('*', express.static(__dirname + '/znam/build'));
+let redirectURLs = ['/score', '/profile', '/contribute']
+for (let rurl of redirectURLs) {
+    app.get(rurl, (req, res) => res.redirect('/'));
+}
+
+app.get('*', (req, res) => {
+    express.static(__dirname + '/znam/build')(req, res);
+});
 
 server.listen(process.env.PORT);
 console.log('\x1b[32m%s\x1b[0m', "ZNAM Server Started.");

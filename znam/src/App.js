@@ -13,6 +13,8 @@ import FaceIcon from '@material-ui/icons/Face';
 import { Switch, Route, Link, Router } from "react-router-dom";
 import { createBrowserHistory } from 'history';
 
+import swal from 'sweetalert';
+
 import theme from "./theme";
 import { queryFetch } from "./js/common";
 
@@ -38,6 +40,7 @@ class App extends Component {
         super(props);
 
         this.state = {
+            isAuth: -1,
             currentPage: 0,
             inGame: false,
             currentQuestion: {
@@ -49,6 +52,32 @@ class App extends Component {
         this.history = createBrowserHistory();
         this.onPlay = this.onPlay.bind(this);
         this.submitAnswer = this.submitAnswer.bind(this);
+    }
+
+    componentDidMount() {
+        queryFetch({ command: "isAuth" })
+            .then(data => {
+                /*if (data.status === "error") {
+                    swal({
+                        title: "Пробајте пак...",
+                        text: "Се појави серверска грешка. Администраторот е известен.",
+                        icon: "error"
+                    });
+                }*/
+
+                if (data.isAuth) {
+                    this.setState({ isAuth: 1 });
+                } else {
+                    this.setState({ isAuth: 0 });
+                }
+
+                if (data.firstTime) {
+                    swal({
+                        title: "Добредојде!",
+                        icon: "success"
+                    });
+                }
+            });
     }
 
     onPlay(response) {
@@ -71,24 +100,21 @@ class App extends Component {
             <Router history={this.history}>
                 <ThemeProvider theme={theme}>
                     <Switch>
-                        <Route path="/auth">
-                            <div class="form-center">
-                                <Suspense fallback={<Loading/>}>
-                                    <Authentication/>
-                                </Suspense>
-                            </div>
-                        </Route>
                         <Route path="/">
                             <div class="form-center">
                                 <Switch>
                                     <Suspense fallback={<Loading/>}>
                                         <Route exact path="/">
                                             {(() => {
-                                                if (this.state.inGame) {
-                                                    return <Question data={this.state.currentQuestion} submitAnswer={this.submitAnswer}/>
-                                                } else {
-                                                    return <SubjectSelector onMount={() => this.setState({currentPage: 0})}
-                                                    onPlay={this.onPlay}/>
+                                                if (this.state.isAuth === 1) {
+                                                    if (this.state.inGame) {
+                                                        return <Question data={this.state.currentQuestion} submitAnswer={this.submitAnswer}/>
+                                                    } else {
+                                                        return <SubjectSelector onMount={() => this.setState({currentPage: 0})}
+                                                        onPlay={this.onPlay}/>
+                                                    }
+                                                } else if (this.state.isAuth === 0) {
+                                                    return <Authentication/>
                                                 }
                                             })()}
                                         </Route>
@@ -104,8 +130,10 @@ class App extends Component {
                                     </Suspense>
                                 </Switch>
                             </div>
-
-                            <div class="navbar-container">
+                            
+                            {(() => {
+                                if (this.state.isAuth === 1) {
+                            return (<div class="navbar-container">
                                 <BottomNavigation
                                     value={this.state.currentPage}
                                     onChange={(event, newValue) => {
@@ -138,7 +166,9 @@ class App extends Component {
                                         to="/profile"
                                     />
                                 </BottomNavigation>
-                            </div>
+                            </div>)
+                                }
+                            })()}
                         </Route>
                     </Switch>
                 </ThemeProvider>

@@ -15,8 +15,8 @@ class Profile extends Component {
     componentDidMount() {
         if (typeof this.props.onMount == "function") this.props.onMount();
         
-        queryFetch({ command: 'profile-info '})
-            .then(data => this.setState({ data }));
+        queryFetch({ command: 'profile-info'})
+            .then(data => this.setState(data));
     }
 
     render() {
@@ -34,7 +34,7 @@ class Profile extends Component {
                                 <div id="profile-content">
                                     <div id="profile-greeting">{(() => {
                                         if (this.state.profileName === undefined) return "Здраво!";
-                                        return "Здраво," + this.state.profileName + "!";
+                                        return "Здраво, " + this.state.profileName + "!";
                                     })()}</div>
                                     <div id="profile-statistics"></div>
                                 </div>
@@ -59,9 +59,14 @@ class Profile extends Component {
                             </Button>
                         </div>
                     </div>
-                    <Link to="/logout" id="logout">
+                    <div id="logout" onClick={() => {
+                                let loc = window.location.href;
+                                let atMK = loc.indexOf(".mk");
+                                let domain = loc.substring(0, atMK + 4);
+                                window.location.href = domain + "client/logout";
+                            }}>
                         Одјави се
-                    </Link>
+                    </div>
                 </div>
             </div>
         )

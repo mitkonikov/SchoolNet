@@ -9,7 +9,7 @@ class Authentication extends Component {
     render() {
         return (
             <React.Fragment>
-                <div class="center-v">
+                <div class="center-v noselect">
                 <div id="platform-title">ЗНАМ</div>
                 <div id="platform-icon">
                     <div
@@ -32,7 +32,9 @@ class Authentication extends Component {
                     </div>
                     <div id="login-buttons">
                         <div class="center-vh">
-                            <IconButton>
+                            <IconButton onClick={() => {
+                                window.location.href += "auth/facebook";
+                            }}>
                                 <FacebookIcon id="facebook-signin" />
                             </IconButton>
                         </div>

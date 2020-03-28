@@ -32,7 +32,7 @@ class Contribute extends Component {
                         inputProps={{
                             maxLength: 150
                         }}
-                        onChange={() => {
+                        onChange={(e) => {
                             let helperText = document.getElementById(
                                 "question-input-helper-text"
                             );
@@ -46,10 +46,10 @@ class Contribute extends Component {
                                 count = 150;
                             }
 
-                            helperText.innerHTML = count + "/300";
-                        }}
+                            this.setState({ question: e.target.value });
 
-                        value={this.state.question}
+                            helperText.innerHTML = count + "/150";
+                        }}
                     />
 
                     <div class="separator"></div>
@@ -70,7 +70,11 @@ class Contribute extends Component {
                                     inputProps={{
                                         maxLength: 150
                                     }}
-                                    value={this.state.answers[i]}
+                                    onChange={((e) => {
+                                        let currentAns = this.state.answers;
+                                        currentAns[i] = e.target.value;
+                                        this.setState({ answers: currentAns });
+                                    })}
                                 />
                             );
                         }
@@ -86,6 +90,7 @@ class Contribute extends Component {
                             color="primary"
                             disableElevation
                             onClick={() => {
+                                console.log("clicked");
                                 updateFetch({
                                     command: 'contribute',
                                     data: {

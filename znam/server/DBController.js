@@ -7,6 +7,24 @@ let Connect = function(databases_connect) {
 }
 
 let contribute = (user, data, callback) => {
+    if (typeof data.subject === "undefined" || 
+        typeof data.answers === "undefined") {
+        callback({ status: "error" });
+        return;
+    }
+
+    if (data.question.length > 150) {
+        callback({ status: "error" });
+        return;
+    }
+
+    for (let i = 0; i < 4; ++i) {
+        if (data.answers[i].length > 150) {
+            callback({ status: "error" });
+            return;
+        }
+    }
+
     let entry = {
         Subject: data.subject,
         Question: data.question,
@@ -19,6 +37,8 @@ let contribute = (user, data, callback) => {
             User: user
         }),
     }
+
+    console.log(entry);
 
     if (typeof data.Difficulty === "undefined")
         entry.Difficulty = 1500;
