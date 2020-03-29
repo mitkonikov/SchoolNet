@@ -103,6 +103,7 @@ Create .env file in the main directory with the following options:
 
 ```
 PORT = 3000
+PORT_ZNAM = 3001
 DATABASE_PORT = 3306
 DATABASE_USER = <here the database username>
 DATABASE_PASS = <here the database password>
@@ -175,6 +176,7 @@ Want to contribute? Our project uses GitHub, so go! Make some changes!
 
 When contributing follow the [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
 
+[Our repository](https://github.com/mitkonikov/SchoolNetUtilities) for Behind-the-scenes scripts and utilities is on GitHub too. 
 
 ### Todos
 

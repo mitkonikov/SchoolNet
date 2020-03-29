@@ -1,24 +1,26 @@
 const fs = require('fs');
 const keywords = require('./keywords');
 
+/*
+ * We are commenting these lines, because we started using NGINX
 const SSLSettings = {
     pfx: fs.readFileSync('C://cert//certificate.pfx'),
     passphrase: keywords.SSLPass()
-};
+};*/
 
 let express = require('express');
-let HTTPApp = new express();
+// let HTTPApp = new express();
 let app = new express();
 
-let http = require('http').createServer(HTTPApp);
+// let http = require('http').createServer(HTTPApp);
 
-HTTPApp.get('*', function(req, res) {  
+/*HTTPApp.get('*', function(req, res) {  
     res.redirect('https://schoolnet.mk');
 })
 
-http.listen(80);
+http.listen(80);*/
 
-let server = require('https').createServer(SSLSettings, app);
+let server = require('http').createServer(app);
 
 const expressSanitizer = require('express-sanitizer');
 app.use(expressSanitizer());
@@ -65,5 +67,5 @@ app.get('*', (req, res) => {
     express.static(__dirname + '/znam/build')(req, res);
 });
 
-server.listen(process.env.PORT);
+server.listen(process.env.PORT_ZNAM);
 console.log('\x1b[32m%s\x1b[0m', "ZNAM Server Started.");

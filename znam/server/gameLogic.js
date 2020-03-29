@@ -29,6 +29,17 @@ let queryQuestion = (API, ID, callback) => {
     });
 }
 
+let checkIfQuestionsExist = (API, list, callback) => {
+    API.ZNAM.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ")", (err, rows) => {
+        let response = [];
+        for (let row of rows) {
+            response.push(row.ID);
+        }
+
+        callback(response);
+    });
+}
+
 /**
  * Generate 10 random IDs unique to those that the Student has already played
  * @param {Object}      API         Database Connection
@@ -37,43 +48,58 @@ let queryQuestion = (API, ID, callback) => {
  * @param {Function}    callback    Callback function
  */
 let getRandomIDs = (API, user, data, callback) => {
+    // TODO: Account for the difficulty of the player and the difficulty of the question
+    
     for (let i = 0; i < data.number; ++i) {
         let currentRandom = Math.random(data.count - 1) + 1;
         randomIDs.push(currentRandom);
     }
 
-    // check if the questions are already played
-    API.ZNAM.query("SELECT Question_ID FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [data.user, data.subject], (err, questionsPlayed) => {
-        if (err) {
-            console.trace(err);
-            return;
-        }
-
-        if (typeof questionsPlayed === "undefined" || questionsPlayed.length == 0) {
-            // skip checks
-            callback(randomIDs.splice(data.number, randomIDs.length - data.number));
-        }
-
-        for (let qp = 0; qp < questionsPlayed.length; ++qp) {
-            for (let i = 0; i < 10; ++i) {
-                if (questionsPlayed[qp] == randomIDs[i]) {
-                    randomIDs = randomIDs.splice(i, 1);
+    // check if the questions exists
+    checkIfQuestionsExist(API, randomIDs, (checked) => {
+        let crossChecked = [];
+        for (let i = 0; i < randomIDs.length; ++i) {
+            for (let k = 0; k < checked.length; ++k) {
+                if (randomIDs[i] == checked[k]) {
+                    crossChecked.push(randomIDs[i]);
                 }
             }
         }
 
-        if (randomIDs.length < data.number) {
-            // this is the number required to come to ten IDs
-            data.number = data.number - randomIDs.length;
-            getRandomIDs(API, user, data, (array) => {
-                randomIDs = randomIDs.concat(array);
-                callback(randomIDs);
-            });
-        } else {
-            randomIDs = randomIDs.splice(data.number, randomIDs.length - data.number);
-            console.log(randomIDs); // You should have 10 random IDs
-            callback(randomIDs);
-        }
+        // check if the questions are already played
+        API.ZNAM.query("SELECT Question_ID FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [data.user, data.subject], (err, questionsPlayed) => {
+            if (err) {
+                console.trace(err);
+                return;
+            }
+
+            if (typeof questionsPlayed === "undefined" || questionsPlayed.length == 0) {
+                // no further checks
+                callback(crossChecked.splice(data.number, crossChecked.length - data.number));
+            }
+            
+            // check if any question that is already played matches the random ID
+            for (let qp = 0; qp < questionsPlayed.length; ++qp) {
+                for (let i = 0; i < 10; ++i) {
+                    if (questionsPlayed[qp] == crossChecked[i]) {
+                        crossChecked = crossChecked.splice(i, 1);
+                    }
+                }
+            }
+
+            if (crossChecked.length < data.number) {
+                // this is the number required to come to ten IDs
+                data.number = data.number - crossChecked.length;
+                getRandomIDs(API, user, data, (array) => {
+                    crossChecked = crossChecked.concat(array);
+                    callback(crossChecked);
+                });
+            } else {
+                crossChecked = crossChecked.splice(data.number, crossChecked.length - data.number);
+                console.log(crossChecked); // You should have 10 random IDs
+                callback(crossChecked);
+            }
+        });
     });        
 }
 
