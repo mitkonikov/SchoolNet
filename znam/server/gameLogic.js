@@ -30,7 +30,7 @@ let queryQuestion = (API, ID, callback) => {
 }
 
 let checkIfQuestionsExist = (API, list, callback) => {
-    API.ZNAM.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ")", (err, rows) => {
+    API.ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ")", (err, rows) => {
         let response = [];
         for (let row of rows) {
             response.push(row.ID);
@@ -49,16 +49,23 @@ let checkIfQuestionsExist = (API, list, callback) => {
  */
 let getRandomIDs = (API, user, data, callback) => {
     // TODO: Account for the difficulty of the player and the difficulty of the question
-    
-    for (let i = 0; i < data.number; ++i) {
-        let currentRandom = Math.random(data.count - 1) + 1;
-        randomIDs.push(currentRandom);
+    let setIDs = new Set();
+
+    while (setIDs.size != data.number + 5) {
+        let currentRandom = getRandomInt(data.count - 1) + 1;
+        setIDs.add(currentRandom);
+    }
+
+    let randomIDs = [];
+    for (let ID of setIDs) {
+        randomIDs.push(ID);
     }
 
     // check if the questions exists
     checkIfQuestionsExist(API, randomIDs, (checked) => {
         let crossChecked = [];
-        for (let i = 0; i < randomIDs.length; ++i) {
+        let randomIDsLength = randomIDs.length;
+        for (let i = 0; i < randomIDsLength; ++i) {
             for (let k = 0; k < checked.length; ++k) {
                 if (randomIDs[i] == checked[k]) {
                     crossChecked.push(randomIDs[i]);
@@ -67,15 +74,25 @@ let getRandomIDs = (API, user, data, callback) => {
         }
 
         // check if the questions are already played
-        API.ZNAM.query("SELECT Question_ID FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [data.user, data.subject], (err, questionsPlayed) => {
+        API.ZNAMDB.query("SELECT Question_ID FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [user, data.subject], (err, questionsPlayed) => {
             if (err) {
                 console.trace(err);
                 return;
             }
 
             if (typeof questionsPlayed === "undefined" || questionsPlayed.length == 0) {
-                // no further checks
-                callback(crossChecked.splice(data.number, crossChecked.length - data.number));
+                if (crossChecked.length < data.number) {
+                    // this is the number required to come to ten IDs
+                    data.number = data.number - crossChecked.length;
+                    getRandomIDs(API, user, data, (array) => {
+                        crossChecked = crossChecked.concat(array);
+                        callback(crossChecked);
+                    });
+                } else {
+                    callback(crossChecked.splice(0, data.number));
+                }
+
+                return;
             }
             
             // check if any question that is already played matches the random ID
@@ -95,7 +112,7 @@ let getRandomIDs = (API, user, data, callback) => {
                     callback(crossChecked);
                 });
             } else {
-                crossChecked = crossChecked.splice(data.number, crossChecked.length - data.number);
+                crossChecked = crossChecked.splice(0, data.number);
                 console.log(crossChecked); // You should have 10 random IDs
                 callback(crossChecked);
             }
@@ -111,22 +128,19 @@ let getRandomIDs = (API, user, data, callback) => {
  * @param {Function}    callback    Callback function
  */
 let generateQuestions = (API, user, data, callback) => {
-    API.ZNAMDB.query("SELECT COUNT(*) AS Count FROM tbl_questions", (err, countQuery) => {
-        let count = countQuery[0].Count;
+    API.ZNAMDB.query("SELECT ID FROM tbl_questions ORDER BY ID DESC LIMIT 1", (err, countQuery) => {
+        let count = countQuery[0].ID;
 
         getRandomIDs(API, user, { 
             count: count, 
             number: 15,
             subject: data.subject
         }, (randomIDs) => {
-
-            console.log("final random IDs: ", randomIDs);
-            randomIDs = randomIDs.splice(10, randomIDs.length - 10);
+            randomIDs = randomIDs.splice(0, 10);
 
             setQuestions(API, user, { IDs: randomIDs }, (response) => {
                 callback(response);
             });
-
         });
     });
 }
@@ -159,7 +173,8 @@ let createGame = (API, user, data, callback) => {
 }
 
 let submitAnswer = (user, data, callback) => {
-
+    // check the answer token
+    // check if the answer is true
 }
 
 let getNextQuestion = (API, user, callback) => {
@@ -167,10 +182,18 @@ let getNextQuestion = (API, user, callback) => {
         let questionIDs = JSON.parse(currentGame[0].Questions);
         let currentQuestion = questionIDs[currentGame[0].Current_Level];
 
-        queryQuestion(API, currentQuestion, (question) => {            
+        queryQuestion(API, currentQuestion, (question) => {    
+            console.log("next raw question: ", question);
+
+
+            
             callback(question);
         });
     });
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 module.exports = {
@@ -178,5 +201,6 @@ module.exports = {
     queryQuestion,
     generateQuestions,
     submitAnswer,
-    getNextQuestion
+    getNextQuestion,
+    getRandomIDs
 }

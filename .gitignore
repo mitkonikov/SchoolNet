@@ -20,3 +20,5 @@ dashboard_admin.js
 /client/static/css/portfolioBundle.js
 /server/demos
 keywords.js
+tests.js
+/tests
