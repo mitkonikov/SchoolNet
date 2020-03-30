@@ -1,11 +1,23 @@
+let API = {};
+let GameEngine;
+
+/**
+ * Function to connect the databases and the Game Engine to the this module
+ * @param {module} node_databases   Databases
+ * @param {module} node_GameEngine  Game Engine
+ */
+let Initialize = (node_databases, node_GameEngine) => {
+    API.ZNAMDB = node_databases.ZNAMDB;
+    GameEngine = node_GameEngine;
+}
+
 /**
  * Set the questions in the Table of Current Games
- * @param {Object}      API         Database Connection
  * @param {Number}      user        User ID
  * @param {Object}      data        Additional Data
  * @param {Function}    callback    Callback function
  */
-let setQuestions = (API, user, data, callback) => {
+let setQuestions = (user, data, callback) => {
     API.ZNAMDB.query("UPDATE tbl_current_games SET Questions = ? WHERE Student_ID = ?", [JSON.stringify(data.IDs), user], (err, rows) => {
         if (err) {
             console.trace(err);
@@ -18,18 +30,17 @@ let setQuestions = (API, user, data, callback) => {
 
 /**
  * Query a single question
- * @param {Object}      API         Database Connection
  * @param {Number}      user        User ID
  * @param {Object}      data        Additional Data
  * @param {Function}    callback    Callback function
  */
-let queryQuestion = (API, ID, callback) => {
+let queryQuestion = (ID, callback) => {
     API.ZNAMDB.query("SELECT * FROM tbl_questions WHERE ID = ?", [ID], (err, questionInfo) => {
         callback(questionInfo[0]);
     });
 }
 
-let checkIfQuestionsExist = (API, list, callback) => {
+let checkIfQuestionsExist = (list, callback) => {
     API.ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ")", (err, rows) => {
         let response = [];
         for (let row of rows) {
@@ -42,12 +53,11 @@ let checkIfQuestionsExist = (API, list, callback) => {
 
 /**
  * Generate 10 random IDs unique to those that the Student has already played
- * @param {Object}      API         Database Connection
  * @param {Number}      user        User ID
  * @param {Object}      data        Additional Data
  * @param {Function}    callback    Callback function
  */
-let getRandomIDs = (API, user, data, callback) => {
+let getRandomIDs = (user, data, callback) => {
     // TODO: Account for the difficulty of the player and the difficulty of the question
     let setIDs = new Set();
 
@@ -62,7 +72,7 @@ let getRandomIDs = (API, user, data, callback) => {
     }
 
     // check if the questions exists
-    checkIfQuestionsExist(API, randomIDs, (checked) => {
+    checkIfQuestionsExist(randomIDs, (checked) => {
         let crossChecked = [];
         let randomIDsLength = randomIDs.length;
         for (let i = 0; i < randomIDsLength; ++i) {
@@ -84,7 +94,7 @@ let getRandomIDs = (API, user, data, callback) => {
                 if (crossChecked.length < data.number) {
                     // this is the number required to come to ten IDs
                     data.number = data.number - crossChecked.length;
-                    getRandomIDs(API, user, data, (array) => {
+                    getRandomIDs(user, data, (array) => {
                         crossChecked = crossChecked.concat(array);
                         callback(crossChecked);
                     });
@@ -107,7 +117,7 @@ let getRandomIDs = (API, user, data, callback) => {
             if (crossChecked.length < data.number) {
                 // this is the number required to come to ten IDs
                 data.number = data.number - crossChecked.length;
-                getRandomIDs(API, user, data, (array) => {
+                getRandomIDs(user, data, (array) => {
                     crossChecked = crossChecked.concat(array);
                     callback(crossChecked);
                 });
@@ -121,24 +131,45 @@ let getRandomIDs = (API, user, data, callback) => {
 }
 
 /**
+ * The Demo ID generated is described in the Game Engine documentation
+ */
+let generateDemoID = () => {
+    let CURRENT_DATE_TIME = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+
+    let CURRENT_DATE_TIME_TRIMMED = CURRENT_DATE_TIME.multiReplace({
+        "-": "",
+        ":": "",
+        " ": "_"
+    });
+
+    let UUID = API.uuidv4().multiReplace({
+        "-": "",
+        ":": "",
+        " ": "_"
+    });
+
+    return CURRENT_DATE_TIME_TRIMMED + "_" + UUID;
+}
+
+/**
  * Generate/find 10 random questions for the user to play
- * @param {Object}      API         Database Connection
  * @param {Number}      user        User ID
  * @param {Object}      data        Additional Data
  * @param {Function}    callback    Callback function
  */
-let generateQuestions = (API, user, data, callback) => {
+let generateQuestions = (user, data, callback) => {
     API.ZNAMDB.query("SELECT ID FROM tbl_questions ORDER BY ID DESC LIMIT 1", (err, countQuery) => {
         let count = countQuery[0].ID;
 
-        getRandomIDs(API, user, { 
+        getRandomIDs(user, { 
             count: count, 
-            number: 15,
+            number: 10,
             subject: data.subject
         }, (randomIDs) => {
-            randomIDs = randomIDs.splice(0, 10);
-
-            setQuestions(API, user, { IDs: randomIDs }, (response) => {
+            setQuestions(user, { IDs: randomIDs }, (response) => {
                 callback(response);
             });
         });
@@ -147,17 +178,17 @@ let generateQuestions = (API, user, data, callback) => {
 
 /**
  * Starting/creating a new Game
- * @param {Object}      API         Database Connection
  * @param {Number}      user        User ID
  * @param {Object}      data        Additional Data
  * @param {Function}    callback    Callback function
  */
-let createGame = (API, user, data, callback) => {
+let createGame = (user, data, callback) => {
     let entry = { 
         Student_ID: user,
         Current_Level: 0,
         Score: 0,
         Time_Left: 30,
+        Demo_ID: generateDemoID(),
         Rated: data.rated
     }
 
@@ -168,7 +199,9 @@ let createGame = (API, user, data, callback) => {
             return;
         }
 
-        generateQuestions(API, user, data, callback);
+        GameEngine.createTable(entry.Demo_ID, (tableResponse) => {
+            generateQuestions(user, data, callback);
+        });
     });
 }
 
@@ -177,17 +210,47 @@ let submitAnswer = (user, data, callback) => {
     // check if the answer is true
 }
 
-let getNextQuestion = (API, user, callback) => {
+let getNextQuestion = (user, callback) => {
     API.ZNAMDB.query("SELECT * FROM tbl_games_current WHERE Student_ID = ?", user, (err, currentGame) => {
         let questionIDs = JSON.parse(currentGame[0].Questions);
         let currentQuestion = questionIDs[currentGame[0].Current_Level];
 
-        queryQuestion(API, currentQuestion, (question) => {    
-            console.log("next raw question: ", question);
+        queryQuestion(currentQuestion, (rawQuestion) => {    
+            console.log("next raw question: ", rawQuestion);
+            let state = {
+                question: rawQuestion.Question,
+                answers: {
+                    ID: [],
+                    content: []
+                }
+            }
 
+            for (let i = 0; i < 4; ++i) {
+                state.answers.ID.push(getRandomInt(10000));
+                state.answers.content.push(rawQuestion['Answer_' + (i+1)]);
+            }
 
+            let trueID = state.answers.ID[rawQuestion.Truth - 1];
             
-            callback(question);
+            // shuffle the IDs and answers
+            for (let k = 0; k < 3; ++k) {
+                for (let i = 0; i < 3; ++i) {
+                    if (getRandomInt(2) == 1) {
+                        let tempID = state.answers.ID[i];
+                        let tempAnswer = state.answers.content[i];
+
+                        state.answers.ID[i] = state.answers.ID[i+1];
+                        state.answers.content[i] = state.answers.content[i+1];
+
+                        state.answers.ID[i+1] = tempID;
+                        state.answers.content[i+1] = tempAnswer;
+                    }
+                }
+            }
+            
+            // remember the IDs and the true ID
+
+            callback(state);
         });
     });
 }
@@ -197,6 +260,7 @@ function getRandomInt(max) {
 }
 
 module.exports = {
+    Initialize,
     createGame,
     queryQuestion,
     generateQuestions,

@@ -1,9 +1,9 @@
 
-let server, network;
+let server, databases;
 
-let Initialize = (server_connect, network_connect) => {
+let Initialize = (server_connect, databases_connect) => {
     server = server_connect;
-    network = network_connect;
+    databases = databases_connect;
 }
 
 String.prototype.multiReplace = function(array) {
@@ -28,14 +28,13 @@ String.prototype.multiReplace = function(array) {
 /** Used to safely shutdown the server */
 process.on('SIGINT', () => {
     console.info('SIGINT signal received.');
-    console.log('Closing http server.');
-    server.close(() => {
-        console.log('Http server closed.');
-        network.end(() => {
+    for (let db in databases.obj) {
+        databases.obj[db].end(() => {
             console.log('mySQL connection closed.');
-            process.exit(0);
         });
-    });
+    }
+
+    setTimeout(() => process.exit(0), 2000);
 });
 
 module.exports.Initialize = Initialize;

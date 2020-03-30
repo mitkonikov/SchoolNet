@@ -212,4 +212,4 @@ server.listen(process.env.PORT);
 console.log('\x1b[32m%s\x1b[0m', "SchoolNet Server Started.");
 
 let misc = require('./server/misc');
-misc.Initialize(server, network);
+misc.Initialize(server, databases);

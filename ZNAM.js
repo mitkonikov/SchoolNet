@@ -46,7 +46,9 @@ let network = databases.network;
 let authenticationModule = require('./server/authentication');
 let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });
 
+let GameEngine = require('./server/play/GameEngine');
 let GameLogic = require("./znam/server/gameLogic");
+GameLogic.Initialize(databases, GameEngine);
 
 let QueryModule = require("./znam/server/query");
 QueryModule.Initialize(databaseController, ZNAMDBC, GameLogic);
@@ -69,3 +71,6 @@ app.get('*', (req, res) => {
 
 server.listen(process.env.PORT_ZNAM);
 console.log('\x1b[32m%s\x1b[0m', "ZNAM Server Started.");
+
+let misc = require('./server/misc');
+misc.Initialize(server, databases);

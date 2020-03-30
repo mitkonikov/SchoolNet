@@ -25,10 +25,19 @@ The Game Engine is simple a small module that has deals with the records (states
   - [getAllLevels](#getalllevels)
   - [GameOver](#gameover)
 
+## Additional Descriptions
+  - [Demo ID](#demo-id)
+
 <br>
 
 ### **getTime ()**
 Function that returns string compatible time for storage in the records. Mostly used for timestamping the records.
+
+The return format is: **HHMMSSsss**
+ - H - hours
+ - M - minuts
+ - S - seconds
+ - s - milliseconds
 
 <br>
 
@@ -212,5 +221,14 @@ Parameters:
 ### **`GameOver`**
 
 <br>
+
+### **Demo ID**
+
+The Demo ID consists of the date and time at which the game is started and a UUID (Unique Identifier)
+
+**Example ID**: 20190411_112425_78667b82f04049f78d593aa331a1cc1d
+
+<br>
+
 
 > Documentations in construction...
