@@ -3,7 +3,7 @@
     src: url(/client/static/res/Kapak.ttf);
 }
 
-@font-face {
+/*@font-face {
     font-family: Roboto-Thin;
     src: url(/client/static/res/Roboto-Thin.ttf);
 }
@@ -21,7 +21,7 @@
 @font-face {
     font-family: Roboto-Bold;
     src: url(/client/static/res/Roboto-Bold.ttf);
-}
+}*/
 
 :root {
 	--color-bg-main: #44aed8;
@@ -92,7 +92,7 @@ body {
     font-size: 100%;
     background-color: var(--color-bg-main);
     color: var(--color-text-main);
-    font-family: 'Roboto-Regular';
+    font-family: 'Roboto', sans-serif;
     /*min-height:100vh;*/
     overflow: hidden;
 
@@ -118,7 +118,7 @@ body {
 }
 
 .center-vh {
-    position: relative;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -236,7 +236,8 @@ select {
     text-decoration: none;
     display: inline-block;
     font-size: 1em;
-    font-family: 'Roboto-Light';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
 	border-radius: 0;
     /*box-shadow: rgba(0, 0, 0, 0.2) 0.2em 0.2em 0.2em;*/
     margin: 0em 0.3em 0.65em 0em;
@@ -290,7 +291,8 @@ img {
     border-width: 1px;
     border-color: white;
     width: 100%;
-    font-family: 'Roboto-Thin';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
     font-size: 1.6em;
     height: 3.6em;
     text-align: center;
@@ -302,6 +304,7 @@ img {
     border-style: none;
     border-width: 0;
     margin: 0;
+    position: relative;
 }
 
 .btn-special:nth-child(2n+1) {
@@ -332,6 +335,20 @@ img {
     transform-origin: center;
 }
 
+.btn-special-text {
+    text-align: left;
+    padding-left: 5em;
+}
+
+.btn-special-title {
+    font-weight: 300;
+    padding-bottom: 0.4em;
+}
+
+.btn-special-content {
+    font-size: 0.7em;
+}
+
 @keyframes pop {
 	0% {
         background-size: 100% 100%;
@@ -344,7 +361,8 @@ img {
 .btn:focus { outline:0; }
 
 .square {
-    font-family: 'Roboto-Regular';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
 }
 
 .alert-sign {
@@ -403,6 +421,11 @@ img {
         height: 100%;   
         width: 60vh;
     }
+
+    .btn-special-text {
+        text-align: left;
+        padding-left: 4em;
+    }
 }
 
 @media only screen and (max-width: 530px) {
@@ -410,6 +433,11 @@ img {
         width: 100%;
         min-width: 360px;
         height: 100%;
+    }
+
+    .btn-special-text {
+        text-align: left;
+        padding-left: 4em;
     }
 }
 
@@ -565,7 +593,8 @@ img {
 
 .options-wrapper {
     height: 8%;
-    font-family: 'Roboto-Bold';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
     box-sizing: border-box;
 }
 

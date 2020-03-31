@@ -3087,7 +3087,8 @@ svg.mdc-button__icon {
 
 .mdc-button__label {
   font-size: 1em;
-  font-family: 'Roboto-Light'; }
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300; }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
   color: #ffffff; }

@@ -1,5 +1,6 @@
-let API = {};
+let ZNAMDB;
 let GameEngine;
+let UUIDV4 = require('uuid/v4');
 
 /**
  * Function to connect the databases and the Game Engine to the this module
@@ -7,7 +8,7 @@ let GameEngine;
  * @param {module} node_GameEngine  Game Engine
  */
 let Initialize = (node_databases, node_GameEngine) => {
-    API.ZNAMDB = node_databases.ZNAMDB;
+    ZNAMDB = node_databases.ZNAMDB;
     GameEngine = node_GameEngine;
 }
 
@@ -18,7 +19,7 @@ let Initialize = (node_databases, node_GameEngine) => {
  * @param {Function}    callback    Callback function
  */
 let setQuestions = (user, data, callback) => {
-    API.ZNAMDB.query("UPDATE tbl_current_games SET Questions = ? WHERE Student_ID = ?", [JSON.stringify(data.IDs), user], (err, rows) => {
+    ZNAMDB.query("UPDATE tbl_current_games SET Questions = ? WHERE Student_ID = ?", [JSON.stringify(data.IDs), user], (err, rows) => {
         if (err) {
             console.trace(err);
             callback({ status: "error" });
@@ -35,13 +36,13 @@ let setQuestions = (user, data, callback) => {
  * @param {Function}    callback    Callback function
  */
 let queryQuestion = (ID, callback) => {
-    API.ZNAMDB.query("SELECT * FROM tbl_questions WHERE ID = ?", [ID], (err, questionInfo) => {
+    ZNAMDB.query("SELECT * FROM tbl_questions WHERE ID = ?", [ID], (err, questionInfo) => {
         callback(questionInfo[0]);
     });
 }
 
 let checkIfQuestionsExist = (list, callback) => {
-    API.ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ")", (err, rows) => {
+    ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ")", (err, rows) => {
         let response = [];
         for (let row of rows) {
             response.push(row.ID);
@@ -84,7 +85,7 @@ let getRandomIDs = (user, data, callback) => {
         }
 
         // check if the questions are already played
-        API.ZNAMDB.query("SELECT Question_ID FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [user, data.subject], (err, questionsPlayed) => {
+        ZNAMDB.query("SELECT Question_ID FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [user, data.subject], (err, questionsPlayed) => {
             if (err) {
                 console.trace(err);
                 return;
@@ -145,7 +146,7 @@ let generateDemoID = () => {
         " ": "_"
     });
 
-    let UUID = API.uuidv4().multiReplace({
+    let UUID = UUIDV4.uuidv4().multiReplace({
         "-": "",
         ":": "",
         " ": "_"
@@ -161,7 +162,7 @@ let generateDemoID = () => {
  * @param {Function}    callback    Callback function
  */
 let generateQuestions = (user, data, callback) => {
-    API.ZNAMDB.query("SELECT ID FROM tbl_questions ORDER BY ID DESC LIMIT 1", (err, countQuery) => {
+    ZNAMDB.query("SELECT ID FROM tbl_questions ORDER BY ID DESC LIMIT 1", (err, countQuery) => {
         let count = countQuery[0].ID;
 
         getRandomIDs(user, { 
@@ -192,7 +193,7 @@ let createGame = (user, data, callback) => {
         Rated: data.rated
     }
 
-    API.ZNAMDB.query("INSERT INTO tbl_current_games SET ?", entry, (err, rows) => {
+    ZNAMDB.query("INSERT INTO tbl_current_games SET ?", entry, (err, rows) => {
         if (err) {
             console.trace(err);
             callback({ status: "error" });
@@ -211,7 +212,7 @@ let submitAnswer = (user, data, callback) => {
 }
 
 let getNextQuestion = (user, callback) => {
-    API.ZNAMDB.query("SELECT * FROM tbl_games_current WHERE Student_ID = ?", user, (err, currentGame) => {
+    ZNAMDB.query("SELECT * FROM tbl_games_current WHERE Student_ID = ?", user, (err, currentGame) => {
         let questionIDs = JSON.parse(currentGame[0].Questions);
         let currentQuestion = questionIDs[currentGame[0].Current_Level];
 

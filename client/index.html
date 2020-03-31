@@ -11,12 +11,17 @@
         <link rel="stylesheet" href="client/static/css/style_home.css"/>
         <link rel="manifest" href="/client/manifest.json">
 
-        <script src="/client/static/js/jquery-3.3.1.js"> </script>
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap" rel="preload" as="font" crossorigin/>
+        
         <script src="/client/static/js/jquery.fullPage.js"> </script>
         <script src="/client/static/js/common.js" async="true"> </script>
         <script src="/client/static/js/home.js" async="true"> </script>
         <script src="/client/static/js/login.js" async="true"> </script>
-        <!--<script src="https://www.google.com/recaptcha/api.js?render=6LeRQd4UAAAAALx8CNdSKBJhGP-NhI7lRRyCbxvW" async="true"></script>-->
 
         <script language="JavaScript1.1" type="text/JavaScript"> 
             <!--
@@ -27,13 +32,9 @@
 
     </head>
     <body style="display: none;">
-
         <div id="fullPage">
-            
-            <div class="section">      
-
+            <div class="section">
                 <div class="form-wrap">
-
                     <div class="row">
                         <div class="">
                             <h1 class="logo-text noselect">SchoolNet</h1>
@@ -42,69 +43,19 @@
 
                     <div class="row">
                         <div class="s-form" class="box">
-                                <div class="con-in-box">
-                                    <button id="schoolBtn" type="button" class="btn" onclick="chooseSchool();"> Избери училиште </button>
+                            <button type="button" class="btn btn-special" id="znamBtn" onclick='window.location.href = "https:\/\/znam.schoolnet.mk/"'> 
+                                <img id="znam-logo" src="/client/static/img/ZNAM-character.png"></img>
+                                <div class="btn-special-text">
+                                    <div class="btn-special-title">ЗНАМ</div>
+                                    <div class="btn-special-content">Забавни квизови со прашања од сите предмети</div>
                                 </div>
-                                
-                                <div class="con-in-box">
-                                    <input type="text" class="textbox in-box" placeholder="Прекар" id="nickname"/>
-                                    <div id="nickname-alert-sign" class="alert-sign"> 
-                                        <div class="alert-img"> </div>
-                                    </div>
-                                </div>
-                                <div class="con-in-box" id="login-password">
-                                    <input type="password" class="textbox in-box" placeholder="Лозинка" id="password"/>
-                                    <div id="password-alert-sign" class="alert-sign">
-                                        <span data-tooltip tabindex="1" class="right tooltip-span" data-disable-hover="true" data-v-offset="50" data-h-offset="50" data-position="right" data-alignment="bottom" title="Лозинката мора да содржи најмалку 8 карактери." id="password-tooltip"> </span>
-                                        <div class="alert-img" id="password-alert-img"> </div>
-                                    </div>
-                                </div>
-                                <div class="con-in-box">
-                                    <div>
-                                        <button id="loggingBtn" type="button" class="btn home" onclick="logmein();"> Најави се </button>
-                                    </div>
-                                    <button id="forgetMeBtn" type="button" class="btn home" onclick="forgetme();" style="display: none;"> Испрати порака </button>
-                                    <button id="registerBtn" class="square" onclick="gotoRegister()"> Регистрирај се </button>
-                                </div>
-                            <div class="alert-container" id="alert-login-form" style="display:none;">
-                                <label id="form-msg"> </label>
-                            </div>
+                            </button>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <div class="section" id="statSection">
-                <!-- Choosing the School -->
-                <div class="form-wrap s-form" id="school-form">
-            
-                    <div class="row">
-                        <div class="">
-                            <h1 class="logo-text" id="school-big-text">Училиште</h1>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <select id="schools">
-                        </select>
-                    </div>
-
-                    <div class="row">
-                        <div id="maybe-school" style="display: none;">
-                            <label class="s-tiny"> Можеби? </label>
-                            <div class="con-in-box">
-                                <button id="recentSchoolBtn" type="button" class="btn" onclick="pickRecentSchool();"> СОУ „Јане Сандански“ - Струмица </button>
-                            </div>
-                        </div>
-
-                        <div class="con-in-box">
-                            <button id="pickSchoolBtn" type="button" class="btn" onclick="pickSchool();"> Готово </button>
-                        </div>
-                    </div>
-        
-                </div>
-                
+            <div class="section" id="statSection">                
                 <!-- Statistics -->
                 <div id="stats">
                     <div class="iframe-wrapper">
@@ -118,16 +69,14 @@
                 <div class="form-wrap s-form" id="info-form">
                     <div id="info-form-cont">
                         <div id="teachers-info-form" class="info-form">
-                            <div id="titles-info-form"> <b> ПРОФЕСОРИ! </b> </div>
-                            <div id="text-info-form"> Зошто не го регистрирате вашето училиште или клас како дел од системов? </div>
+                            <div id="text-info-form"> Сите сме опкружени со технологија, но не знаеме како да ја искористиме. 📡 </div>
                         </div>
                         <div id="students-info-form" class="info-form">
-                            <div id="titles-info-form"> <b> УЧЕНИЦИ! </b> </div>
-                            <div id="text-info-form"> Покажете го ова на вашите професори! Сигурни сме дека ќе ви дозволат да играте на часот 😄 </div>
+                            <div id="text-info-form"> <b>SchoolNet</b> е се уште во изработка. <br><br> Таа е единствена платформа која овозможува интерактивна настава со бесплатни едукативни игри во реално време. 🚧 </div>
                         </div>
                         <div id="parents-info-form" class="info-form">
-                            <div id="titles-info-form"> <b> РОДИТЕЛИ! </b> </div>
-                            <div id="text-info-form"> Имате поплаки или пофалби? </div>
+                            <div id="titles-info-form"> <b> КОНТАКТ </b> </div>
+                            <div id="text-info-form"> Имате поплаки или пофалби? 📱 </div>
                         </div>
                     </div>
                     <div id="about-cont">
@@ -135,11 +84,7 @@
                             <img src="/client/static/img/about-founder.png"></img>
                         </div>
                         <div id="about-text">
-                            Сите сме опкружени со технологија, но не знаеме како да ја искористиме.
-                            <br><br><b>SchoolNet</b> е единствена платформа која овозможува интерактивна настава со бесплатни едукативни игри во реално време.
-                            <!--Работиме на можноста, учениците да создаваат игри и истовремено овде да се играат од ученици и од други училишта.-->
-                            
-                            Нашата цел е да го направиме едукативниот систем модерен!
+                            Нашата цел е да го направиме едукативниот систем модерен! 🔥
                             <br><br>
                             Овој проект е основан од Митко Ников.
                         </div>

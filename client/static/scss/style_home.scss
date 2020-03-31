@@ -9,6 +9,47 @@
         background-clip: text;
 }
 
+$znam-color: #f26726;
+
+#znamBtn {
+    background-color: $znam-color;
+}
+
+#znamBtn:hover {
+    background-color: darken($color: $znam-color, $amount: 8%);
+}
+
+#znamBtn.active {
+    /*background-color: #163c4b;
+    color: #ffffff;*/
+
+    animation: pop 0.5s ease-out;
+	background: radial-gradient(circle at center, darken($color: $znam-color, $amount: 12%) 5%, darken($color: $znam-color, $amount: 8%) 6%);
+	background-size: 100% 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+    transform-origin: center;
+}
+
+#znam-logo {
+    width: 3.5em;
+    float: left;
+}
+
+@media screen and (max-width: 1300px) and (max-height: 800px) {
+    #tatkoBtn {
+        font-size: 1.2em;
+    }
+}
+
+.s-form {
+    width: 50vh;
+}
+
+.btn-special {
+    height: 4.6em;
+}
+
 #schoolBtn {
     font-size: 1.1em;
     width: 100%;
