@@ -16,13 +16,13 @@ import { createBrowserHistory } from 'history';
 import swal from 'sweetalert';
 
 import theme from "./theme";
-import { queryFetch } from "./js/common";
+import { queryFetch, ReactLazyPreload } from "./js/common";
 
 const Authentication = React.lazy(() => import("./components/authentication"));
 const SubjectSelector = React.lazy(() => import("./components/subjectSelector"));
-const Scoreboard = React.lazy(() => import("./components/scoreboard"));
-const Contribute = React.lazy(() => import("./components/contribute"));
-const Profile = React.lazy(() => import("./components/profile"));
+const Scoreboard = ReactLazyPreload(() => import("./components/scoreboard"));
+const Contribute = ReactLazyPreload(() => import("./components/contribute"));
+const Profile = ReactLazyPreload(() => import("./components/profile"));
 const Question = React.lazy(() => import("./components/question"));
 
 class Loading extends Component {
@@ -93,6 +93,13 @@ class App extends Component {
 
     submitAnswer(data) {
         console.log("submitting answer: ", data);
+
+        queryFetch({
+            command: 'submit-answer',
+            data: { token: data }
+        }).then(data => {
+            console.log(data);
+        });
     }
 
     render() {
@@ -152,18 +159,21 @@ class App extends Component {
                                         label="Statistics"
                                         icon={<BarChartIcon />}
                                         to="/score"
+                                        onMouseEnter={() => Scoreboard.preload()}
                                     />
                                     <BottomNavigationAction
                                         component={Link}
                                         label="Contribute"
                                         icon={<AddIcon />}
                                         to="/contribute"
+                                        onMouseEnter={() => Contribute.preload()}
                                     />
                                     <BottomNavigationAction
                                         component={Link}
                                         label="Profile"
                                         icon={<FaceIcon />}
                                         to="/profile"
+                                        onMouseEnter={() => Profile.preload()}
                                     />
                                 </BottomNavigation>
                             </div>)

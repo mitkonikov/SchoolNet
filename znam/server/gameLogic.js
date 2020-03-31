@@ -41,8 +41,8 @@ let queryQuestion = (ID, callback) => {
     });
 }
 
-let checkIfQuestionsExist = (list, callback) => {
-    ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ")", (err, rows) => {
+let checkIfQuestionsExist = (list, subject, callback) => {
+    ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ") AND Subject = ? AND Valid = ?", [subject, 1], (err, rows) => {
         let response = [];
         for (let row of rows) {
             response.push(row.ID);
@@ -73,7 +73,7 @@ let getRandomIDs = (user, data, callback) => {
     }
 
     // check if the questions exists
-    checkIfQuestionsExist(randomIDs, (checked) => {
+    checkIfQuestionsExist(randomIDs, data.subject, (checked) => {
         let crossChecked = [];
         let randomIDsLength = randomIDs.length;
         for (let i = 0; i < randomIDsLength; ++i) {
@@ -206,9 +206,36 @@ let createGame = (user, data, callback) => {
     });
 }
 
+let updateScore = (user, score, callback) => {
+    ZNAMDB.query("UPDATE tbl_games_current SET Score = ? WHERE Student_ID = ?", [score, user], callback);
+}
+
 let submitAnswer = (user, data, callback) => {
     // check the answer token
     // check if the answer is true
+    // data: { token: ID }
+    // user = req.body.user
+
+    ZNAMDB.query("SELECT * FROM tbl_games_current WHERE Student_ID = ?", user, (err, currentGame) => {
+        let Demo_ID = currentGame[0].Demo_ID;
+
+        GameEngine.getLastRecord(Demo_ID, { Command: "question" }, (lastQ) => {
+            let lastQData = JSON.parse(lastQ[0].Data);
+            if (parseInt(lastQData.trueID) === parseInt(data.token)) {
+                // answer is true
+                let scoreUpdate = 100;
+                if (currentGame[0].Time_Left <= 20) {
+                    scoreUpdate -= (20 - currentGame[0].Time_Left) * 4;
+                }
+
+                updateScore(user, currentGame[0].Score + scoreUpdate, (err, setScore) => {
+                    callback({ Score: currentGame[0].Score + scoreUpdate });
+                });
+            } else {
+                callback({ Score: currentGame[0].Score });
+            }
+        });
+    });
 }
 
 let getNextQuestion = (user, callback) => {
@@ -250,8 +277,16 @@ let getNextQuestion = (user, callback) => {
             }
             
             // remember the IDs and the true ID
+            let Demo_ID = currentGame[0].Demo_ID;
 
-            callback(state);
+            let recordState = JSON.parse(JSON.stringify(state));
+            recordState.trueID = trueID;
+
+            GameEngine.record(Demo_ID, {
+                Source: "server",
+                Command: "question",
+                Data: JSON.stringify(recordState)
+            }, () => callback(state));
         });
     });
 }

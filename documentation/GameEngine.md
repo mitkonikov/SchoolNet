@@ -16,6 +16,7 @@ The Game Engine is simple a small module that has deals with the records (states
   - [getRecord](#getrecord--demotable-querydata-callback-)
   - [getAllRecords](#getallrecords--demotable-querydata-callback-)
   - [getRecordTime](#getrecordtime--demotable-querydata-callback-)
+  - [getLastRecord](#getlastrecord--demotable-querydata-callback-)
   - [updateRecord](#updaterecord--demotable-logdata-callback-)
   - [userJoins](#userjoins)
   - [userLeaves](#userleaves)
@@ -159,6 +160,24 @@ Parameters:
                 Data: ""
             }
         ```
+
+<br>
+
+### **getLastRecord ( demoTable, queryData, callback )**
+Function that gets the last record that satistifies the queryData parameter. *(**queryData** is the same as **logData**)*
+
+Parameters:
+ - **demoTable**
+ - **queryData**
+    ```javascript
+        let queryData = {
+            Source:     "", // (optional)
+            Command:    "",
+            Data:       ""  // (optional)
+        }
+    ```
+ - **callback**
+    - `row`       <span style="color: #239B56; font-family: Consolas, monospace; font-weight: bold;">\<array/list\><span>
 
 <br>
 

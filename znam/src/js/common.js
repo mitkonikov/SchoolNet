@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 let queryFetch = body => {
 
@@ -86,4 +86,10 @@ const useFitText = () => {
     return { fontSize: `${fontSize}%`, ref };
 };
 
-export { queryFetch, updateFetch, useFitText };
+const ReactLazyPreload = importStatement => {
+    const Component = React.lazy(importStatement);
+    Component.preload = importStatement;
+    return Component;
+};
+
+export { queryFetch, updateFetch, useFitText, ReactLazyPreload };
