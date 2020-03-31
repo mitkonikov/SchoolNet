@@ -1,25 +1,25 @@
 // SETUP THE HTTP AND HTTPS SERVERS
 const fs = require('fs');
 const keywords = require('./keywords');
-
+/*
 const SSLSettings = {
     pfx: fs.readFileSync('C://cert//certificate.pfx'),
     passphrase: keywords.SSLPass()
-};
+};*/
 
 let express = require('express');
-let HTTPApp = new express();
+// let HTTPApp = new express();
 let app = new express();
-
+/*
 let http = require('http').createServer(HTTPApp);
 
 HTTPApp.get('*', function(req, res) {  
     res.redirect('https://schoolnet.mk');
 })
 
-http.listen(80);
+http.listen(80);*/
 
-let server = require('https').createServer(SSLSettings, app);
+let server = require('http').createServer(app);
 
 // EXPRESS THINGS
 const requestIp = require('request-ip');
@@ -60,44 +60,46 @@ let gameLogic = require('./server/play/main.play').Initialize(server, auth.passp
 let indexRequestsCount = 0;
 let prev_ip = false;
 
-let student_module = require("./server/student");
-student_module.BuildStudent(app, network, auth.crypto);
+if (process.env.READY == 1) {
+    let student_module = require("./server/student");
+    student_module.BuildStudent(app, network, auth.crypto);
 
-let professor_module = require("./server/professor");
-professor_module.BuildProfessor(app, network, auth.crypto);
+    let professor_module = require("./server/professor");
+    professor_module.BuildProfessor(app, network, auth.crypto);
 
-app.post('/client/registerme', function(req, res, next) {
-    
-    console.log(" ================================= ");
-    console.log(" == REGISTER REQ SENT");
-    console.log(req.body);
-    console.log(" ================================= ");
+    app.post('/client/registerme', function(req, res, next) {
+        
+        console.log(" ================================= ");
+        console.log(" == REGISTER REQ SENT");
+        console.log(req.body);
+        console.log(" ================================= ");
 
-    // RECAPTCHA STUFF HERE
-    
-    let checks = auth.protectionChecks.registerCheck(req);
-    if (checks != true) {
-        res.send(checks);
-        return;
-    }
-
-    // Check if there's already an existing user with the same username in the same school
-    network.query("SELECT * FROM tbl_students WHERE Nickname = ? AND School_ID = ?", [req.body.username, req.body.school], function(err, rows) {
-
-        // if (err != null) console.log(err);
-        if (rows.length == 0) {
-            if (req.body.student == 'true') {
-                student_module.Register(req, res);
-            } else if (req.body.student == 'false') {
-                professor_module.Register(req, res);
-            } else {
-                res.send("failed");
-            }
-        } else {
-            res.send("already taken");
+        // RECAPTCHA STUFF HERE
+        
+        let checks = auth.protectionChecks.registerCheck(req);
+        if (checks != true) {
+            res.send(checks);
+            return;
         }
+
+        // Check if there's already an existing user with the same username in the same school
+        network.query("SELECT * FROM tbl_students WHERE Nickname = ? AND School_ID = ?", [req.body.username, req.body.school], function(err, rows) {
+
+            // if (err != null) console.log(err);
+            if (rows.length == 0) {
+                if (req.body.student == 'true') {
+                    student_module.Register(req, res);
+                } else if (req.body.student == 'false') {
+                    professor_module.Register(req, res);
+                } else {
+                    res.send("failed");
+                }
+            } else {
+                res.send("already taken");
+            }
+        });
     });
-});
+}
 
 // REDIRECTING
 app.get('/favicon.ico', function(req, res) {
