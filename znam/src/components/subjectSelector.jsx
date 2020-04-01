@@ -8,6 +8,9 @@ import LockIcon from "@material-ui/icons/Lock";
 
 import "./../styles/subject_selector.css";
 import { queryFetch } from "../js/common";
+import swal from "sweetalert";
+
+import HistoryIcon from '../subjects/znam-history.svg';
 
 class SubjectSelector extends Component {
     state = {
@@ -33,23 +36,39 @@ class SubjectSelector extends Component {
             "ИСТОРИЈА"
         ];
 
+        let playable = [8];
+
+        let subjectIcons = [LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, HistoryIcon];
+
         for (let i = 0; i < 9; i++) {
             subjectDOM.push(
                 <div class="subject" key={i}>
                     <Card>
                         <ButtonBase
                             onClick={event => {
-                                // start game
-                                queryFetch({
-                                    command: 'play-znam',
-                                    data: {
-                                        subject: i,
-                                        rated: this.state.rated
+                                for (let k = 0; k < playable.length; ++k) {
+                                    if (i == playable[k]) {
+                                        // start game
+                                        console.log("creating game...");
+                                        queryFetch({
+                                            command: 'play-znam',
+                                            data: {
+                                                subject: i,
+                                                rated: this.state.rated
+                                            }
+                                        })
+                                        .then(data => {
+                                            if (typeof this.props.onMount == "function")
+                                                this.props.onPlay(data);
+                                        });
+                                        return;
                                     }
-                                })
-                                .then(data => {
-                                    if (typeof this.props.onMount == "function")
-                                        this.props.onPlay(data);
+                                }
+                                    
+                                swal({
+                                    title: "Упс...",
+                                    text: "Се уште не се обработени прашањата за овој предмет...",
+                                    icon: "error"
                                 });
                             }}
                         >
@@ -65,12 +84,9 @@ class SubjectSelector extends Component {
                                         })()}
                                     >
                                         <div class="center-vh">
-                                            <LockIcon
-                                                style={{
-                                                    width: "1.5em",
-                                                    height: "1.5em"
-                                                }}
-                                            />
+                                            {() => {
+                                                return subjectIcons[i];
+                                            }}
                                         </div>
                                     </div>
                                     <div class="subject-name">

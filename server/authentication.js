@@ -100,7 +100,10 @@ let Initialize = (app, network, req) => {
             passport_module.passport.authenticate('facebook', (err, user, info) => {
                 req.logIn(user, (err) => {
                     network.query("UPDATE tbl_stats AS tbl1 SET tbl1.Logins = (SELECT tbl1.Logins WHERE tbl1.ID = ?)+1 WHERE tbl1.ID = ?", [req.user.ID, req.user.ID]);
-                    res.redirect('/');
+                    
+                    network.query("UPDATE tbl_students SET Redirect = ? WHERE ID = ?", ["ZNAM", req.user.ID], (err, rows) => {
+                        res.redirect('/');
+                    });
                 })
             })(req, res);
         }

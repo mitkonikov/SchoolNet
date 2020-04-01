@@ -19,7 +19,7 @@ HTTPApp.get('*', function(req, res) {
 
 http.listen(80);*/
 
-let server = require('http').createServer(app);
+let server = require('http').createServer(app.urlencoded({ extended: true }));
 
 // EXPRESS THINGS
 const requestIp = require('request-ip');
@@ -144,7 +144,19 @@ app.use('/client/common', express.static(__dirname + '/client/common'));
 
 app.get('/', function(req, res) {
     if (req.isAuthenticated()) {
-        res.sendFile(__dirname + '/client/lobby/index.html');
+        network.query("SELECT Redirect FROM tbl_students WHERE ID = ?", req.user.ID, (err, rows) => {
+            if (err) {
+                console.trace(err);
+                res.sendFile(__dirname + '/client/index.html');
+                return;
+            }
+
+            if (rows[0].Redirect == "ZNAM") {
+                res.redirect("https:\/\/znam.schoolnet.mk/");
+            } else {
+                res.sendFile(__dirname + '/client/lobby/index.html');
+            }
+        });
     } else {
         res.sendFile(__dirname + '/client/index.html');
     }
@@ -154,7 +166,7 @@ app.get('/', function(req, res) {
         console.log("User " + ip + " requested index.html");
         prev_ip = ip;
     }
-
+/*
     indexRequestsCount += 1;
     if (indexRequestsCount % 10 == 0) {
         network.query("SELECT Stat_Count From tbl_stats_web WHERE Stat_Name = ?", 'Index Requests', function(err, rows) {
@@ -163,7 +175,7 @@ app.get('/', function(req, res) {
             network.query("UPDATE tbl_stats_web SET Stat_Count = ? WHERE Stat_Name = 'Index Requests'", currentStatCount);
             indexRequestsCount = 0;
         });
-    }
+    }*/
 });
 
 app.get('/pin', (req, res) => {
@@ -183,11 +195,11 @@ app.get('/client/lobby/dashboard*', function(req, res) {
 });
 
 app.get('/client/lobby*', function(req, res) {
-    if (req.isAuthenticated()) {
+    /*if (req.isAuthenticated()) {
         res.sendFile(__dirname + req.url);
-    } else {
+    } else {*/
         res.redirect('/');
-    }
+    //}
 });
 
 app.get('/user/:userCalled', function(req, res) {
@@ -215,3 +227,5 @@ console.log('\x1b[32m%s\x1b[0m', "SchoolNet Server Started.");
 
 let misc = require('./server/misc');
 misc.Initialize(server, databases);
+
+module.exports.quit = misc.quit;

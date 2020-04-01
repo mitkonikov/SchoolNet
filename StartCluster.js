@@ -3,6 +3,7 @@ const numCPUs = require('os').cpus().length;
 
 const fs = require('fs');
 
+// process all the arguments given when starting this module
 let argsRaw = process.argv;
 let args = {};
 
@@ -31,31 +32,37 @@ if (cluster.isMaster) {
         console.log("Restart received, reloading workers");
 
         // delete the cached module, so we can reload the app
-        delete require.cache[require.resolve("./" + args['-server'])];
+        delete require.cache[require.resolve("./" + args["-server"])];
+
+        let workers = Object.keys(cluster.workers);
 
         // only reload one worker at a time
         // otherwise, we'll have a time when no request handlers are running
         let i = 0;
-        let workers = Object.keys(cluster.workers);
-        console.log(workers);
         let updateWorker = function() {
             if (i == workers.length) return;
 
             console.log("Killing " + workers[i]);
-            
+
+            // this now means, just shut down the mySQL connections
+            cluster.workers[workers[i]].send({ data: "bye" });
+
             cluster.workers[workers[i]].on("disconnect", function() {
                 console.log("Shutdown complete");
             });
 
-            cluster.workers[workers[i]].disconnect();
-            
-            let newWorker = cluster.fork();
-            newWorker.on("listening", function() {
-                console.log("Replacement worker online.");
+            // wait a little bit for the connections to be shut down
+            setTimeout(() => {
+                // it could happen that the worker errored out
+                if (typeof cluster.workers[workers[i]] != "undefined") {
+                    cluster.workers[workers[i]].disconnect();
+                    console.log("Disconnecting worker...");
+                }
+                
                 i++;
                 updateWorker();
-            });
-        }
+            }, 1000);
+        };
 
         updateWorker();
     });
@@ -65,4 +72,12 @@ if (cluster.isMaster) {
     console.log(`Worker ${process.pid} Starting...`);
 
     let SchoolNet = require("./" + args['-server']);
+
+    process.on("message", (msg) => {
+        if (msg.data) {
+            if (msg.data == "bye") {
+                SchoolNet.quit();
+            }
+        }
+    });
 }

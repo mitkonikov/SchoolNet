@@ -28,13 +28,14 @@ String.prototype.multiReplace = function(array) {
 /** Used to safely shutdown the server */
 process.on('SIGINT', () => {
     console.info('SIGINT signal received.');
-    for (let db in databases.obj) {
-        databases.obj[db].end(() => {
-            console.log('mySQL connection closed.');
-        });
-    }
-
+    quit();
     setTimeout(() => process.exit(0), 2000);
 });
 
+/** Shut down the MySQL connections */
+let quit = () => {
+    databases.endAll();
+}
+
 module.exports.Initialize = Initialize;
+module.exports.quit = quit;
