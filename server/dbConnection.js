@@ -37,16 +37,6 @@ wordsDB.connect((error) => onConnect("words", error));
 records.connect((error) => onConnect("records", error));
 ZNAM.connect((error) => onConnect("ZNAM", error));
 
-module.exports.endAll = () => {
-	if(network.state != 'disconnected') { 
-		console.log("Shutting down mySQL connections");
-		network.end(); 
-	}
-	if(wordsDB.state != 'disconnected') { wordsDB.end(); }
-	if(records.state != 'disconnected') { records.end(); }
-	if(ZNAM.state != 'disconnected') { ZNAM.end(); }
-}
-
 /** The MySql module */
 module.exports.MySQL = mysql;
 
@@ -57,10 +47,18 @@ module.exports.wordsDB = wordsDB;
 module.exports.records = records;
 module.exports.ZNAM = ZNAM;
 
-/** Collection of all the databases */
-module.exports.obj = {
+let obj = {
 	"db_net": network,
 	"db_words": wordsDB,
 	"db_records": records,
 	"db_znam": ZNAM
+};
+
+/** Collection of all the databases */
+module.exports.obj = obj;
+
+module.exports.endAll = () => {
+	for (let db in obj) {
+		obj[db].end();
+	}
 }
