@@ -25,6 +25,11 @@
     height: 80%;
 }
 
+.subject-icon-img {
+    width: 1.5em;
+    height: 1.5em;
+}
+
 .subject-name {
     width: 100%;
     position: absolute;

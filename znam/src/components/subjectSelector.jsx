@@ -38,8 +38,6 @@ class SubjectSelector extends Component {
 
         let playable = [8];
 
-        let subjectIcons = [LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, LockIcon, HistoryIcon];
-
         for (let i = 0; i < 9; i++) {
             subjectDOM.push(
                 <div class="subject" key={i}>
@@ -47,7 +45,7 @@ class SubjectSelector extends Component {
                         <ButtonBase
                             onClick={event => {
                                 for (let k = 0; k < playable.length; ++k) {
-                                    if (i == playable[k]) {
+                                    if (i === playable[k]) {
                                         // start game
                                         console.log("creating game...");
                                         queryFetch({
@@ -83,10 +81,15 @@ class SubjectSelector extends Component {
                                                 };
                                         })()}
                                     >
-                                        <div class="center-vh">
-                                            {() => {
-                                                return subjectIcons[i];
-                                            }}
+                                        <div class="center-vh subject-icon-img">
+                                            {(() => {
+                                                switch (i) {
+                                                    case 8:
+                                                        return <img src={HistoryIcon} alt="icon"/>;
+                                                }
+
+                                                return <LockIcon/>;
+                                            })()}
                                         </div>
                                     </div>
                                     <div class="subject-name">
