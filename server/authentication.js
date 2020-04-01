@@ -1,4 +1,4 @@
-let Initialize = (app, network, req, platform) => {
+let Initialize = (app, network, req) => {
     let sess                = require('express-session');
 
     let crypto              = require('crypto');
@@ -30,6 +30,7 @@ let Initialize = (app, network, req, platform) => {
         name: process.env.SESSION_NAME,
         secret: process.env.SESSION_SECRET,
         cookie: {
+            domain: '.schoolnet.mk',
             maxAge: 1000 * 60 * 60 * 24 * 3,
             expires: 1000 * 60 * 60 * 24 * 3
         },
@@ -39,7 +40,7 @@ let Initialize = (app, network, req, platform) => {
     }));
 
     // Initializes the passport module
-    passport_module = passport_module.Initialize(network, crypto, platform);
+    passport_module = passport_module.Initialize(network, crypto);
 
     let passportPass = {
         store           : store,
@@ -103,7 +104,7 @@ let Initialize = (app, network, req, platform) => {
                     network.query("UPDATE tbl_stats AS tbl1 SET tbl1.Logins = (SELECT tbl1.Logins WHERE tbl1.ID = ?)+1 WHERE tbl1.ID = ?", [req.user.ID, req.user.ID]);
                     
                     network.query("UPDATE tbl_students SET Redirect = ? WHERE ID = ?", ["ZNAM", req.user.ID], (err, rows) => {
-                        res.redirect('/');
+                        res.redirect('https://znam.schoolnet.mk/');
                     });
                 })
             })(req, res);

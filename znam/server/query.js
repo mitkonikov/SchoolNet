@@ -18,7 +18,6 @@ let Initialize = function(node_databaseController, node_ZNAMDBC, node_GameLogic)
 let Query = function(req, res) {
     if (req.body.command === "isAuth") {
         let userIsAuth = req.isAuthenticated();
-        console.log(userIsAuth);
         if (userIsAuth) {
             network.table().isFirstTimeLogIn(req.user.ID, (firstTime) => {
                 res.send({

@@ -147,11 +147,10 @@ app.get('/', function(req, res) {
             }
 
             if (rows[0].Redirect == "ZNAM") {
-                res.sendFile(__dirname + '/client/lobby/index.html');
-                console.log("authenticated!");
-                // res.redirect("https:\/\/znam.schoolnet.mk/");
+                res.redirect("https:\/\/znam.schoolnet.mk/");
             } else {
-                res.sendFile(__dirname + '/client/lobby/index.html');
+                // res.sendFile(__dirname + '/client/lobby/index.html');
+                res.redirect("https:\/\/znam.schoolnet.mk/");
             }
         });
     } else {
@@ -176,19 +175,20 @@ app.get('/', function(req, res) {
 });
 
 app.get('/pin', (req, res) => {
-    res.sendFile(__dirname + '/client/guest/index.html');
+    //res.sendFile(__dirname + '/client/guest/index.html');
+    res.redirect('/');
 });
 
 app.get('/client/lobby/dashboard*', function(req, res) {
-    if (req.isAuthenticated()) {
+    /*if (req.isAuthenticated()) {
         if (req.user.Role == '1') {
             res.sendFile(__dirname + req.url);
         } else {
             res.redirect('/client/lobby/');
         }
-    } else {
+    } else {*/
         res.redirect('/');
-    }
+    //}
 });
 
 app.get('/client/lobby*', function(req, res) {
@@ -202,15 +202,18 @@ app.get('/client/lobby*', function(req, res) {
 app.get('/user/:userCalled', function(req, res) {
     // if (crash.it) console.log("crash");
     
-    if (req.isAuthenticated()) {
+    /*if (req.isAuthenticated()) {
         res.sendFile(__dirname + "/client/lobby/profile.html");
-    } else {
+    } else {*/
         res.redirect('/');
-    }
+    //}
 });
 
 app.get('/:pageCalled', function(req, res) {
-    console.log('User requested page out-of-bounds: ' + req.params.pageCalled);
+    if (req.user) {
+        console.log(req.user.ID + ' requested page out-of-bounds: ' + req.params.pageCalled);
+    }
+    
     res.redirect('/');
 });
 
