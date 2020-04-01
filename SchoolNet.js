@@ -1,7 +1,11 @@
 // SETUP THE HTTP AND HTTPS SERVERS
 const fs = require('fs');
 const keywords = require('./keywords');
-/*
+
+/* UNCOMMENT THIS IF YOU DONT HAVE NGINX SETUP
+ * Also, change the ports:
+ *   - HTTPS on 443
+ *   - HTTP  on 80
 const SSLSettings = {
     pfx: fs.readFileSync('C://cert//certificate.pfx'),
     passphrase: keywords.SSLPass()
@@ -19,7 +23,7 @@ HTTPApp.get('*', function(req, res) {
 
 http.listen(80);*/
 
-let server = require('http').createServer(app.urlencoded({ extended: true }));
+let server = require('http').createServer(app);
 
 // EXPRESS THINGS
 const requestIp = require('request-ip');
@@ -124,15 +128,6 @@ app.post('/client/dashboard/update', function(req, res) {
     res.send("under construction");
 });
 
-app.get('/p/:pageCalled/:subPageCalled', function(req, res) {
-    SCHOOL = req.params.pageCalled;
-    USERNAME = req.params.subPageCalled;
-
-    console.log(SCHOOL + " : " + USERNAME);
-
-    res.redirect('/');
-});
-
 // this is for another project
 //app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));
 
@@ -152,7 +147,9 @@ app.get('/', function(req, res) {
             }
 
             if (rows[0].Redirect == "ZNAM") {
-                res.redirect("https:\/\/znam.schoolnet.mk/");
+                res.sendFile(__dirname + '/client/lobby/index.html');
+                console.log("authenticated!");
+                // res.redirect("https:\/\/znam.schoolnet.mk/");
             } else {
                 res.sendFile(__dirname + '/client/lobby/index.html');
             }

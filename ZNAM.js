@@ -44,7 +44,7 @@ ZNAMDBC.Connect(databases);
 
 let network = databases.network;
 let authenticationModule = require('./server/authentication');
-let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });
+let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler }, "ZNAM");
 
 let GameEngine = require('./server/play/GameEngine');
 let GameLogic = require("./znam/server/gameLogic");

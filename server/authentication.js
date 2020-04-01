@@ -1,4 +1,4 @@
-let Initialize = (app, network, req) => {
+let Initialize = (app, network, req, platform) => {
     let sess                = require('express-session');
 
     let crypto              = require('crypto');
@@ -17,7 +17,8 @@ let Initialize = (app, network, req) => {
 
     let bodyParser        = require('body-parser');
     let cookieParser      = require('cookie-parser');
-    app.use(bodyParser());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
 
     let protectionChecks  = require('./protectionChecks');
     protectionChecks.Error(req.ErrorHandler);
@@ -38,7 +39,7 @@ let Initialize = (app, network, req) => {
     }));
 
     // Initializes the passport module
-    passport_module = passport_module.Initialize(network, crypto);
+    passport_module = passport_module.Initialize(network, crypto, platform);
 
     let passportPass = {
         store           : store,

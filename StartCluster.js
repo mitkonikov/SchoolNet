@@ -21,12 +21,6 @@ if (cluster.isMaster) {
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
     }
-  
-    cluster.on('exit', (worker, code, signal) => {
-        console.log('worker %d died (%s). restarting...',
-            worker.process.pid, signal || code);
-        cluster.fork();
-    });
     
     fs.watchFile("./watcher", (curr, prev) => {
         console.log("Restart received, reloading workers");
@@ -49,6 +43,7 @@ if (cluster.isMaster) {
 
             cluster.workers[workers[i]].on("disconnect", function() {
                 console.log("Shutdown complete");
+                cluster.fork();
             });
 
             // wait a little bit for the connections to be shut down

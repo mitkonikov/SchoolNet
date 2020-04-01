@@ -4,7 +4,7 @@ let Server = function(node_app) {
     app = node_app;
 };
 
-let Initialize = function(network, crypto) {
+let Initialize = function(network, crypto, platform) {
     let flash = require("connect-flash");
     let passport = require("passport");
     let LocalStrategy = require("passport-local").Strategy;
@@ -67,12 +67,18 @@ let Initialize = function(network, crypto) {
 
     FacebookStrategy = require("passport-facebook").Strategy;
 
+    let CallbackURL = process.env.FACEBOOK_CALLBACK_URL;
+
+    if (platform == "ZNAM") {
+        CallbackURL = process.env.FACEBOOK_CALLBACK_URL_ZNAM;
+    }
+
     passport.use(
         new FacebookStrategy(
             {
                 clientID: process.env.FACEBOOK_APP_ID,
                 clientSecret: process.env.FACEBOOK_APP_SECRET,
-                callbackURL: process.env.FACEBOOK_CALLBACK_URL
+                callbackURL: CallbackURL
             },
             function(accessToken, refreshToken, profile, done) {
                 console.log("Access Token: ", accessToken);
