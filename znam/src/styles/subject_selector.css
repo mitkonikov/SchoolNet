@@ -1,0 +1,44 @@
+#selector-subject-container {
+    width: 100%;
+    height: 100%;
+}
+
+#selector-subject {
+    width: 100%;
+    height: 52%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.subject {
+    width: 29%;
+    height: 29%;
+    margin: 2%;
+}
+
+.subject-content {
+    height: 88%;
+}
+
+.subject-icon {
+    height: 80%;
+}
+
+.subject-icon-img {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.subject-name {
+    width: 100%;
+    position: absolute;
+    bottom: 0.5em;
+    font-size: 0.5em;
+    text-align: center;
+}
+
+#game-options {
+    padding-left: 1em;
+    padding-top: 1em;
+}

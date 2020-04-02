@@ -3087,7 +3087,8 @@ svg.mdc-button__icon {
 
 .mdc-button__label {
   font-size: 1em;
-  font-family: 'Roboto-Light'; }
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300; }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
   color: #ffffff; }
@@ -3226,12 +3227,14 @@ svg.mdc-button__icon {
   display: inline-block; }
 
 #profile-name {
-  font-family: 'Roboto-Regular';
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
   font-size: 1.2em;
   display: inline-block; }
 
 #profile-desc {
-  font-family: 'Roboto-Thin';
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
   font-size: 0.9em;
   display: inline-block; }
 
@@ -3277,7 +3280,8 @@ svg.mdc-button__icon {
 
 #gotoDashboard-text {
   font-size: 1.4em;
-  font-family: 'Roboto-Thin';
+  font-family: 'Roboto', sans-serif;
+  font-weight: 100;
   z-index: 3; }
 
 #gotoDashboard-effect {
@@ -3326,7 +3330,8 @@ svg.mdc-button__icon {
 
 #stats-xp {
   font-size: 1.6em;
-  font-family: 'Roboto-Bold'; }
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700; }
 
 .form-center {
   position: absolute;

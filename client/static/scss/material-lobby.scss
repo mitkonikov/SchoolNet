@@ -83,13 +83,15 @@
 }
 
 #profile-name {
-    font-family: 'Roboto-Regular';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
     font-size: 1.2em;
     display: inline-block;
 }
 
 #profile-desc {
-    font-family: 'Roboto-Thin';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
     font-size: 0.9em;
     display: inline-block;
 }
@@ -148,7 +150,8 @@
 
 #gotoDashboard-text {
     font-size: 1.4em;
-    font-family: 'Roboto-Thin';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 100;
     z-index: 3;
 }
 
@@ -205,7 +208,8 @@
 
 #stats-xp {
     font-size: 1.6em;
-    font-family: 'Roboto-Bold';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
 }
 
 .form-center {

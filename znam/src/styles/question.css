@@ -1,0 +1,41 @@
+#question-container {
+    width: 100%;
+    height: 95%;
+    position: relative;
+}
+
+#question {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 38%;
+    text-align: center;
+    padding: 2%;
+}
+
+#question-content {
+    padding: 0.8em;
+}
+
+#answers-container {
+    text-align: center;
+    position: relative;
+    height: 60%;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.answer {
+    position: relative;
+    margin: 2%;
+    width: 96%;
+    height: 21%;
+}

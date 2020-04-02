@@ -238,6 +238,61 @@ let getRecordTime = (demo_table, queryData, callback) => {
 }
 
 /**
+ * Gets the last record with a specific command
+ * @param {JSON}        demo_table  Database Table
+ * @param {String}      queryData   Query entry
+ * @param {Function}    callback    Callback function
+ */
+let getLastRecord = (demo_table, queryData, callback) => {
+    if (queryData.Source == undefined && queryData.Data == undefined) {
+        records.query("SELECT * FROM " + demo_table + " WHERE Command = ? ORDER BY ID DESC LIMIT 1",
+            [queryData.Command], (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    return;
+                }
+
+                if (typeof rows === "undefined") {
+                    callback(false);
+                    return;
+                }
+
+                callback(rows);
+            });
+    } else if (queryData.Data == undefined) {
+        records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ? ORDER BY ID DESC LIMIT 1",
+            [queryData.Source, queryData.Command], (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    return;
+                }
+
+                if (typeof rows === "undefined") {
+                    callback(false);
+                    return;
+                }
+
+                callback(rows);
+            });
+    } else {
+        records.query("SELECT * FROM " + demo_table + " WHERE Source = ? AND Command = ? AND Data = ? ORDER BY ID DESC LIMIT 1",
+            [queryData.Source, queryData.Command, queryData.Data], (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    return;
+                }
+                
+                if (typeof rows === "undefined") {
+                    callback(false);
+                    return;
+                }
+
+                callback(rows);
+            });
+    }
+}
+
+/**
  * Updates a given record given an existing Source and Command
  * and the new Data
  * @param {JSON}        demo_table  Database Table
@@ -407,6 +462,7 @@ module.exports = {
     getRecord,
     getAllRecords,
     getRecordTime,
+    getLastRecord,
     updateRecord,
     userJoins,
     userLeaves,

@@ -1,0 +1,59 @@
+#profile-header {
+    position: relative;
+    height: 12em;
+}
+
+#logout-container {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+#logout {
+    font-size: 0.9em;
+    cursor: pointer;
+    text-align: center;
+    color: #fff;
+    text-decoration: none;
+}
+
+#profile-img-container {
+    float: left;
+    padding: 1em;
+    height: 5em;
+    width: 5em;
+}
+
+#profile-img {
+    background-image: url('./../img/ZNAM-character.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 5em;
+    width: 5em;
+    cursor: pointer;
+}
+
+#profile-content {
+    text-align: left;
+    padding: 0.5em;
+    padding-top: 1em;
+}
+
+#profile-greeting {
+    font-size: 0.8em;
+}
+/*
+#feedback-container {
+    height: 10%;
+}*/
+
+#request-feature {
+    width: 100%;
+    margin-bottom: 1em;
+}
+
+#feedback {
+    margin-bottom: 0.5em;
+}

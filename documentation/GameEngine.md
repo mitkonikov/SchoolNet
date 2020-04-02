@@ -16,6 +16,7 @@ The Game Engine is simple a small module that has deals with the records (states
   - [getRecord](#getrecord--demotable-querydata-callback-)
   - [getAllRecords](#getallrecords--demotable-querydata-callback-)
   - [getRecordTime](#getrecordtime--demotable-querydata-callback-)
+  - [getLastRecord](#getlastrecord--demotable-querydata-callback-)
   - [updateRecord](#updaterecord--demotable-logdata-callback-)
   - [userJoins](#userjoins)
   - [userLeaves](#userleaves)
@@ -25,10 +26,19 @@ The Game Engine is simple a small module that has deals with the records (states
   - [getAllLevels](#getalllevels)
   - [GameOver](#gameover)
 
+## Additional Descriptions
+  - [Demo ID](#demo-id)
+
 <br>
 
 ### **getTime ()**
 Function that returns string compatible time for storage in the records. Mostly used for timestamping the records.
+
+The return format is: **HHMMSSsss**
+ - H - hours
+ - M - minuts
+ - S - seconds
+ - s - milliseconds
 
 <br>
 
@@ -153,6 +163,24 @@ Parameters:
 
 <br>
 
+### **getLastRecord ( demoTable, queryData, callback )**
+Function that gets the last record that satistifies the queryData parameter. *(**queryData** is the same as **logData**)*
+
+Parameters:
+ - **demoTable**
+ - **queryData**
+    ```javascript
+        let queryData = {
+            Source:     "", // (optional)
+            Command:    "",
+            Data:       ""  // (optional)
+        }
+    ```
+ - **callback**
+    - `row`       <span style="color: #239B56; font-family: Consolas, monospace; font-weight: bold;">\<array/list\><span>
+
+<br>
+
 ### **updateRecord ( demoTable, logData, callback )**
 Function to update certain record's data.
 
@@ -212,5 +240,14 @@ Parameters:
 ### **`GameOver`**
 
 <br>
+
+### **Demo ID**
+
+The Demo ID consists of the date and time at which the game is started and a UUID (Unique Identifier)
+
+**Example ID**: 20190411_112425_78667b82f04049f78d593aa331a1cc1d
+
+<br>
+
 
 > Documentations in construction...

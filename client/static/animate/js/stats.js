@@ -10,14 +10,14 @@ var HEIGHT = 0;
 var prevWIDTH = 0;
 var prevHEIGHT = 0;
 
-let robotoLight, robotoThin;
+// let robotoLight, robotoThin;
 
 let gotServerData = false;
 let cacheServerData;
 
 function preload() {
-    robotoLight = loadFont('/client/static/res/Roboto-Light.ttf');
-    robotoThin = loadFont('/client/static/res/Roboto-Thin.ttf');
+    // robotoLight = loadFont('/client/static/res/Roboto-Light.ttf');
+    // robotoThin = loadFont('/client/static/res/Roboto-Thin.ttf');
 }
 
 function setup() {
@@ -158,10 +158,10 @@ function getStatistics() {
 
 function drawStatsText() {
     fill(255);
-    textFont(robotoThin);
+    textFont("Roboto Thin");
     textAlign(CENTER, CENTER);
-    textSize(HEIGHT / 20.00);
-    text('Real-time Statistics', WIDTH / 2, HEIGHT / 2);
+    textSize(HEIGHT / 40.00);
+    text('Статистики во вистинско време', WIDTH / 2, HEIGHT / 2);
 
     if (!gotServerData) {
         getStatistics().then((response) => {
@@ -178,7 +178,7 @@ function drawStatsText() {
 function printTextStats(response) {
     let MAIN_STATS = "";
 
-    textFont(robotoLight);
+    textFont("Roboto Thin");
     textAlign(CENTER, CENTER);
     textSize(HEIGHT / 40.00);
 
