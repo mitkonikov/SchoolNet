@@ -8,9 +8,11 @@ import LockIcon from "@material-ui/icons/Lock";
 
 import "./../styles/subject_selector.css";
 import { queryFetch } from "../js/common";
+import { subjectName, subjectIcons } from "../js/subjects";
 import swal from "sweetalert";
 
-import HistoryIcon from '../subjects/znam-history.svg';
+let clickFX = new Audio("/audio/click-2.mp3");  
+clickFX.volume = 0.5;
 
 class SubjectSelector extends Component {
     state = {
@@ -22,20 +24,7 @@ class SubjectSelector extends Component {
     }
 
     renderSubjects() {
-
         let subjectDOM = [];
-        let subjectName = [
-            "МАКЕДОНСКИ ЈАЗИК",
-            "МАТЕМАТИКА",
-            "АНГЛИСКИ",
-            "ФИЗИКА",
-            "ХЕМИЈА",
-            "БИОЛОГИЈА",
-            "ИНФОРМАТИКА",
-            "ГЕОГРАФИЈА",
-            "ИСТОРИЈА"
-        ];
-
         let playable = [8];
 
         for (let i = 0; i < 9; i++) {
@@ -44,6 +33,8 @@ class SubjectSelector extends Component {
                     <Card>
                         <ButtonBase
                             onClick={event => {
+                                clickFX.play();
+
                                 for (let k = 0; k < playable.length; ++k) {
                                     if (i === playable[k]) {
                                         // start game
@@ -83,9 +74,10 @@ class SubjectSelector extends Component {
                                     >
                                         <div class="center-vh subject-icon-img">
                                             {(() => {
-                                                switch (i) {
-                                                    case 8:
-                                                        return <img src={HistoryIcon} alt="icon"/>;
+                                                for (let k = 0; k < playable.length; ++k) {
+                                                    if (i === playable[k]) {
+                                                        return <img src={subjectIcons[i]} alt="icon"/>;
+                                                    }
                                                 }
 
                                                 return <LockIcon/>;

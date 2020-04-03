@@ -33,7 +33,8 @@ const theme = createMuiTheme({
         MuiButton: {
 			root: {
                 borderRadius: 0,
-                padding: "6px 30px"
+                padding: "6px 30px",
+                fontFamily: "Roboto"
 			},
 			text: {
                 color: "#fff"
@@ -85,7 +86,8 @@ const theme = createMuiTheme({
                 width: "100%",
                 height: "100%",
                 borderWidth: "0",
-                borderRadius: 0
+                borderRadius: 0,
+                fontFamily: "Roboto"
             }
         },
 		MuiTextField: {
@@ -130,6 +132,19 @@ const theme = createMuiTheme({
         MuiCheckbox: {
             root: {
                 width: "initial"
+            }
+        },
+        MuiListItemAvatar: {
+            root: {
+                position: "relative",
+                minWidth: "0px",
+                marginRight: "1em"
+            }
+        },
+        MuiAvatar: {
+            colorDefault: {
+                color: "#fff",
+                backgroundColor: palette.secondary.main
             }
         }
     }
