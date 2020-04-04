@@ -40,7 +40,7 @@ class App extends Component {
         super(props);
 
         this.state = {
-            isAuth: -1,
+            isAuth: 1,
             currentPage: 0,
             inGame: false,
             currentQuestion: {

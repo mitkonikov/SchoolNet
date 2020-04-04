@@ -5,9 +5,22 @@ import { List, ListItem, ListItemText } from '@material-ui/core';
 import LeaderboardPlayer from './leaderboardPlayer';
 
 import './../styles/scoreboard.css';
+import { queryFetch } from '../js/common';
 
 class Scoreboard extends Component {
+    state = {
+        scoreboard: [{
+            Display_Name: "John Doe",
+            Score: "100",
+            Rank: "1"
+        }]
+    }
+    
     componentDidMount() {
+        queryFetch({
+            command: "get-scoreboard"
+        }).then(data => this.setState({ scoreboard: data }));
+
         if (typeof this.props.onMount == "function")
             this.props.onMount();
     }
@@ -17,11 +30,12 @@ class Scoreboard extends Component {
 
         for (let i = 0; i < 10; i++) {
             playersDOM.push(
-                <ListItem button>
+                <ListItem button dense>
                     <div class="list-number">
-                        #{i}
+                        #{scoreboard[0].Rank}
                     </div>
-                    <ListItemText primary={"Player" + i}/>
+                    <ListItemText primary={scoreboard[0].Player_Name}/>
+                    {scoreboard[0].Score}
                 </ListItem>
             );
         }

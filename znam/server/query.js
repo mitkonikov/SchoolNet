@@ -33,7 +33,6 @@ let Query = function(req, res) {
     }
 
     if (req.isAuthenticated()) {
-
         if (typeof req.body.command !== "undefined") {
             let commandSanitized = req.sanitize(req.body.command);
 
@@ -47,6 +46,8 @@ let Query = function(req, res) {
                 GameLogic.submitAnswer(req.user.ID, data, (response) => res.send(response));
             } else if (commandSanitized === 'get-question') {
                 GameLogic.getNextQuestion(req.user.ID, (response) => res.send(response));
+            } else if (commandSanitized === 'get-scoreboard') {
+                GameLogic.getScoreboard((response) => res.send(response));
             } else if (commandSanitized === 'profile-info') {
                 network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => {
                     let response = {

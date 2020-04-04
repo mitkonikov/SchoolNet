@@ -1,3 +1,4 @@
+let databases;
 let ZNAMDB;
 let GameEngine;
 let UUIDV4 = require('uuid/v4');
@@ -8,7 +9,8 @@ let UUIDV4 = require('uuid/v4');
  * @param {module} node_GameEngine  Game Engine
  */
 let Initialize = (node_databases, node_GameEngine) => {
-    ZNAMDB = node_databases.ZNAMDB;
+    databases = node_databases;
+    ZNAMDB = node_databases.ZNAM;
     GameEngine = node_GameEngine;
 }
 
@@ -295,6 +297,29 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
+let getScoreboard = (callback) => {
+    ZNAMDB.query("SELECT * FROM tbl_scoreboard ORDER BY RANK LIMIT 10", (err, scores) => {
+        let IDs = [];
+        for (let score of scores) {
+            IDs.push(score.Player_ID);
+        }
+
+        // get the names according to the player IDs
+        databases.network.query("SELECT ID, Display_Name FROM tbl_students_info WHERE ID IN (" + IDs.join() + ")", (err, infos) => {
+            // match them
+            for (let score of scores) {
+                for (let info of infos) {
+                    if (score.Player_ID == info.ID) {
+                        score.Display_Name = info.Display_Name;
+                    }
+                }
+            }
+
+            callback(scores);
+        });
+    });
+}
+
 module.exports = {
     Initialize,
     createGame,
@@ -302,5 +327,6 @@ module.exports = {
     generateQuestions,
     submitAnswer,
     getNextQuestion,
-    getRandomIDs
+    getRandomIDs,
+    getScoreboard
 }

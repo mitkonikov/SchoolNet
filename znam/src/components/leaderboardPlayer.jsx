@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import { Card, CardContent, ButtonBase } from '@material-ui/core';
 
+import TrophyIcon from './../svg/znam-trophy-1.svg';
+
 class LeaderboardPlayer extends Component {
     render() {
         return (
@@ -14,7 +16,12 @@ class LeaderboardPlayer extends Component {
                     >
                         <CardContent>
                             <div class="leaderplace-content">
-                                <div class="center-vh">Player Winner</div>
+                                <div class="center-vh">
+                                    <img src={TrophyIcon} alt="Trophy Icon" class="trophy-icon"/>
+                                </div>
+                                <div class="leaderplace-name">
+                                    John Doe
+                                </div>
                             </div>
                         </CardContent>
                     </ButtonBase>

@@ -5,7 +5,8 @@ const palette = { // #ef6834
     primary: {
         light: "#dd531d",
         main: "#dd531d",
-        dark: "#dd531d",
+        dark: "#cc3914",
+        hover: "#a72f11",
         contrastText: "#fff"
     },
     secondary: {
@@ -49,7 +50,7 @@ const theme = createMuiTheme({
                 text: {
                     color: "#fff"
                 },
-                backgroundColor: "#b84518"
+                backgroundColor: palette.primary.dark
             }
         },
         MuiCardContent: {
@@ -57,13 +58,13 @@ const theme = createMuiTheme({
                 width: "100%",
                 height: "100%",
                 padding: "0",
-                backgroundColor: "#b84518",
+                backgroundColor: palette.primary.dark, // "#b84518",
                 color: "white",
                 fontSize: "2em",
                 cursor: "pointer",
                 position: "absolute",
                 "&&:hover": {
-                    backgroundColor: "#9d3d18"
+                    backgroundColor: palette.primary.hover
                     // backgroundColor: "#b84518"
                     // backgroundColor: "#002c3f"
                 }
