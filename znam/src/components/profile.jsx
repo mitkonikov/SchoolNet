@@ -114,7 +114,7 @@ class Profile extends Component {
         return (
             <div>
                 <div id="profile-header">
-                    <Card variant="outlined">
+                    <Card variant="outlined" elevation="0">
                         <ButtonBase>
                             <CardContent>
                                 <div id="profile-img-container">

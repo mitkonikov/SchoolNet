@@ -358,7 +358,7 @@ let getRandomInt = (max) => {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-let getScoreboard = (callback) => {
+let getLeaderboard = (callback) => {
     ZNAMDB.query("SELECT * FROM tbl_leaderboard ORDER BY RANK LIMIT 10", (err, scores) => {
         let IDs = [];
         for (let score of scores) {
@@ -650,6 +650,6 @@ module.exports = {
     submitAnswer,
     getNextQuestion,
     getRandomIDs,
-    getScoreboard,
+    getLeaderboard,
     updateRank
 }

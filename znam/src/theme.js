@@ -4,9 +4,9 @@ const palette = { // #ef6834
     type: "dark",
     primary: {
         light: "#dd531d",
-        main: "#dd531d",
-        dark: "#cc3914",
-        hover: "#a72f11",
+        main: "#f26726", // "#dd531d",
+        dark: "#ee5e1b", // "#cc3914",
+        hover: "#c7490f",
         contrastText: "#fff"
     },
     secondary: {

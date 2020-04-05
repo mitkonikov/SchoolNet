@@ -18,7 +18,7 @@ class Scoreboard extends Component {
     
     componentDidMount() {
         queryFetch({
-            command: "get-scoreboard"
+            command: "get-leaderboard"
         }).then(data => this.setState({ scoreboard: data }));
 
         if (typeof this.props.onMount == "function")
@@ -32,10 +32,10 @@ class Scoreboard extends Component {
             playersDOM.push(
                 <ListItem button dense>
                     <div class="list-number">
-                        #{scoreboard[0].Rank}
+                        #{this.state.scoreboard[0].Rank}
                     </div>
-                    <ListItemText primary={scoreboard[0].Player_Name}/>
-                    {scoreboard[0].Score}
+                    <ListItemText primary={this.state.scoreboard[0].Player_Name}/>
+                    {this.state.scoreboard[0].Score}
                 </ListItem>
             );
         }
@@ -50,9 +50,9 @@ class Scoreboard extends Component {
                     <Typography variant="h5"> Честитки! </Typography>
                 </div>
                 <div id="leaderboard">
-                    <LeaderboardPlayer></LeaderboardPlayer>
-                    <LeaderboardPlayer></LeaderboardPlayer>
-                    <LeaderboardPlayer></LeaderboardPlayer>
+                    <LeaderboardPlayer place="1"></LeaderboardPlayer>
+                    <LeaderboardPlayer place="2"></LeaderboardPlayer>
+                    <LeaderboardPlayer place="3"></LeaderboardPlayer>
                 </div>
                 <div id="scoreboard">
                     <List>

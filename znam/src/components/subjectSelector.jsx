@@ -30,7 +30,7 @@ class SubjectSelector extends Component {
         for (let i = 0; i < 9; i++) {
             subjectDOM.push(
                 <div class="subject" key={i}>
-                    <Card>
+                    <Card elevation="0">
                         <ButtonBase
                             onClick={event => {
                                 clickFX.play();

@@ -1,0 +1,18 @@
+.trophy-icon {
+    width: 2.6em;
+    height: 2.6em;
+}
+.cls-1 {
+    fill: none;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 11px;
+}
+.cls-2 {
+    font-size: 105px;
+    fill: #fff;
+    font-family: Roboto-BoldItalic, Roboto;
+    font-weight: 700;
+    font-style: italic;
+}

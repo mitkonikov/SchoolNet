@@ -23,7 +23,7 @@ class Question extends Component {
         for (let i = 0; i < 4; i++) {
             result.push(
                 <div class="answer" key={this.state.answers.ID[i]}>
-                    <Card variant="outlined">
+                    <Card variant="outlined" elevation="0">
                         <ButtonBase
                             onClick={event => {
                                 this.props.submitAnswer(
