@@ -320,6 +320,122 @@ let getScoreboard = (callback) => {
     });
 }
 
+let updateRank = (user, data, callback) => {
+    data.Player_ID = user;
+    // we need to put in account the subject, but that's later
+    ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Player_ID = ?", user, (err, userExists) => {
+        if (typeof userExists !== "undefined" && userExists.length >= 1) {
+            // user exists
+            // is there a rank with the same score already?
+            ZNAMDB.query("SELECT Rank FROM tbl_scoreboard WHERE Score = ?", data.Score, (err, sameScore) => {
+                if (typeof sameScore != "undefined" && sameScore.length > 0) { // there is a rank that has the same score
+                    let newRank = sameScore[0].Rank;
+                    ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = ?, Score = ? WHERE ID = ?", [newRank, data.Score, userExists[0].ID], () => {
+                        if (newRank != userExists[0].Rank) {
+                            // was this entry alone?
+                            ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Score = ?", userExists[0].Score, (err, alone) => {
+                                if (typeof alone === "undefined" || alone.length == 0) { // alone
+                                    ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = Rank - 1 WHERE Score < ?", userExists[0].Score, () => {
+                                        callback({ status: "success" });
+                                    })
+                                    return;
+                                } // else, there was somebody else, do nothing.
+                                
+                                callback({ status: "success" });
+                            });
+                        } else {
+                            callback({ status: "success" });
+                        }
+                    });
+                } else { // there's no rank with that score
+                    ZNAMDB.query("SELECT Rank FROM tbl_scoreboard WHERE Score > ? ORDER BY Score", data.Score, (err, newRankRows) => {
+                        if (typeof newRankRows != "undefined" && newRankRows.length > 0) {
+                            // found a closest rank with a bigger score 
+                            // was he alone? (first we set the new score)
+                            ZNAMDB.query("UPDATE tbl_scoreboard SET Score = ? WHERE ID = ?", [data.Score, userExists[0].ID], () => {
+                                if (newRankRows[0].Rank + 1 != userExists[0].Rank) {
+                                    ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Score = ?", userExists[0].Score, (err, alone) => {
+                                        if (typeof alone != "undefined" && alone.length > 0) { // he wasn't alone
+                                            ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = Rank + 1 WHERE Score < ?", [data.Score], () => {
+                                                ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = ? WHERE ID = ?", [newRankRows[0].Rank + 1, userExists[0].ID], () => {
+                                                    callback({ status: "success" });
+                                                });
+                                            })
+                                        } else { // he was alone
+                                            ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = Rank + 1 WHERE Score BETWEEN ? AND ?", [userExists[0].Score, data.Score-1], () => {
+                                                ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = ? WHERE ID = ?", [newRankRows[0].Rank + 1, userExists[0].ID], () => {
+                                                    callback({ status: "success" });
+                                                });
+                                            })
+                                        }
+                                    });
+                                } else {
+                                    // it remains the same rank
+                                    // but is he alone?
+                                    ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Score = ?", userExists[0].Score, (err, alone) => {
+                                        if (typeof alone != "undefined" && alone.length > 0) { // he wasn't alone
+                                            ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = Rank + 1 WHERE Score < ?", [data.Score], () => {
+                                                ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = ? WHERE ID = ?", [newRankRows[0].Rank + 1, userExists[0].ID], () => {
+                                                    callback({ status: "success" });
+                                                });
+                                            })
+                                        } else { // he was alone
+                                            callback({ status: "success" });
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            if (userExists[0].Rank != 1) {
+                                // he is the first now
+                                ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = Rank + 1", () => { // shift all
+                                    ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = 1, Score = ? WHERE ID = ?", [data.Score, userExists[0].ID], () => {
+                                        callback({ status: "success" });
+                                    });
+                                })
+                            } else {
+                                ZNAMDB.query("UPDATE tbl_scoreboard SET Score = ? WHERE ID = ?", [data.Score, userExists[0].ID], () => {
+                                    callback({ status: "success" });
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        } else {
+            // user is for the first time inserted
+            // check if there's a rank with the same score
+            ZNAMDB.query("SELECT Rank FROM tbl_scoreboard WHERE Score = ?", data.Score, (err, sameScore) => {
+                if (typeof sameScore != "undefined" && sameScore.length > 0) {
+                    // callback(sameScore[0].Rank);
+                    data.Rank = sameScore[0].Rank;
+                    ZNAMDB.query("INSERT INTO tbl_scoreboard SET ?", data, () => callback({ status: "success" }));
+                    return;
+                } else {
+                    // there's no such score
+                    ZNAMDB.query("SELECT Rank FROM tbl_scoreboard WHERE Score > ? ORDER BY Score", data.Score, (err, newRankRows) => {
+                        if (typeof newRankRows != "undefined" && newRankRows.length > 0) {
+                            // callback(newRankRows[0].Rank + 1);
+                            data.Rank = (parseInt(newRankRows[0].Rank) + 1);
+                            ZNAMDB.query("INSERT INTO tbl_scoreboard SET ?", data);
+                            // we need to shift all the other ranks
+                            ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = Rank + 1 WHERE Score < ?", data.Score, () => callback({ status: "success" }))
+                        } else {
+                            data.Rank = 1;
+                            // we need to shift all the other ranks
+                            ZNAMDB.query("UPDATE tbl_scoreboard SET Rank = Rank + 1", () => {
+                                ZNAMDB.query("INSERT INTO tbl_scoreboard SET ?", data, () => {
+                                    callback({ status: "success" });
+                                });
+                            })
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
 module.exports = {
     Initialize,
     createGame,
@@ -328,5 +444,6 @@ module.exports = {
     submitAnswer,
     getNextQuestion,
     getRandomIDs,
-    getScoreboard
+    getScoreboard,
+    updateRank
 }
