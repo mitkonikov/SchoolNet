@@ -7,6 +7,8 @@ import swal from 'sweetalert';
 import "./../styles/contribute.css";
 import { updateFetch } from './../js/common';
 
+let hoverFX = new Audio("/audio/hover-2.mp3");
+
 class Contribute extends Component {
     state = {
         question: "",
@@ -103,6 +105,7 @@ class Contribute extends Component {
                                     }
                                 });
                             }}
+                            onMouseEnter={() => hoverFX.play()}
                         >
                             ПРИДОНЕСИ
                         </Button>

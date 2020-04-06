@@ -16,6 +16,8 @@ import "./../styles/profile.css";
 import { queryFetch } from "./../js/common";
 import { subjectName, subjectIcons } from "../js/subjects";
 
+let hoverFX = new Audio("/audio/hover-2.mp3");
+
 class Profile extends Component {
     state = {
         profileName: undefined,
@@ -180,6 +182,7 @@ class Profile extends Component {
                                 variant="contained"
                                 color="primary"
                                 disableElevation
+                                onMouseEnter={() => hoverFX.play()}
                             >
                                 REQUEST A FEATURE
                             </Button>
@@ -189,6 +192,7 @@ class Profile extends Component {
                                 variant="contained"
                                 color="primary"
                                 disableElevation
+                                onMouseEnter={() => hoverFX.play()}
                             >
                                 SETTINGS
                             </Button>

@@ -11,7 +11,7 @@ import { queryFetch } from "../js/common";
 import { subjectName, subjectIcons } from "../js/subjects";
 import swal from "sweetalert";
 
-let clickFX = new Audio("/audio/click-2.mp3");  
+let clickFX = new Audio("/audio/click-3h.mp3");  
 clickFX.volume = 0.5;
 
 class SubjectSelector extends Component {
