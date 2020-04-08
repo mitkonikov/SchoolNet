@@ -32,6 +32,7 @@ let contribute = (user, data, callback) => {
         Answer_2: data.answers[1],
         Answer_3: data.answers[2],
         Answer_4: data.answers[3],
+        Valid: 0,
         Truth: 0,
         Origin: JSON.stringify({
             User: user
@@ -46,7 +47,9 @@ let contribute = (user, data, callback) => {
         entry.Difficulty = data.Difficulty;
 
     ZNAMDB.query("INSERT INTO tbl_questions SET ?", entry, (err, rows) => {
-        callback({ status: "success" });
+        ZNAMDB.query("UPDATE tbl_student_stats SET Contributions = Contributions + 1 WHERE Student_ID = ?", user, () => {
+            callback({ status: "success" });
+        });
     });
 }
 

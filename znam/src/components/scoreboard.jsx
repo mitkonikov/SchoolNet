@@ -9,11 +9,7 @@ import { queryFetch } from '../js/common';
 
 class Scoreboard extends Component {
     state = {
-        scoreboard: [{
-            Display_Name: "John Doe",
-            Score: "100",
-            Rank: "1"
-        }]
+        scoreboard: []
     }
     
     componentDidMount() {
@@ -28,14 +24,14 @@ class Scoreboard extends Component {
     renderPlayers() {
         let playersDOM = [];
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < this.state.scoreboard.length; i++) {
             playersDOM.push(
                 <ListItem button dense>
                     <div class="list-number">
-                        #{this.state.scoreboard[0].Rank}
+                        #{this.state.scoreboard[i].Rank}
                     </div>
-                    <ListItemText primary={this.state.scoreboard[0].Player_Name}/>
-                    {this.state.scoreboard[0].Score}
+                    <ListItemText primary={this.state.scoreboard[i].Player_Name}/>
+                    {this.state.scoreboard[i].Score}
                 </ListItem>
             );
         }

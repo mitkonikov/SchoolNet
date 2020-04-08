@@ -22,35 +22,11 @@ class Profile extends Component {
     state = {
         profileName: undefined,
         statistics: {
-            allTimeQuestions: 0,
-            qCount: 22,
-            activities: [
-                {
-                    Subject: 8,
-                    Statistics: {
-                        Correct: 8,
-                        Questions: 10
-                    },
-                    Score: 300
-                },
-                {
-                    Subject: 8,
-                    Statistics: {
-                        Correct: 8,
-                        Questions: 10
-                    },
-                    Score: 300
-                },
-                {
-                    Subject: 8,
-                    Statistics: {
-                        Correct: 8,
-                        Questions: 10
-                    },
-                    Score: 300
-                }
-            ]
-        }
+            questionsPlayed: 0,
+            questionsCount: 22,
+            contributions: 0
+        },
+        activities: []
     };
 
     componentDidMount() {
@@ -64,7 +40,10 @@ class Profile extends Component {
     renderActivities() {
         let activitiesDOM = [];
 
-        for (let i = 0; i < this.state.statistics.activities.length; i++) {
+        if (typeof this.state.activities === "undefined")
+            return;
+
+        for (let i = 0; i < this.state.activities.length; i++) {
             activitiesDOM.push(
                 <ListItem button dense>
                     <ListItemAvatar>
@@ -72,13 +51,13 @@ class Profile extends Component {
                             <img
                                 src={
                                     subjectIcons[
-                                        this.state.statistics.activities[i]
+                                        this.state.activities[i]
                                             .Subject
                                     ]
                                 }
                                 alt={
                                     subjectName[
-                                        this.state.statistics.activities[i]
+                                        this.state.activities[i]
                                             .Subject
                                     ]
                                 }
@@ -90,20 +69,20 @@ class Profile extends Component {
                     <ListItemText
                         primary={
                             subjectName[
-                                this.state.statistics.activities[i].Subject
+                                this.state.activities[i].Subject
                             ]
                         }
                         secondary={
-                            this.state.statistics.activities[i].Statistics
+                            this.state.activities[i].Statistics
                                 .Correct +
                             "/" +
-                            this.state.statistics.activities[i].Statistics
+                            this.state.activities[i].Statistics
                                 .Questions +
                             " Точни одговори"
                         }
                     />
                     <span class="activity-score">
-                        +{this.state.statistics.activities[i].Score}
+                        +{this.state.activities[i].Score}
                     </span>
                 </ListItem>
             );
@@ -116,7 +95,7 @@ class Profile extends Component {
         return (
             <div>
                 <div id="profile-header">
-                    <Card variant="outlined" elevation="0">
+                    <Card variant="outlined" elevation={0}>
                         <ButtonBase>
                             <CardContent>
                                 <div id="profile-img-container">
@@ -144,7 +123,7 @@ class Profile extends Component {
                                                     marginBottom: "0.2em"
                                                 }}
                                             >
-                                                Прашања играни: 0/22
+                                                Прашања играни: {this.state.statistics.questionsPlayed}/{this.state.statistics.questionsCount}
                                             </div>
                                             <LinearProgress
                                                 variant="determinate"
@@ -158,7 +137,7 @@ class Profile extends Component {
                                                     marginBottom: "0.2em"
                                                 }}
                                             >
-                                                Придонеси: 0
+                                                Придонеси: {this.state.statistics.contributions}
                                             </div>
                                         </div>
                                     </div>
@@ -177,14 +156,14 @@ class Profile extends Component {
 
                 <div id="logout-container">
                     <div id="feedback-container">
-                        <div id="feedback">
+                        <div id="feedback" style={{display: "none"}}>
                             <Button
                                 variant="contained"
                                 color="primary"
                                 disableElevation
                                 onMouseEnter={() => hoverFX.play()}
                             >
-                                REQUEST A FEATURE
+                                ИМАМ ИДЕА
                             </Button>
                         </div>
                         <div id="request-feature">
@@ -193,8 +172,10 @@ class Profile extends Component {
                                 color="primary"
                                 disableElevation
                                 onMouseEnter={() => hoverFX.play()}
+                                component={Link}
+                                to="/settings"
                             >
-                                SETTINGS
+                                ОПЦИИ
                             </Button>
                         </div>
                     </div>

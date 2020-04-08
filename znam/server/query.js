@@ -20,10 +20,38 @@ let Query = function(req, res) {
         let userIsAuth = req.isAuthenticated();
         if (userIsAuth) {
             network.table().isFirstTimeLogIn(req.user.ID, (firstTime) => {
-                res.send({
-                    isAuth: 1,
-                    firstTime: firstTime
-                });
+                if (!firstTime) {
+                    database.DB("db_znam").query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", req.user.ID, (err, currentGames) => {
+                        if (typeof currentGames != "undefined" && currentGames.length > 0) {
+                            if (currentGames[0].Current_Level === 0) {
+                                res.send({
+                                    isAuth: 1,
+                                    intro: true,
+                                    inGame: false
+                                });
+                            } else {
+                                res.send({
+                                    isAuth: 1,
+                                    intro: false,
+                                    inGame: true
+                                });
+                            }                            
+                        } else {
+                            res.send({
+                                isAuth: 1
+                            });
+                        }
+                    });
+                } else {
+                    database.DB("db_znam").query(
+                        "INSERT INTO tbl_student_stats SET ?", { Student_ID: req.user.ID }, () => {
+                            res.send({
+                                isAuth: 1,
+                                firstTime: firstTime
+                            });
+                        }
+                    );
+                }
             });
         } else {
             res.send({ isAuth: 0 });
@@ -35,26 +63,34 @@ let Query = function(req, res) {
     if (req.isAuthenticated()) {
         if (typeof req.body.command !== "undefined") {
             let commandSanitized = req.sanitize(req.body.command);
-
-            let dataSanitized = "";
-            if (typeof req.body.data !== "undefined")
-                dataSanitized = req.sanitize(req.body.data);
-
-            if (commandSanitized === 'play-znam') {
-                GameLogic.createGame(req.user.ID, data, (response) => res.send(response));
+            
+            if (commandSanitized === "get-time") {
+                GameLogic.getTimeLeft(req.user.ID, (response) => res.send(response));
+            } else if (commandSanitized === 'play-znam') {
+                GameLogic.createGame(req.user.ID, req.body.data, (response) => res.send(response));
+            } else if (commandSanitized === 'start-znam') {
+                GameLogic.startGame(req.user.ID, (response) => res.send(response));
             } else if (commandSanitized === 'submit-answer') {
-                GameLogic.submitAnswer(req.user.ID, data, (response) => res.send(response));
+                GameLogic.submitAnswer(req.user.ID, req.body.data, (response) => res.send(response));
             } else if (commandSanitized === 'get-question') {
                 GameLogic.getNextQuestion(req.user.ID, (response) => res.send(response));
+            } else if (commandSanitized === 'get-scoreboard') {
+                GameLogic.getScoreboard((response) => res.send(response));
             } else if (commandSanitized === 'get-leaderboard') {
                 GameLogic.getLeaderboard((response) => res.send(response));
             } else if (commandSanitized === 'profile-info') {
                 network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => {
-                    let response = {
-                        profileName: rows.Display_Name
-                    }
+                    GameLogic.getStudentStats(req.user.ID, (stats) => {
+                        GameLogic.getActivities(req.user.ID, (activities) => {
+                            let response = {
+                                profileName: rows.Display_Name,
+                                activities: activities,
+                                statistics: stats
+                            };
 
-                    res.send(response);
+                            res.send(response);
+                        });
+                    });
                 });
             } else if (commandSanitized === 'get-info-me') {
                 network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => res.send(rows));
@@ -63,6 +99,10 @@ let Query = function(req, res) {
             } else if (commandSanitized === 'get-stats-me') {
                 network.table("tbl_students_info").getStatistics(req, (rows) => res.send(rows));
             } else if (commandSanitized === 'search-request') {
+                let dataSanitized = "";
+                if (typeof req.body.data !== "undefined")
+                    dataSanitized = req.sanitize(req.body.data);
+
                 if (dataSanitized.length > 2) {
                     network.table("tbl_students").searchUsers(req, dataSanitized, (rows) => {
                         res.send(rows);

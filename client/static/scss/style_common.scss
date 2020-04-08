@@ -423,8 +423,10 @@ img {
     }
 
     .btn-special-text {
-        text-align: left;
         padding-left: 4em;
+        .btn-special-content {
+            font-size: 0.5em;
+        }
     }
 }
 
@@ -436,8 +438,10 @@ img {
     }
 
     .btn-special-text {
-        text-align: left;
         padding-left: 4em;
+        .btn-special-content {
+            font-size: 0.5em;
+        }
     }
 }
 

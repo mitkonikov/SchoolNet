@@ -30,14 +30,14 @@ class SubjectSelector extends Component {
         for (let i = 0; i < 9; i++) {
             subjectDOM.push(
                 <div class="subject" key={i}>
-                    <Card elevation="0">
+                    <Card elevation={0}>
                         <ButtonBase
                             onClick={event => {
                                 clickFX.play();
 
                                 for (let k = 0; k < playable.length; ++k) {
                                     if (i === playable[k]) {
-                                        // start game
+                                        // create game
                                         console.log("creating game...");
                                         queryFetch({
                                             command: 'play-znam',
@@ -47,8 +47,14 @@ class SubjectSelector extends Component {
                                             }
                                         })
                                         .then(data => {
-                                            if (typeof this.props.onMount == "function")
-                                                this.props.onPlay(data);
+                                            if (typeof this.props.onSelectSubject == "function")
+                                                this.props.onSelectSubject(data);
+                                        }).catch(() => {
+                                            swal({
+                                                title: "Упс...",
+                                                text: "Не успеавме да го контактираме серверот. Пробајте пак.",
+                                                icon: "error"
+                                            });
                                         });
                                         return;
                                     }
@@ -107,7 +113,7 @@ class SubjectSelector extends Component {
                         control={
                             <Checkbox
                                 checked={this.state.rated}
-                                //onChange={handleChange}
+                                onChange={() => this.setState(prevState => ({ rated: !prevState.rated}))}
                                 name="checkedA"
                             />
                         }

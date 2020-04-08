@@ -20,11 +20,7 @@ let Query = function(req, res) {
             gameLogic.Query(req, res, req.body.game);
         } else if (typeof req.body.command !== "undefined") {
             let commandSanitized = req.sanitize(req.body.command);
-
-            let dataSanitized = "";
-            if (typeof req.body.data !== "undefined")
-                dataSanitized = req.sanitize(req.body.data);
-
+            
             if (commandSanitized === 'get-info-me') {
                 network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => res.send(rows));
             } else if (commandSanitized === 'get-info-user') {
@@ -32,6 +28,10 @@ let Query = function(req, res) {
             } else if (commandSanitized === 'get-stats-me') {
                 network.table("tbl_students_info").getStatistics(req, (rows) => res.send(rows));
             } else if (commandSanitized === 'search-request') {
+                let dataSanitized = "";
+                if (typeof req.body.data !== "undefined")
+                    dataSanitized = req.sanitize(req.body.data);
+
                 if (dataSanitized.length > 2) {
                     network.table("tbl_students").searchUsers(req, dataSanitized, (rows) => {
                         res.send(rows);

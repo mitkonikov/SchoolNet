@@ -41,9 +41,19 @@ if (cluster.isMaster) {
             // this now means, just shut down the mySQL connections
             cluster.workers[workers[i]].send({ data: "bye" });
 
-            cluster.workers[workers[i]].on("disconnect", function() {
+            cluster.workers[workers[i]].on("disconnect", () => {
                 console.log("Shutdown complete");
-                cluster.fork();
+                if (cluster.workers.length < numCPUs) {
+                    cluster.fork();
+                }
+            });
+
+            cluster.workers[workers[i]].on("exit", () => {
+                setTimeout(() => {
+                    if (cluster.workers.length < numCPUs) {
+                        cluster.fork();
+                    }
+                }, 1000);
             });
 
             // wait a little bit for the connections to be shut down

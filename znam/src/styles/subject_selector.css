@@ -36,9 +36,15 @@
     bottom: 0.5em;
     font-size: 0.5em;
     text-align: center;
+    padding: 0 0.6em;
 }
 
 #game-options {
     padding-left: 1em;
     padding-top: 1em;
+}
+
+#play-button-container {
+    position: relative;
+    height: 4em;
 }

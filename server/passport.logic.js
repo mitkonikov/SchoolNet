@@ -149,7 +149,7 @@ let Initialize = function(network, crypto) {
                                                         "INSERT INTO tbl_stats SET ?",
                                                         valuesStats
                                                     );
-
+                                                    
                                                     done(null, newRows[0]);
                                                 }
                                             );

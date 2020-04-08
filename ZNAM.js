@@ -46,7 +46,13 @@ let network = databases.network;
 let authenticationModule = require('./server/authentication');
 let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });
 
+let demoLoggerModule = require("./server/play/demoLogger");
+demoLoggerModule.buildDemoLogger(network);
 let GameEngine = require('./server/play/GameEngine');
+GameEngine.buildGameEngine(
+        network,
+        databaseController,
+        demoLoggerModule);
 let GameLogic = require("./znam/server/gameLogic");
 GameLogic.Initialize(databases, GameEngine);
 

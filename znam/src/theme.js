@@ -72,7 +72,8 @@ const theme = createMuiTheme({
         },
         MuiPaper: {
             root: {
-                backgroundColor: "#fff",
+                // backgroundColor: "#fff",
+                backgroundColor: "transparent",
                 color: "#1a1a1a"
             }
         },
@@ -146,6 +147,37 @@ const theme = createMuiTheme({
             colorDefault: {
                 color: "#fff",
                 backgroundColor: palette.secondary.main
+            }
+        },
+        MuiStepper: {
+            root: {
+                backgroundColor: "transparent"
+            }
+        },
+        MuiStepIcon: {
+            root: {
+                "&&.MuiStepIcon-completed" : {
+                    color: "#fff",
+                    "&&:hover": {
+                        color: "#d9d9d9"
+                    }
+                },
+                color: "#fff",
+                "&&:hover": {
+                    color: "#d9d9d9"
+                }
+            }
+        },
+        MuiStepConnector: {
+            root: {
+                height: "0.1em"
+            },
+            line: {
+                borderColor: "transparent",
+                minHeight: "12px"
+            },
+            lineVertical: {
+                minHeight: "12px"
             }
         }
     }

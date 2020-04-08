@@ -3,19 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#eb4f34" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.7" />
+    <meta name="theme-color" content="#f26726" />
     <meta
       name="description"
       content="Platform for open quizzes inside SchoolNet"
     />
     <!--<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="preload" as="font" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"/>
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>ЗНАМ</title>
   </head>
   <style>
-    body { background-color: #f26726; }
+    html { overflow: hidden; }
+    head { overflow: hidden; }
+    body { background-color: #f26726; overflow: hidden; position: inherit; }
+    #root { overflow: hidden; position: inherit; height: 100%; }
     @keyframes rotating { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     #logo { width: 4em; height: 4em; border-width: 1em; border-style: solid; border-color: #dd531d; animation: rotating 2s linear infinite; }
     #loading-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }

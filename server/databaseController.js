@@ -428,7 +428,8 @@ let DB = function(database) {
     let DBSelector = {
         "db_net": networkAPI,
         "db_words": databases.wordsDB,
-        "db_records": databases.records
+        "db_records": databases.records,
+        "db_znam": databases.ZNAM
     }
 
     return DBSelector[database];

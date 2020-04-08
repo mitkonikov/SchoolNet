@@ -10,6 +10,12 @@
     padding: 1em;
 }
 
+#end-screen-message {
+    width: 100%;
+    height: 30%;
+    padding: 1em;
+}
+
 #leaderboard {
     width: 100%;
     height: 20%;

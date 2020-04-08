@@ -469,5 +469,6 @@ module.exports = {
     updateCurrentLevel,
     getCurrentLevel,
     getLevelData,
-    getAllLevels
+    getAllLevels,
+    createTable
 }

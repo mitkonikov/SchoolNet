@@ -411,8 +411,9 @@ img {
     height: 100%;
     width: 60vh; }
   .btn-special-text {
-    text-align: left;
-    padding-left: 4em; } }
+    padding-left: 4em; }
+    .btn-special-text .btn-special-content {
+      font-size: 0.5em; } }
 
 @media only screen and (max-width: 530px) {
   .form-center {
@@ -420,8 +421,9 @@ img {
     min-width: 360px;
     height: 100%; }
   .btn-special-text {
-    text-align: left;
-    padding-left: 4em; } }
+    padding-left: 4em; }
+    .btn-special-text .btn-special-content {
+      font-size: 0.5em; } }
 
 .s-form {
   width: 18.75em;
