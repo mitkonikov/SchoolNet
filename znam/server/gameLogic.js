@@ -211,7 +211,7 @@ let createGame = (user, data, callback) => {
 }
 
 let updateScore = (user, score, callback) => {
-    ZNAMDB.query("UPDATE tbl_games_current SET Score = ?, Time_Left = 30, Current_Level = Current_Level + 1 WHERE Student_ID = ?", [score, user], callback);
+    ZNAMDB.query("UPDATE tbl_games_current SET Score = ?, Time_Left = 30, Current_Level = Current_Level + 1, Status = 0 WHERE Student_ID = ?", [score, user], callback);
 }
 
 let updateQStats = (Demo_ID, data, callback) => {
@@ -355,7 +355,11 @@ let getNextQuestion = (user, callback) => {
                         Source: "server",
                         Command: "question",
                         Data: JSON.stringify(recordState)
-                    }, () => callback(state));
+                    }, () => {
+                        ZNAMDB.query("UPDATE tbl_current_games SET Status = 1 WHERE ID = ?", currentGame[0].ID, () => {
+                            callback(state);
+                        });
+                    });
 
                     let qPlayed = {
                         Student_ID: user,
