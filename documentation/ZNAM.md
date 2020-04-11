@@ -33,4 +33,12 @@ We still haven't provided a working example database, because of the many recent
 ## Contribute
 
 All contributions are welcomed! The same rules that apply to the main SchoolNet platform apply to ZNAM too. <br>
-For more info read the main [readme.md file](https://github.com/mitkonikov/SchoolNet).
+For more info read the main [readme.md file](https://github.com/mitkonikov/SchoolNet). <br>
+If you have a problem running the ZNAM start and build scripts because of the different versions of webpack,
+you can use the .env variable `SKIP_PREFLIGHT_CHECK = true` in the `ZNAM .env`.
+
+#### .env
+```
+PORT = 3006
+SKIP_PREFLIGHT_CHECK = true
+```

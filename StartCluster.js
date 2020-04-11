@@ -21,6 +21,31 @@ if (cluster.isMaster) {
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
     }
+
+    setTimeout(() => {
+        let workers = Object.keys(cluster.workers);
+
+        let i = 0;
+        let updateWorker = function() {
+            if (i == workers.length) return;
+
+            cluster.workers[workers[i]].on("exit", () => {
+                console.log("Worker exited... workers:", workers.length);
+
+                setTimeout(() => {
+                    if (workers.length < numCPUs) {
+                        cluster.fork();
+                    }
+                }, 100);
+            });
+            
+            setTimeout(() => {            
+                i++;
+                updateWorker();
+            }, 1000);
+        }
+    }, 1000);
+    
     
     fs.watchFile("./watcher", (curr, prev) => {
         console.log("Restart received, reloading workers");
@@ -43,17 +68,24 @@ if (cluster.isMaster) {
 
             cluster.workers[workers[i]].on("disconnect", () => {
                 console.log("Shutdown complete");
-                if (cluster.workers.length < numCPUs) {
-                    cluster.fork();
-                }
+
+                setTimeout(() => {
+                    let workersKeys = Object.keys(cluster.workers);
+                    if (workersKeys.length < numCPUs) {
+                        cluster.fork();
+                    }
+                }, 100);
             });
 
             cluster.workers[workers[i]].on("exit", () => {
+                console.log("Worker exited...");
+
                 setTimeout(() => {
-                    if (cluster.workers.length < numCPUs) {
+                    let workersKeys = Object.keys(cluster.workers);
+                    if (workersKeys.length < numCPUs) {
                         cluster.fork();
                     }
-                }, 1000);
+                }, 100);
             });
 
             // wait a little bit for the connections to be shut down

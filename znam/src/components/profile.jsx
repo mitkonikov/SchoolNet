@@ -72,14 +72,14 @@ class Profile extends Component {
                                 this.state.activities[i].Subject
                             ]
                         }
-                        secondary={
-                            this.state.activities[i].Statistics
-                                .Correct +
-                            "/" +
-                            this.state.activities[i].Statistics
-                                .Questions +
-                            " Точни одговори"
-                        }
+                        secondary={(() => {
+                            let correct = this.state.activities[i].Statistics.Correct;
+                            let questions = this.state.activities[i].Statistics.Questions;
+
+                            if (correct === null || questions === null) return "";
+
+                            return correct + "/" + questions + " Точни одговори";
+                        })()}
                     />
                     <span class="activity-score">
                         +{this.state.activities[i].Score}
@@ -127,17 +127,20 @@ class Profile extends Component {
                                             </div>
                                             <LinearProgress
                                                 variant="determinate"
-                                                value={0}
+                                                value={(() => {
+                                                    let played = parseInt(this.state.statistics.questionsPlayed);
+                                                    let count = parseInt(this.state.statistics.questionsCount);
+                                                    return played / count * 100;
+                                                })()}
                                                 id="all-questions-bar"
                                             />
                                         </div>
                                         <div id="contributions">
-                                            <div
-                                                style={{
-                                                    marginBottom: "0.2em"
-                                                }}
-                                            >
-                                                Придонеси: {this.state.statistics.contributions}
+                                            <div class="block-title">
+                                                Придонеси:
+                                            </div>
+                                            <div class="block-number">
+                                                {this.state.statistics.contributions}
                                             </div>
                                         </div>
                                     </div>

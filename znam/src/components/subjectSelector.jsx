@@ -16,7 +16,7 @@ clickFX.volume = 0.5;
 
 class SubjectSelector extends Component {
     state = {
-        rated: false
+        rated: true
     }
 
     componentDidMount() {
@@ -47,6 +47,24 @@ class SubjectSelector extends Component {
                                             }
                                         })
                                         .then(data => {
+                                            if (data.status && data.status === "error") {
+                                                if (data.message === "run out of questions") {
+                                                    swal({
+                                                        title: "Нема доволно прашања.",
+                                                        text: "Немаме доволно прашања на овој предмет за да играте уште еднаш. Ви препорачуваме да придонесете неколку прашања!",
+                                                        icon: "error"
+                                                    });
+                                                } else {
+                                                    swal({
+                                                        title: "Упс...",
+                                                        text: "Имаме серверски проблем. Ве молиме пробајте подоцна.",
+                                                        icon: "error"
+                                                    });
+                                                }
+
+                                                return;
+                                            }
+
                                             if (typeof this.props.onSelectSubject == "function")
                                                 this.props.onSelectSubject(data);
                                         }).catch(() => {

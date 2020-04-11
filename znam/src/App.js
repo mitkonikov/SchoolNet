@@ -51,21 +51,19 @@ class App extends Component {
             endScreen: false,
             timeInterval: null,
             endScore: {
-                scoreboard: [{
-                    Rank: 2,
-                    Score: 300,
-                    Player_Name: "John Doe"
-                }],
-                score: 300,
+                scoreboard: [],
+                score: 0,
                 rank: undefined,
-                playerName: undefined // TODO...
+                playerName: undefined, // TODO...
             },
+            question: undefined
         };
 
         this.history = createBrowserHistory();
         this.selectSubject = this.selectSubject.bind(this);
         this.onPlay = this.onPlay.bind(this);
         this.submitAnswer = this.submitAnswer.bind(this);
+        this.questionMounted = this.questionMounted.bind(this);
 
         this.questionUI = React.createRef();
     }
@@ -102,32 +100,13 @@ class App extends Component {
 
             if (data.inGame) {
                 this.setState({ inGame: true });
-                // fetch the questions and whatnot
+                this.fetchNextQuestion(false);
             }
         });
-
-        /*
-         ----- TESTING -----
+/*
         setTimeout(() => {
-            console.log("[Timeout Test]");
-            let c = 30;
-            let a = setInterval(() => {
-                c -= 0.1;
-                this.questionUI.current.updateStates({
-                    timeLeft: c
-                });
-
-                if (Math.round(c) == 0) clearInterval(a);
-            }, 100);
-        }, 2000);*/
-
-        /*setTimeout(() => {
-            this.questionUI.current.markCorrect("4");
-        }, 2000);
-
-        setTimeout(() => {
-            this.questionUI.current.applySkeleton();
-        }, 4000);*/
+            this.questionUI.current.setQuestion(this.state.question);
+        }, 3000);*/
     }
 
     selectSubject(response) {
@@ -137,33 +116,46 @@ class App extends Component {
         Question.preload();
     }
 
+    questionMounted() {
+        // set the question on the UI
+        this.questionUI.current.setQuestion(this.state.question);
+
+        this.setState({
+            timeInterval: setInterval(() => {
+                queryFetch({
+                    command: "get-time",
+                }).then((timeData) => {
+                    // update time
+                    this.questionUI.current.updateStates({
+                        timeLeft: timeData.timeLeft,
+                    });
+
+                    if (timeData.timeLeft === 0) {
+                        this.fetchNextQuestion(false);
+                    }
+                });
+            }, 1000),
+        });
+    }
+
     fetchNextQuestion(firstTime) {
+        clearInterval(this.state.timeInterval);
+
         queryFetch({
             command: "get-question",
         }).then((question) => {
             console.log("question: ", question);
-            // set the question on the UI
-            this.questionUI.current.setQuestion(question);
             // start the game
             if (firstTime) {
                 this.setState({
                     intro: false,
-                    inGame: true
+                    inGame: true,
+                    question: question
                 });
+            } else {
+                this.setState({ question: question });
+                this.questionMounted();
             }
-
-            this.setState({
-                timeInterval: setInterval(() => {
-                    queryFetch({
-                        command: "get-time",
-                    }).then((timeData) => {
-                        // update time
-                        this.questionUI.current.updateStates({
-                            timeLeft: timeData.timeLeft
-                        });
-                    });
-                }, 1000),
-            });
         });
     }
 
@@ -178,6 +170,24 @@ class App extends Component {
 
     submitAnswer(data) {
         console.log("submitting answer: ", data);
+        /*
+        this.setState({
+            question: {
+                questionNumber: "1",
+                question: "dasda",
+                answers: {
+                    ID: [13, 14, 15, 16],
+                    content: ["das", "s", "a", "s"]
+                },
+                score: "",
+                timeLeft: 30,
+            }
+        })
+
+        setTimeout(() => {
+            this.questionUI.current.applySkeleton();
+            this.questionUI.current.setQuestion(this.state.question);
+        }, 1000);*/
 
         clearInterval(this.state.timeInterval);
 
@@ -210,7 +220,7 @@ class App extends Component {
             }
 
             this.questionUI.current.updateStates({
-                score: data.score
+                score: data.score,
             });
 
             // do we wait or do we put a continue button?
@@ -232,7 +242,7 @@ class App extends Component {
                             onContinue={() => {
                                 this.setState({
                                     inGame: false,
-                                    endScreen: false
+                                    endScreen: false,
                                 });
                             }}
                         />
@@ -242,6 +252,7 @@ class App extends Component {
                         <Question
                             submitAnswer={this.submitAnswer}
                             ref={this.questionUI}
+                            onMount={this.questionMounted}
                         />
                     );
                 }

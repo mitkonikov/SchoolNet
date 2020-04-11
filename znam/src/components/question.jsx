@@ -7,57 +7,90 @@ import CardContent from "@material-ui/core/CardContent";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Typography from "@material-ui/core/Typography";
 
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress } from "@material-ui/core";
 
 class Question extends Component {
     constructor(props) {
         super(props);
+        this.onAnswerClick = this.onAnswerClick.bind(this);
         this.answersRef = React.createRef();
     }
 
     state = {
         answered: false,
         active: null,
-        data: {}
+        data: {
+            questionNumber: "",
+            question: "",
+            answers: {
+                ID: [-1, -1, -1, -1],
+                content: ["", "", "", ""],
+            },
+            score: "",
+            timeLeft: 30,
+        },
     };
 
+    componentDidMount() {
+        setTimeout(() => {
+            // bug with react, refs are not assigned before children calls componentDidMount
+            if (typeof this.props.onMount == "function") this.props.onMount();
+        }, 100);
+    }
+
     setQuestion(data) {
-        // TODO: to be discussed
-        this.setState((prevState) => ({
-            data: {
-                ...prevState.data,
-                ...data
-            },
-        }));
+        this.setState({ data: data });
     }
 
     updateStates(newStates) {
         this.setState((prevState) => ({
             data: {
                 ...prevState.data,
-                ...newStates
+                ...newStates,
             },
         }));
     }
 
     markCorrect(correctID) {
-        let correctDiv = this.answersRef.current.children.namedItem(correctID);
-        correctDiv.getElementsByClassName("ZNAMAnswer-correct")[0].style.width =
-            "100%";
+        for (let i = 0; i < 4; ++i) {
+            if (this.state.data.answers.ID[i] == correctID) {
+                let correctDiv = this.answersRef.current.children.namedItem(i);
+                correctDiv.getElementsByClassName(
+                    "ZNAMAnswer-correct"
+                )[0].style.width = "100%";
+            }
+        }
     }
 
     applySkeleton() {
         this.setState({
             answered: false,
-            active: null
+            active: null,
         });
 
         let correctDivs = this.answersRef.current.children;
 
         for (let c of correctDivs) {
-            c.getElementsByClassName("ZNAMAnswer-correct")[0].style.width = "0%";
+            c.getElementsByClassName("ZNAMAnswer-correct")[0].style.width =
+                "0%";
             c.getElementsByClassName("ZNAMAnswer-active")[0].style.width = "0%";
         }
+    }
+
+    onAnswerClick(event, i) {
+        if (!this.state.answered) {
+            let targetElement = this.answersRef.current.children.namedItem(i);
+            targetElement.getElementsByClassName(
+                "ZNAMAnswer-active"
+            )[0].style.width = "100%";
+
+            this.setState({
+                answered: true,
+                active: this.state.data.answers.ID[i],
+            });
+        }
+
+        this.props.submitAnswer(this.state.data.answers.ID[i]);
     }
 
     renderAnswers() {
@@ -65,29 +98,36 @@ class Question extends Component {
 
         for (let i = 0; i < 4; i++) {
             result.push(
-                <div class="answer" id={this.state.data.answers.ID[i]} key={this.state.data.answers.ID[i]}>
+                <div class="answer" id={i} key={i}>
                     <Card variant="outlined" elevation={0}>
                         <ButtonBase
                             disableRipple
-                            onClick={(event) => {
-                                if (!this.state.answered) {
-                                    event.target.children[0].style.width =
-                                        "100%";
-                                    this.setState({
-                                        answered: true,
-                                        active: this.state.data.answers.ID[i]
-                                    });
-                                }
-
-                                this.props.submitAnswer(
-                                    this.state.data.answers.ID[i]
-                                );
+                            onClick={(e) => {
+                                this.onAnswerClick(e, i);
                             }}
                         >
                             <CardContent>
                                 <div class="ZNAMAnswer-active"></div>
                                 <div class="ZNAMAnswer-correct"></div>
-                                <div class="answer-content">
+                                <div
+                                    class="answer-content"
+                                    style={(() => {
+                                        if (
+                                            this.state.data.answers.content[i]
+                                                .length > 15
+                                        ) {
+                                            if (
+                                                this.state.data.answers.content[
+                                                    i
+                                                ].length > 50
+                                            ) {
+                                                return { fontSize: "0.5em" };
+                                            } else {
+                                                return { fontSize: "0.7em" };
+                                            }
+                                        }
+                                    })()}
+                                >
                                     <div class="center-vh">
                                         {this.state.data.answers.content[i]}
                                     </div>
@@ -124,15 +164,25 @@ class Question extends Component {
                             {Math.round(this.state.data.timeLeft) + "s"}
                         </div>
                         <div>Прашање број {this.state.data.questionNumber}</div>
-                        <div id="question-content">
-                            <Typography variant="h5">
-                                {this.state.data.question}
-                            </Typography>
+                        <div
+                            id="question-content"
+                            style={(() => {
+                                if (
+                                    typeof this.state.data.question !=
+                                    "undefined"
+                                ) {
+                                    if (this.state.data.question.length < 100) {
+                                        return { fontSize: "1.2em" };
+                                    }
+                                }
+                            })()}
+                        >
+                            {this.state.data.question}
                         </div>
                         <div id="time-bar-container">
                             <LinearProgress
                                 variant="determinate"
-                                value={(this.state.data.timeLeft) / 30.00 * 100}
+                                value={(this.state.data.timeLeft / 30.0) * 100}
                                 id="time-bar"
                             />
                         </div>

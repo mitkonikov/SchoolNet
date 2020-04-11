@@ -17,6 +17,13 @@
 
 #question-content {
     padding: 0.8em;
+    font-size: 1em;
+    text-align: center;
+}
+
+.answer-content {
+    font-size: 1em;
+    text-align: center;
 }
 
 #score-container {

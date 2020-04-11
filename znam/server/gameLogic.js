@@ -12,6 +12,7 @@ let Initialize = (node_databases, node_GameEngine) => {
     databases = node_databases;
     ZNAMDB = node_databases.ZNAM;
     GameEngine = node_GameEngine;
+    updateTime();
 }
 
 /**
@@ -46,8 +47,11 @@ let queryQuestion = (ID, callback) => {
 let checkIfQuestionsExist = (list, subject, callback) => {
     ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ") AND Subject = ? AND Valid = ?", [subject, 1], (err, rows) => {
         let response = [];
-        for (let row of rows) {
-            response.push(row.ID);
+
+        if (typeof rows !== "undefined" && rows.length > 0) {
+            for (let row of rows) {
+                response.push(row.ID);
+            }
         }
 
         callback(response);
@@ -111,7 +115,7 @@ let getRandomIDs = (user, data, callback) => {
             // check if any question that is already played matches the random ID
             for (let qp = 0; qp < questionsPlayed.length; ++qp) {
                 for (let i = 0; i < 10; ++i) {
-                    if (questionsPlayed[qp] == crossChecked[i]) {
+                    if (questionsPlayed[qp].Question_ID == crossChecked[i]) {
                         crossChecked = crossChecked.splice(i, 1);
                     }
                 }
@@ -165,7 +169,7 @@ let generateDemoID = () => {
  */
 let generateQuestions = (user, data, callback) => {
     ZNAMDB.query("SELECT ID FROM tbl_questions ORDER BY ID DESC LIMIT 1", (err, countQuery) => {
-        let count = countQuery[0].ID;
+        let count = parseInt(countQuery[0].ID);
 
         getRandomIDs(user, { 
             count: count, 
@@ -197,26 +201,37 @@ let createGame = (user, data, callback) => {
         Rated: data.rated
     }
 
-    ZNAMDB.query("INSERT INTO tbl_current_games SET ?", entry, (err, rows) => {
-        if (err) {
-            console.trace(err);
-            callback({ status: "error" });
-            return;
-        }
+    ZNAMDB.query("SELECT COUNT(*) AS Count FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [user, data.subject], (err, qPlayed) => {
+        ZNAMDB.query("SELECT COUNT(*) As Count FROM tbl_questions WHERE Valid = 1", (err, qCount) => {
+            if (parseInt(qPlayed[0].Count) + 10 > parseInt(qCount[0].Count)) {
+                callback({ status: "error", message: "run out of questions" });
+                return;
+            }
 
-        GameEngine.createTable(entry.Demo_ID, (tableResponse) => {
-            generateQuestions(user, data, callback);
+            ZNAMDB.query("INSERT INTO tbl_current_games SET ?", entry, (err, rows) => {
+                if (err) {
+                    console.trace(err);
+                    callback({ status: "error" });
+                    return;
+                }
+
+                GameEngine.createTable(entry.Demo_ID, (tableResponse) => {
+                    GameEngine.record(entry.Demo_ID, { Source: "server", Command: "Q_Correct", Data: "0" });
+                    GameEngine.record(entry.Demo_ID, { Source: "server", Command: "Q_Wrong", Data: "0" });
+                    generateQuestions(user, data, callback);
+                });
+            });
         });
     });
 }
 
 let updateScore = (user, score, callback) => {
-    ZNAMDB.query("UPDATE tbl_games_current SET Score = ?, Time_Left = 30, Current_Level = Current_Level + 1, Status = 0 WHERE Student_ID = ?", [score, user], callback);
+    ZNAMDB.query("UPDATE tbl_current_games SET Score = ?, Time_Left = 30, Current_Level = Current_Level + 1, Status = 0 WHERE Student_ID = ?", [score, user], callback);
 }
 
 let updateQStats = (Demo_ID, data, callback) => {
     if (data.Correct) {
-        GameEngine.getRecord(Demo_ID, { Source: "server", Command: "Q_Corect" }, (rawStat) => {
+        GameEngine.getRecord(Demo_ID, { Source: "server", Command: "Q_Correct" }, (rawStat) => {
             let newStat = parseInt(rawStat) + 1;
             GameEngine.updateRecord(Demo_ID, { Source: "server", Command: "Q_Correct", Data: newStat }, callback);
         });
@@ -237,7 +252,7 @@ let submitAnswer = (user, data, callback) => {
     // data: { token: ID }
     // user = req.body.user
 
-    ZNAMDB.query("SELECT * FROM tbl_games_current WHERE Student_ID = ?", user, (err, currentGame) => {
+    ZNAMDB.query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", user, (err, currentGame) => {
         let Demo_ID = currentGame[0].Demo_ID;
         let Subject = currentGame[0].Subject;
         GameEngine.getLastRecord(Demo_ID, { Command: "question" }, (lastQ) => {
@@ -263,19 +278,36 @@ let submitAnswer = (user, data, callback) => {
                             score: currentGame[0].Score + scoreUpdate,
                             nextLevel: currentGame[0].Current_Level + 1
                         });
+
+                        calculateRating({
+                            user,
+                            currentGame,
+                            Demo_ID,
+                            Subject,
+                            lastQData,
+                            correct
+                        });
                     } else {
                         GameEngine.getRecord(Demo_ID, { Command: "Q_Correct" }, (qCorrect) => {
                             GameEngine.getRecord(Demo_ID, { Command: "Q_Wrong" }, (qWrong) => {
                                 endGame(user, {
-                                    Q_Correct: parseInt(qCorrect[0].Data),
-                                    Q_Wrong: parseInt(qWrong[0].Data)
+                                    Q_Correct: parseInt(qCorrect),
+                                    Q_Wrong: parseInt(qWrong)
                                 }, (endScoreboard) => {
                                     callback({
                                         correctToken: parseInt(lastQData.trueID),
                                         score: currentGame[0].Score + scoreUpdate,
                                         gameOver: true,
-                                        scoreboard: endScoreboard.scoreboard,
-                                        rank: endScoreboard.rank
+                                        ...endScoreboard
+                                    });
+
+                                    calculateRating({
+                                        user,
+                                        currentGame,
+                                        Demo_ID,
+                                        Subject,
+                                        lastQData,
+                                        correct
                                     });
                                 });
                             });
@@ -287,14 +319,159 @@ let submitAnswer = (user, data, callback) => {
     });
 }
 
+let calculateRating = (data) => {
+    let eloEntry = {
+        Time: data.currentGame[0].Time_Left,
+        Time_Max: 30,
+        A_Win: 0,
+        B_Win: 0
+    }
+
+    if (data.correct) {
+        eloEntry.A_Win = 1;
+    } else {
+        eloEntry.B_Win = 1;
+    }
+
+    let updateDemoRating = false;
+
+    ZNAMDB.query("SELECT Rating FROM tbl_questions WHERE ID = ?", data.lastQData.ID, (err, questionRating) => {
+        ZNAMDB.query("SELECT Rating FROM tbl_leaderboard WHERE Student_ID = ?", data.user, (err, userRating) => {
+            GameEngine.getRecord(data.Demo_ID, { Source: "server", Command: "rating" }, (pRating) => {
+                if (pRating) {
+                    eloEntry.A = parseInt(pRating);
+                    updateDemoRating = true;
+                } else {
+                    if (typeof userRating !== "undefined" && userRating.length > 0) {
+                        eloEntry.A = userRating[0].Rating;
+                    } else {
+                        eloEntry.A = 1500;
+                        GameEngine.record(data.Demo_ID, { Source: "server", Command: "rating", Data: 1500 });
+                        updateDemoRating = true;
+                    }
+                }
+
+                eloEntry.B = questionRating[0].Rating;
+
+                let newRatings = calculateElo(eloEntry);
+
+                ZNAMDB.query("UPDATE tbl_leaderboard SET Rating = ? WHERE Student_ID = ?", [newRatings.A, data.user]);
+                ZNAMDB.query("UPDATE tbl_questions SET Rating = ? WHERE ID = ?", [newRatings.B, data.lastQData.ID]);
+                
+                if (updateDemoRating) {
+                    GameEngine.updateRecord(data.Demo_ID, { Source: "server", Command: "rating", Data: newRatings.A });
+                }
+                
+                updateDemoRating = false;
+
+                ZNAMDB.query("SELECT Rating FROM tbl_scoreboard WHERE Student_ID = ? AND Subject = ?", [data.user, data.Subject], (err, subjRating) => {
+                    GameEngine.getRecord(data.Demo_ID, { Source: "server", Command: "rating_subject" }, (sRating) => {
+                        if (sRating) {
+                            eloEntry.A = parseInt(sRating);
+                            updateDemoRating = true;
+                        } else {
+                            if (typeof subjRating !== "undefined" && subjRating.length > 0) {
+                                eloEntry.A = subjRating[0].Rating;
+                            } else {
+                                eloEntry.A = 1500;
+                                GameEngine.record(data.Demo_ID, { Source: "server", Command: "rating_subject", Data: 1500 });
+                                updateDemoRating = true;
+                            }
+                        }
+
+                        eloEntry.B = questionRating[0].Rating;
+
+                        let newSubjRatings = calculateElo(eloEntry);
+                        
+                        ZNAMDB.query("UPDATE tbl_scoreboard SET Rating = ? WHERE Student_ID = ? AND Subject = ?", [newSubjRatings.A, data.user, data.Subject]);
+                        ZNAMDB.query("UPDATE tbl_questions SET Rating = ? WHERE ID = ?", [newSubjRatings.B, data.lastQData.ID]);
+
+                        if (updateDemoRating) {
+                            GameEngine.updateRecord(data.Demo_ID, { Source: "server", Command: "rating_subject", Data: newSubjRatings.A });
+                        }
+                    });
+                });
+            });
+        });
+    });
+}
+
 let startGame = (user, callback) => {
-    ZNAMDB.query("UPDATE tbl_games_current SET Status = ?, Current_Level = ?, Time_Left = 31 WHERE Student_ID = ?", [1, 1, user], (err, rows) => {
+    ZNAMDB.query("UPDATE tbl_current_games SET Status = ?, Current_Level = ?, Time_Left = 30 WHERE Student_ID = ?", [1, 1, user], (err, rows) => {
         callback({ status: "success" });
     });
 }
 
+let queryNextQuestion = (data, callback) => {
+    queryQuestion(data.currentQuestion, (rawQuestion) => {
+        console.log("next raw question: ", rawQuestion);
+        let state = {
+            questionNumber: data.currentGame[0].Current_Level,
+            question: rawQuestion.Question,
+            answers: {
+                ID: [],
+                content: []
+            },
+            score: data.currentGame[0].Score,
+            timeLeft: data.currentGame[0].Time_Left
+        }
+
+        for (let i = 0; i < 4; ++i) {
+            state.answers.ID.push(getRandomInt(10000));
+            state.answers.content.push(rawQuestion['Answer_' + (i+1)]);
+        }
+
+        let trueID = state.answers.ID[rawQuestion.Truth - 1];
+        
+        // shuffle the IDs and answers
+        for (let k = 0; k < 3; ++k) {
+            for (let i = 0; i < 3; ++i) {
+                if (getRandomInt(2) == 1) {
+                    let tempID = state.answers.ID[i];
+                    let tempAnswer = state.answers.content[i];
+
+                    state.answers.ID[i] = state.answers.ID[i+1];
+                    state.answers.content[i] = state.answers.content[i+1];
+
+                    state.answers.ID[i+1] = tempID;
+                    state.answers.content[i+1] = tempAnswer;
+                }
+            }
+        }
+        
+
+        let recordState = JSON.parse(JSON.stringify(state));
+        recordState.ID = data.currentQuestion;
+        recordState.trueID = trueID;
+
+        // remember the IDs and the true ID
+        GameEngine.record(data.Demo_ID, {
+            Source: "server",
+            Command: "question",
+            Data: JSON.stringify(recordState)
+        }, () => {
+            ZNAMDB.query("UPDATE tbl_current_games SET Status = 1 WHERE ID = ?", data.currentGame[0].ID, () => {
+                callback(state);
+            });
+        });
+
+        let qPlayed = {
+            Student_ID: data.user,
+            Subject: data.Subject,
+            Question_ID: data.currentQuestion
+        }
+
+        ZNAMDB.query("INSERT INTO tbl_questions_played SET ?", qPlayed);
+    });
+}
+
 let getNextQuestion = (user, callback) => {
-    ZNAMDB.query("SELECT * FROM tbl_games_current WHERE Student_ID = ?", user, (err, currentGame) => {
+    ZNAMDB.query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", user, (err, currentGame) => {
+        if (typeof currentGame == "undefined" || currentGame.length == 0) {
+            callback({ status: "error" });
+            return;
+        }
+
         let questionIDs = JSON.parse(currentGame[0].Questions);
         let currentQuestion = questionIDs[currentGame[0].Current_Level - 1];
         let Subject = currentGame[0].Subject;
@@ -303,76 +480,87 @@ let getNextQuestion = (user, callback) => {
 
         // check if the question is already written in the Demo
         GameEngine.getLastRecord(Demo_ID, { Command: "question" }, (lastQ) => {
+            if (lastQ == false || typeof lastQ == "undefined" || lastQ.length == 0) {
+                queryNextQuestion({
+                    currentGame,
+                    currentQuestion,
+                    Subject,
+                    Demo_ID,
+                    user
+                }, callback);
+                return;
+            }
+
             let lastQData = JSON.parse(lastQ[0].Data);
             if (lastQData.ID == currentQuestion) {
                 lastQData.ID = undefined;
                 lastQData.trueID = undefined;
                 callback(lastQData);
             } else {
-                queryQuestion(currentQuestion, (rawQuestion) => {
-                    console.log("next raw question: ", rawQuestion);
-                    let state = {
-                        questionNumber: currentGame[0].Current_Level,
-                        question: rawQuestion.Question,
-                        answers: {
-                            ID: [],
-                            content: []
-                        },
-                        score: currentGame[0].Score,
-                        timeLeft: currentGame[0].Time_Left
-                    }
-
-                    for (let i = 0; i < 4; ++i) {
-                        state.answers.ID.push(getRandomInt(10000));
-                        state.answers.content.push(rawQuestion['Answer_' + (i+1)]);
-                    }
-
-                    let trueID = state.answers.ID[rawQuestion.Truth - 1];
-                    
-                    // shuffle the IDs and answers
-                    for (let k = 0; k < 3; ++k) {
-                        for (let i = 0; i < 3; ++i) {
-                            if (getRandomInt(2) == 1) {
-                                let tempID = state.answers.ID[i];
-                                let tempAnswer = state.answers.content[i];
-
-                                state.answers.ID[i] = state.answers.ID[i+1];
-                                state.answers.content[i] = state.answers.content[i+1];
-
-                                state.answers.ID[i+1] = tempID;
-                                state.answers.content[i+1] = tempAnswer;
-                            }
-                        }
-                    }
-                    
-
-                    let recordState = JSON.parse(JSON.stringify(state));
-                    recordState.ID = currentQuestion;
-                    recordState.trueID = trueID;
-
-                    // remember the IDs and the true ID
-                    GameEngine.record(Demo_ID, {
-                        Source: "server",
-                        Command: "question",
-                        Data: JSON.stringify(recordState)
-                    }, () => {
-                        ZNAMDB.query("UPDATE tbl_current_games SET Status = 1 WHERE ID = ?", currentGame[0].ID, () => {
-                            callback(state);
-                        });
-                    });
-
-                    let qPlayed = {
-                        Student_ID: user,
-                        Subject: Subject,
-                        Question_ID: currentQuestion
-                    }
-
-                    ZNAMDB.query("INSERT INTO tbl_questions_played SET ?", qPlayed);
-                });
+                queryNextQuestion({
+                    currentGame,
+                    currentQuestion,
+                    Subject,
+                    Demo_ID,
+                    user
+                }, callback);
             }
         });
     });
 }
+
+let calculateElo = (data) => {
+    let expectedA = 1.00 / (1 + Math.pow(10, (data.B - data.A) / 400));
+    let expectedB = 1.00 - expectedA;
+
+    let factorA = (data.A_Win - expectedA);
+    let factorB = (data.B_Win - expectedB);
+
+    let timeFactorA = Math.log10(data.Time + 2) * 0.7;
+    let timeFactorB = Math.log10(-data.Time + data.Time_Max + 1) * 1.1;
+
+    if (timeFactorA > 1.00) timeFactorA = 1;
+    if (timeFactorB > 1.00) timeFactorB = 1;
+
+    if (timeFactorA < 0.00) timeFactorA = 0;
+    if (timeFactorB < 0.00) timeFactorB = 0;
+
+    if (data.A_Win == 1) {
+        factorA *= timeFactorA;
+        factorB *= timeFactorA;
+    } else if (data.B_Win == 1) {
+        factorA *= timeFactorB;
+        factorB *= timeFactorB;
+    }
+
+    let newScoreA = Math.round(data.A + 32 * factorA);
+    let newScoreB = Math.round(data.B + 32 * factorB);
+
+    return {
+        A: newScoreA,
+        B: newScoreB
+    };
+}
+
+/* ELO Rating Example:
+    - data.A = 1400
+    - data.B = 1600
+        - expectedA = 0.24025
+        - expectedB = 1 - eA = 0.7597
+    - newScoreA = 1400 + 32 * (1 - 0.24025)
+        - newScoreA = 1424
+
+    // another time curve: log(x+0.3)*0.45+0.36 
+
+    else if (data.B_Win == 1) {
+        factorB *= timeFactorB;
+
+        timeFactorB += 0.1;
+        if (timeFactorB > 1) timeFactorB = 1;
+
+        factorA *= timeFactorB;
+    }
+*/
 
 let getRandomInt = (max) => {
     return Math.floor(Math.random() * Math.floor(max));
@@ -381,17 +569,22 @@ let getRandomInt = (max) => {
 let getLeaderboard = (callback) => {
     ZNAMDB.query("SELECT * FROM tbl_leaderboard ORDER BY RANK LIMIT 10", (err, scores) => {
         let IDs = [];
-        for (let score of scores) {
-            IDs.push(score.Player_ID);
+
+        if (typeof scores != "undefined") {
+            for (let score of scores) {
+                IDs.push(score.Student_ID);
+            }
         }
 
         // get the names according to the player IDs
         databases.network.query("SELECT ID, Display_Name FROM tbl_students_info WHERE ID IN (" + IDs.join() + ")", (err, infos) => {
             // match them
-            for (let score of scores) {
-                for (let info of infos) {
-                    if (score.Player_ID == info.ID) {
-                        score.Display_Name = info.Display_Name;
+            if (typeof scores != "undefined" && typeof infos != "undefined") {
+                for (let score of scores) {
+                    for (let info of infos) {
+                        if (score.Student_ID == info.ID) {
+                            score.Display_Name = info.Display_Name;
+                        }
                     }
                 }
             }
@@ -404,17 +597,22 @@ let getLeaderboard = (callback) => {
 let getScoreboard = (data, callback) => {
     ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Subject = ? AND RANK BETWEEN ? AND ? ORDER BY RANK LIMIT 10", [data.subject, data.rank - 3, data.rank + 10], (err, scores) => {
         let IDs = [];
-        for (let score of scores) {
-            IDs.push(score.Player_ID);
+
+        if (typeof scores != "undefined") {        
+            for (let score of scores) {
+                IDs.push(score.Student_ID);
+            }
         }
 
         // get the names according to the player IDs
         databases.network.query("SELECT ID, Display_Name FROM tbl_students_info WHERE ID IN (" + IDs.join() + ")", (err, infos) => {
             // match them
-            for (let score of scores) {
-                for (let info of infos) {
-                    if (score.Player_ID == info.ID) {
-                        score.Display_Name = info.Display_Name;
+            if (typeof scores != "undefined" && typeof infos != "undefined") {
+                for (let score of scores) {
+                    for (let info of infos) {
+                        if (score.Student_ID == info.ID) {
+                            score.Display_Name = info.Display_Name;
+                        }
                     }
                 }
             }
@@ -426,63 +624,59 @@ let getScoreboard = (data, callback) => {
 
 let endGame = (user, data, callback) => {
     ZNAMDB.query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", user, (err, currentGame) => {
-        ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user, (err, test) => {
-            console.log("delete feedback: ");
-            console.log(test);
+        // update the user status
+        let rank = {
+            Score: currentGame[0].Score,
+            Subject: currentGame[0].Subject
+        }
 
-            // update the user status
-            let rank = {
-                Score: currentGame[0].Score,
-                Subject: currentGame[0].Subject
-            }
-
-            ZNAMDB.query("UPDATE tbl_scoreboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ?", [data.Q_Correct, data.Q_Wrong, user], () => {
-                ZNAMDB.query("UPDATE tbl_student_stats SET Questions_Played = Questions_Played + 10 WHERE Student_ID = ?", user, () => {
-                    if (currentGame.Rated == 1) {
-                        updateCustomRank(user, rank, (subjectRank) => { // update the subject rank
-                            updateRank(user, rank, () => {  // update the main rank
-                                getScoreboard({
-                                    subject: currentGame[0].Subject,
+        ZNAMDB.query("UPDATE tbl_scoreboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ?", [data.Q_Correct, data.Q_Wrong, user], () => {
+            ZNAMDB.query("UPDATE tbl_student_stats SET Questions_Played = Questions_Played + 10 WHERE Student_ID = ?", user, () => {
+                if (currentGame[0].Rated == 1) {
+                    updateCustomRank(user, rank, (subjectRank) => { // update the subject rank
+                        updateRank(user, rank, () => {  // update the main rank
+                            getScoreboard({
+                                subject: currentGame[0].Subject,
+                                rank: subjectRank.newRank
+                            }, (endScoreboard) => {
+                                callback({
+                                    scoreboard: endScoreboard,
                                     rank: subjectRank.newRank
-                                }, (endScoreboard) => {
-                                    callback({
-                                        scoreboard: endScoreboard,
-                                        rank: subjectRank.newRank
-                                    });
                                 });
                             });
                         });
-                    } else {
-                        getScoreboard({
-                            subject: currentGame[0].Subject,
-                            rank: 1
-                        }, (endScoreboard) => {
-                            callback({
-                                scoreboard: endScoreboard
-                            });
+                    });
+                } else {
+                    getScoreboard({
+                        subject: currentGame[0].Subject,
+                        rank: 1
+                    }, (endScoreboard) => {
+                        callback({
+                            scoreboard: endScoreboard
                         });
-                    }
+                    });
+                }
 
-                    let activity = {
-                        Student_ID: user,
-                        Subject: currentGame[0].Subject,
-                        Score: currentGame[0].Score,
-                        Statistics: JSON.stringify({
-                            Correct: data.Q_Correct,
-                            Questions: (data.Q_Correct + data.Q_Wrong)
-                        })
-                    };
-
-                    ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
-                });
+                let activity = {
+                    Student_ID: user,
+                    Subject: currentGame[0].Subject,
+                    Score: currentGame[0].Score,
+                    Statistics: JSON.stringify({
+                        Correct: data.Q_Correct,
+                        Questions: (data.Q_Correct + data.Q_Wrong)
+                    })
+                };
+                
+                ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
+                ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user);
             });
         });
     });
 }
 
 let updateCustomRank = (user, data, callback) => {
-    data.Player_ID = user;
-    ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Player_ID = ? AND Subject = ?", [user, data.Subject], (err, userExists) => {
+    data.Student_ID = user;
+    ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Student_ID = ? AND Subject = ?", [user, data.Subject], (err, userExists) => {
         if (typeof userExists !== "undefined" && userExists.length >= 1) {
             // user exists
             // is there a rank with the same score already?
@@ -607,9 +801,9 @@ let updateCustomRank = (user, data, callback) => {
 }
 
 let updateRank = (user, data, callback) => {
-    data.Player_ID = user;
+    data.Student_ID = user;
     // we need to put in account the subject, but that's later
-    ZNAMDB.query("SELECT * FROM tbl_leaderboard WHERE Player_ID = ?", user, (err, userExists) => {
+    ZNAMDB.query("SELECT * FROM tbl_leaderboard WHERE Student_ID = ?", user, (err, userExists) => {
         if (typeof userExists !== "undefined" && userExists.length >= 1) {
             // user exists
             // is there a rank with the same score already?
@@ -732,14 +926,26 @@ let updateRank = (user, data, callback) => {
 
 let getTimeLeft = (user, callback) => {
     ZNAMDB.query("SELECT Time_Left FROM tbl_current_games WHERE Student_ID = ?", user, (err, rows) => {
-        callback({ timeLeft: rows[0].Time_Left });
+        if (typeof rows != "undefined" && rows.length > 0) {
+            callback({ timeLeft: rows[0].Time_Left });
+        } else {
+            callback({ status: "error" });
+        }
     });
 }
 
 // We are using this same exact interval as a MySQL Event
 let updateTime = () => {
     setInterval(() => {
-        ZNAMDB.query("UPDATE tbl_current_games SET Time_Left = Time_Left - 1 WHERE Status = 1 AND Time_Left > 0");
+        ZNAMDB.query("SELECT * tbl_current_games WHERE Time_Left = 0 AND Status = 1", (err, rows) => {
+            if (typeof rows != "undefined" && rows.length > 0) {
+                for (let row of rows) {
+                    submitAnswer(row.Student_ID, {
+                        token: -1
+                    }, () => {});
+                }
+            }
+        });
     }, 1000);
 }
 
@@ -761,11 +967,11 @@ let getActivities = (user, callback) => {
 
 let getStudentStats = (user, callback) => {
     ZNAMDB.query("SELECT * FROM tbl_student_stats WHERE Student_ID = ?", user, (err, stats) => {
-        ZNAMDB.query("SELECT COUNT(*) As Count FROM tbl_questions", (err, qCount) => {
+        ZNAMDB.query("SELECT COUNT(*) As Count FROM tbl_questions WHERE Valid = 1", (err, qCount) => {
             callback({
                 questionsPlayed: stats[0].Questions_Played,
                 contributions: stats[0].Contributions,
-                questionsCount: qCount[0].Count
+                questionsCount: parseInt(qCount[0].Count)
             });
         });
     });
