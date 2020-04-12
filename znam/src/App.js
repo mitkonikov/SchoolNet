@@ -81,6 +81,7 @@ class App extends Component {
 
             if (data.isAuth) {
                 this.setState({ isAuth: 1 });
+                localStorage.setItem('authNotFirstTime', 1);
             } else {
                 this.setState({ isAuth: 0 });
             }
@@ -217,6 +218,8 @@ class App extends Component {
                 setTimeout(() => {
                     this.setState({ endScreen: true });
                 }, 4000);
+
+                return;
             }
 
             this.questionUI.current.updateStates({
@@ -339,13 +342,13 @@ class App extends Component {
                                             >
                                                 <BottomNavigationAction
                                                     component={Link}
-                                                    label="Play"
+                                                    label="Играј"
                                                     icon={<SchoolIcon />}
                                                     to="/"
                                                 />
                                                 <BottomNavigationAction
                                                     component={Link}
-                                                    label="Statistics"
+                                                    label="Статистики"
                                                     icon={<BarChartIcon />}
                                                     to="/score"
                                                     onMouseEnter={() =>
@@ -354,7 +357,7 @@ class App extends Component {
                                                 />
                                                 <BottomNavigationAction
                                                     component={Link}
-                                                    label="Contribute"
+                                                    label="Придонеси"
                                                     icon={<AddIcon />}
                                                     to="/contribute"
                                                     onMouseEnter={() =>
@@ -363,7 +366,7 @@ class App extends Component {
                                                 />
                                                 <BottomNavigationAction
                                                     component={Link}
-                                                    label="Profile"
+                                                    label="Профил"
                                                     icon={<FaceIcon />}
                                                     to="/profile"
                                                     onMouseEnter={() =>

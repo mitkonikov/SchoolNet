@@ -202,7 +202,7 @@ let createGame = (user, data, callback) => {
     }
 
     ZNAMDB.query("SELECT COUNT(*) AS Count FROM tbl_questions_played WHERE Student_ID = ? AND Subject = ?", [user, data.subject], (err, qPlayed) => {
-        ZNAMDB.query("SELECT COUNT(*) As Count FROM tbl_questions WHERE Valid = 1", (err, qCount) => {
+        ZNAMDB.query("SELECT COUNT(*) As Count FROM tbl_questions WHERE Valid = 1 AND Subject = ?", data.subject, (err, qCount) => {
             if (parseInt(qPlayed[0].Count) + 10 > parseInt(qCount[0].Count)) {
                 callback({ status: "error", message: "run out of questions" });
                 return;
@@ -413,7 +413,11 @@ let queryNextQuestion = (data, callback) => {
                 content: []
             },
             score: data.currentGame[0].Score,
-            timeLeft: data.currentGame[0].Time_Left
+            timeLeft: data.currentGame[0].Time_Left,
+        }
+
+        if (rawQuestion.Origin == "matura") {
+            state.origin = "Матура";
         }
 
         for (let i = 0; i < 4; ++i) {

@@ -7,7 +7,8 @@ import CardContent from "@material-ui/core/CardContent";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Typography from "@material-ui/core/Typography";
 
-import { LinearProgress } from "@material-ui/core";
+import { LinearProgress, Chip } from "@material-ui/core";
+import DoneIcon from "@material-ui/icons/Done";
 
 class Question extends Component {
     constructor(props) {
@@ -53,7 +54,7 @@ class Question extends Component {
 
     markCorrect(correctID) {
         for (let i = 0; i < 4; ++i) {
-            if (this.state.data.answers.ID[i] == correctID) {
+            if (this.state.data.answers.ID[i] === correctID) {
                 let correctDiv = this.answersRef.current.children.namedItem(i);
                 correctDiv.getElementsByClassName(
                     "ZNAMAnswer-correct"
@@ -91,6 +92,20 @@ class Question extends Component {
         }
 
         this.props.submitAnswer(this.state.data.answers.ID[i]);
+    }
+
+    renderChip() {
+        if (typeof this.state.data.origin === "undefined") return null;
+
+        return (
+            <Chip
+                color="secondary"
+                onDelete={() => {}}
+                deleteIcon={<DoneIcon />}
+                label={this.state.data.origin}
+                onClick={() => {}}
+            />
+        );
     }
 
     renderAnswers() {
@@ -186,6 +201,7 @@ class Question extends Component {
                                 id="time-bar"
                             />
                         </div>
+                        <div id="question-chip">{this.renderChip()}</div>
                     </div>
                     <div id="answers-container" ref={this.answersRef}>
                         {this.renderAnswers()}

@@ -5,6 +5,23 @@ import { IconButton, Divider } from "@material-ui/core";
 
 import { Alert } from "@material-ui/lab";
 
+function AuthMessage() {
+    let hide = localStorage.getItem("authNotFirstTime");
+
+    if (hide === '1') return null;
+    else {
+        return (
+            <div id="login-alert">
+                <Alert severity="warning">
+                    <span class="noselect">
+                        Поради спам, мора да се најавите преку Facebook
+                    </span>
+                </Alert>
+            </div>
+        );
+    }
+}
+
 class Authentication extends Component {
     render() {
         return (
@@ -15,20 +32,16 @@ class Authentication extends Component {
                         <div id="platform-icon-img" />
                     </div>
                     <div id="introduction">
-                        ЗНАМ е платформа на SchoolNet. <Divider /> Овде бесплатно може да се натпреварувате на прашања од
+                        ЗНАМ е платформа на SchoolNet. <Divider /> Овде
+                        бесплатно може да се натпреварувате на прашања од
                         различни предмети. <br />
-                        <div style={{fontSize: "0.8em", paddingTop: "1em"}}>SchoolNet официјално е се уште во изработка, но ЗНАМ е
-                        екслузивно отворена за сите.</div>
+                        <div style={{ fontSize: "0.8em", paddingTop: "1em" }}>
+                            SchoolNet официјално е се уште во изработка, но ЗНАМ
+                            е екслузивно отворена за сите.
+                        </div>
                     </div>
                     <div id="auth-container">
-                        <div id="login-alert">
-                            <Alert severity="warning">
-                                <span class="noselect">
-                                    Поради спам, мора да се најавите преку
-                                    Facebook
-                                </span>
-                            </Alert>
-                        </div>
+                        <AuthMessage/>
                         <div id="login-buttons">
                             <div class="center-vh">
                                 <IconButton

@@ -15,6 +15,7 @@ import {
 import "./../styles/profile.css";
 import { queryFetch } from "./../js/common";
 import { subjectName, subjectIcons } from "../js/subjects";
+import Block from "./block";
 
 let hoverFX = new Audio("/audio/hover-2.mp3");
 
@@ -135,14 +136,7 @@ class Profile extends Component {
                                                 id="all-questions-bar"
                                             />
                                         </div>
-                                        <div id="contributions">
-                                            <div class="block-title">
-                                                Придонеси:
-                                            </div>
-                                            <div class="block-number">
-                                                {this.state.statistics.contributions}
-                                            </div>
-                                        </div>
+                                        <Block title="Придонеси" number={this.state.statistics.contributions}/>
                                     </div>
                                 </div>
                             </CardContent>

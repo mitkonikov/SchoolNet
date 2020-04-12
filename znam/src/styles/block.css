@@ -1,0 +1,20 @@
+.block-stats {
+    text-align: center;
+    margin-bottom: 0.2em;
+    padding: 0.5em 0.8em;
+    float: left;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.block-stats:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.block-title {
+    font-size: 0.9em;
+}
+
+.block-number {
+    font-size: 1.2em;
+    font-weight: 700;
+}

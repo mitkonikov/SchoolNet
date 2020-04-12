@@ -31,18 +31,14 @@ class LeaderboardPlayer extends Component {
     render() {
         return (
             <div class="leaderboard-player">
-                <Card variant="outlined" elevation={1}>
-                    <ButtonBase
-                        onClick={(event) => {
-                            console.log("clicked");
-                        }}
-                    >
+                <Card variant="outlined" elevation={0}>
+                    <ButtonBase>
                         <CardContent>
                             <div class="leaderplace-content">
                                 <div class="center-vh">
                                     {TrophyIcon({ place: this.props.place })}
                                 </div>
-                                <div class="leaderplace-name">John Doe</div>
+                                <div class="leaderplace-name">{this.props.name}</div>
                             </div>
                         </CardContent>
                     </ButtonBase>

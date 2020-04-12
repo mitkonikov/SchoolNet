@@ -4,6 +4,8 @@ import { Button } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import { List, ListItem, ListItemText } from "@material-ui/core";
 
+import Block from "../components/block";
+
 import "./../styles/scoreboard.css";
 
 let getEndMessage = [
@@ -62,8 +64,15 @@ class EndScreen extends Component {
                             }
                         })()}
                     </Typography>
-                    <div id="platform-icon-auth" class="noselect">
-                        <div id="platform-icon-img" />
+                    <div class="flex-container">
+                        <div id="platform-icon-auth" class="noselect">
+                            <div id="platform-icon-img" />
+                        </div>
+                        <div class="flex-fill">
+                            <div class="center-vh">
+                                <Block title="Поени" number={this.props.endScore.score}/>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="scoreboard">
