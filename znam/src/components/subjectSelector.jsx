@@ -96,6 +96,7 @@ class SubjectSelector extends Component {
                                                 };
                                         })()}
                                     >
+                                        <div class="subject-progress"></div>
                                         <div class="center-vh subject-icon-img">
                                             {(() => {
                                                 for (let k = 0; k < playable.length; ++k) {
@@ -135,7 +136,7 @@ class SubjectSelector extends Component {
                                 name="checkedA"
                             />
                         }
-                        label="Сакам да ми се регистрираат поените во Статистика"
+                        label="Регистрирај ме во статистиките"
                     />
                 </div>
             </div>

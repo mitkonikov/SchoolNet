@@ -21,13 +21,20 @@
     height: 88%;
 }
 
+.subject-content:hover {
+    font-size: 1.01em;
+}
+
 .subject-icon {
     height: 80%;
 }
 
 .subject-icon-img {
     width: 1.5em;
-    height: 1.5em;
+}
+
+.subject-icon-img:hover {
+    width: 1.7em;
 }
 
 .subject-name {
@@ -37,6 +44,15 @@
     font-size: 0.5em;
     text-align: center;
     padding: 0 0.6em;
+}
+
+.subject-progress {
+    position: absolute;
+    width: 100%;
+    height: 0%;
+    bottom: 0;
+    background-color: rgba(0, 128, 0, 0.712);
+    transition: height 1s ease-in-out;
 }
 
 #game-options {
