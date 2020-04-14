@@ -47,8 +47,16 @@
     cursor: pointer;
 }
 
+.class-net:hover {
+    background-color: var(--color-main-0-3);
+}
+
 .class-net:nth-child(2n) {
     background-color: var(--color-main-0-3);
+}
+
+.class-net:nth-child(2n):hover {
+    background-color: var(--color-main-0-1);
 }
 
 .class-name {
@@ -56,13 +64,13 @@
 }
 
 .class-name-year {
-    font-family: 'Roboto-Thin';
+    font-weight: 100;
     font-size: 3.3em;
     float: left;
 }
 
 .class-name-num {
-    font-family: 'Roboto-Regular';
+    font-weight: 400;
     float: right;
     font-size: 1.5em;
     padding: 0.2em;
@@ -193,7 +201,7 @@
 #online-studs-num {
     float: right;
     font-size: 1.1em;
-    font-family: 'Roboto-Light';
+    font-weight: 300;
     padding-left: 0.1em;
 }
 
@@ -209,7 +217,7 @@
 #total-studs-num {
     float: right;
     font-size: 1.1em;
-    font-family: 'Roboto-Light';
+    font-weight: 300;
     padding-left: 0.1em;
 }
 
@@ -253,7 +261,7 @@
 
 #choose-year-text {
     font-size: 1.5em;
-    font-family: 'Roboto-Thin';
+    font-weight: 100;
     text-align: center;
     margin-bottom: 0.5em;
 }
@@ -353,7 +361,7 @@
 
 #empty-lobby {
     font-size: 1.5em;
-    font-family: 'Roboto-Light';
+    font-weight: 300;
 }
 
 #class-statistics-container {

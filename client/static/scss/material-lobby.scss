@@ -34,6 +34,7 @@
 }*/
 
 #profile-photo-wrapper {
+    position: relative;
     width: 8em;
     height: 8em;
     clip-path: circle(40% at center);
@@ -41,6 +42,7 @@
 }
 
 #profile-photo {
+    position: relative;
     width: 100%;
     height: 100%;
 }
@@ -68,8 +70,9 @@
 }
 
 #profile-info-wrapper {
+    position: relative;
     width: calc(100% - 9em);
-    height: 5em;
+    height: 100%;
     display: inline-block;
 }
 
@@ -97,6 +100,7 @@
 }
 
 #profile-stats {
+    position: relative;
     background-color: var(--color-desire);
     height: 8em;
     text-align: center;

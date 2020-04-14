@@ -3179,6 +3179,7 @@ svg.mdc-button__icon {
     margin: 0 auto;
 }*/
 #profile-photo-wrapper {
+  position: relative;
   width: 8em;
   height: 8em;
   -webkit-clip-path: circle(40% at center);
@@ -3186,6 +3187,7 @@ svg.mdc-button__icon {
   display: inline-block; }
 
 #profile-photo {
+  position: relative;
   width: 100%;
   height: 100%; }
 
@@ -3210,8 +3212,9 @@ svg.mdc-button__icon {
   background-color: #02a802; }
 
 #profile-info-wrapper {
+  position: relative;
   width: calc(100% - 9em);
-  height: 5em;
+  height: 100%;
   display: inline-block; }
 
 #profile-name-wrapper {
@@ -3239,6 +3242,7 @@ svg.mdc-button__icon {
   display: inline-block; }
 
 #profile-stats {
+  position: relative;
   background-color: var(--color-desire);
   height: 8em;
   text-align: center; }

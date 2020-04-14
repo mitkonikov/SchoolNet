@@ -110,7 +110,7 @@ function buildPost(data) {
 
     let postTitle = createDIV("post-title");
     postTitle.innerHTML = data.Title;
-    postTitle.style.fontFamily = "Roboto-Bold";
+    postTitle.style.fontWeight = "700";
 
     let postContent = createDIV("post-content");
     postContent.innerHTML = data.Content;

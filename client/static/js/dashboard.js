@@ -457,13 +457,13 @@ function putClass(data) {
     ONLINE_STUDS_NUM.id = "online-studs-num";
     
     // NEEDS DATA!!!
-    ONLINE_STUDS_NUM.innerHTML = '0';
+    ONLINE_STUDS_NUM.innerHTML = data.onlineStudents;
 
     let TOTAL_STUDS_NUM = document.createElement("div");
     TOTAL_STUDS_NUM.id = "total-studs-num";
     
     // NEEDS DATA!!!
-    TOTAL_STUDS_NUM.innerHTML = '0';
+    TOTAL_STUDS_NUM.innerHTML = data.offlineStudents;
 
     CLASS_NAME.appendChild(CLASS_NAME_YEAR);
     CLASS_NAME.appendChild(CLASS_NAME_NUM);

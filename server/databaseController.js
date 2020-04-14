@@ -334,8 +334,45 @@ let DB = function(database) {
         let Class = {
             getAll: {
                 whereTeacher: (teacherID, callback) => {
-                    currentDB.query("SELECT * FROM tbl_classes WHERE Teacher_ID = ?", teacherID, function(err, rows) {
-                        callback(rows);
+                    currentDB.query("SELECT * FROM tbl_classes WHERE Teacher_ID = ? ORDER BY ID", teacherID, function(err, rows) {
+                        let classIDs = [];
+
+                        if (typeof rows !== "undefined" && rows.length > 0) {
+                            for (let row of rows) {
+                                classIDs.push(row.ID);
+                            }
+                            
+                            currentDB.query("SELECT Class_ID, Student_ID, tbl_students.Online FROM `tbl_classes_student` JOIN tbl_students ON tbl_students.ID = tbl_classes_student.Student_ID WHERE Class_ID IN (" + classIDs.join() + ") ORDER BY Class_ID", (err, classStudent) => {
+                                let classStatistics = { };
+
+                                if (typeof classStudent !== "undefined" && classStudent.length > 0) {
+                                    for (let i = 0; i < classStudent.length; ++i) {
+                                        classStatistics[classStudent[i].Class_ID] = { };
+                                        classStatistics[classStudent[i].Class_ID].onlineStudents = 0;
+                                        classStatistics[classStudent[i].Class_ID].totalStudents = 0;
+                                    }
+
+                                    for (let i = 0; i < classStudent.length; ++i) {
+                                        classStatistics[classStudent[i].Class_ID].onlineStudents += parseInt(classStudent[i].Online);
+                                        classStatistics[classStudent[i].Class_ID].totalStudents++;
+                                    }
+
+                                    for (let row of rows) {
+                                        if (typeof classStatistics[row.ID] != "undefined") {
+                                            row.onlineStudents = classStatistics[row.ID].onlineStudents;
+                                            row.offlineStudents = classStatistics[row.ID].totalStudents - classStatistics[row.ID].onlineStudents;
+                                        } else {
+                                            row.onlineStudents = 0;
+                                            row.offlineStudents = 0;
+                                        }
+                                    }
+                                }
+                                
+                                callback(rows);
+                            });
+                        } else {
+                            callback(rows);
+                        }
                     });
                 }
             },
