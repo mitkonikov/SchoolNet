@@ -42,6 +42,17 @@
     margin-right: 0.8em;
 }
 
+.list-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background-color: rgba(1, 152, 1, 0.68);
+    z-index: -3;
+    transition: width 0.8s ease-in-out;
+}
+
 #scoreboard {
     width: 100%;
     height: 65%;

@@ -626,6 +626,28 @@ let getScoreboard = (data, callback) => {
     });
 }
 
+let getInitStats = (user, callback) => {
+    ZNAMDB.query("SELECT * FROM tbl_scoreboard WHERE Student_ID = ?", user, (err, data) => {
+        ZNAMDB.query("SELECT Subject_ID, Count_Questions FROM tbl_subjects", (err, qCount) => {
+            let qCountMap = { };
+            for (let q of qCount) {
+                qCountMap[q.Subject_ID] = q.Count_Questions;
+            }
+
+            if (typeof data !== "undefined" && data.length > 0) {
+                for (let row of data) {
+                    row.progress = parseInt(row.Q_Correct) + parseInt(row.Q_Wrong);
+                    row.maxQuestions = qCountMap[row.Subject];
+                }
+
+                callback(data);
+            } else {
+                callback(null);
+            }
+        });
+    });
+}
+
 let endGame = (user, data, callback) => {
     ZNAMDB.query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", user, (err, currentGame) => {
         // update the user status
@@ -983,6 +1005,7 @@ let getStudentStats = (user, callback) => {
 
 module.exports = {
     getTimeLeft,
+    getInitStats,
     Initialize,
     createGame,
     startGame,

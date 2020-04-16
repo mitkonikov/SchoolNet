@@ -22,7 +22,10 @@ let Update = function(req, res) {
         switch (req.body.command) {
             // Display Name
             case 'contribute':
-                ZNAMDBC.contribute(req.user.ID, req.body.command, (response) => res.send(response));
+                ZNAMDBC.contribute(req.user.ID, req.body.data, (response) => res.send(response));
+                break;
+            case 'contact':
+                ZNAMDBC.contact(req.user.ID, req.body.data, (response) => res.send(response));
                 break;
             case 'display-name-change':
                 if (data.displayname && data.displayname.length >= 5 && data.displayname.length <= 100) {

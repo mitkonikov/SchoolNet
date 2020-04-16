@@ -1,6 +1,6 @@
 let databases;
 let ZNAMDB;
-let rateLimiter;
+let rateLimiter, rateLimiterContact;
 
 let Connect = function(databases_connect) {
     databases = databases_connect;
@@ -10,8 +10,35 @@ let Connect = function(databases_connect) {
     options.points = 10;
     options.duration = 3600;
     
-    // if second parameter is not a function or not provided, it may throw unhandled error on creation db or table
     rateLimiter = new databases.limiter.RateLimiterMySQL(options, databases.limiter.ready);
+
+    options.points = 3;
+    options.duration = 3600;
+
+    rateLimiterContact = new databases.limiter.RateLimiterMySQL(options, databases.limiter.ready);
+}
+
+let contact = (user, data, callback) => {
+    rateLimiterContact.consume(user).them(() => {
+        if (typeof data.message === "undefined") {
+            callback({ status: "error", message: "empty" });
+            return;
+        }
+
+        if (data.message.length > 300) {
+            callback({ status: "error", message: "constrains" });
+            return;
+        }
+
+        let entry = {
+            Student_ID: user,
+            Message: data.message
+        };
+
+        ZNAMDB.query("INSERT INTO tbl_contact SET ?", entry, () => {
+            callback({ status: "success" });
+        });
+    });
 }
 
 let contribute = (user, data, callback) => {
@@ -67,6 +94,7 @@ let contribute = (user, data, callback) => {
 
 module.exports = {
     contribute,
+    contact,
     ZNAMDB
 }
 

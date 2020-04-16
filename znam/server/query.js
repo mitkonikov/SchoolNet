@@ -66,6 +66,8 @@ let Query = function(req, res) {
             
             if (commandSanitized === "get-time") {
                 GameLogic.getTimeLeft(req.user.ID, (response) => res.send(response));
+            } else if (commandSanitized === "get-init") {
+                GameLogic.getInitStats(req.user.ID, (response) => res.send(response));
             } else if (commandSanitized === 'play-znam') {
                 GameLogic.createGame(req.user.ID, req.body.data, (response) => res.send(response));
             } else if (commandSanitized === 'start-znam') {

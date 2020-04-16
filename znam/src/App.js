@@ -5,7 +5,6 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import { BottomNavigation, BottomNavigationAction } from "@material-ui/core";
 
 import SchoolIcon from "@material-ui/icons/School";
-// import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import AddIcon from "@material-ui/icons/Add";
 import FaceIcon from "@material-ui/icons/Face";
@@ -28,6 +27,7 @@ const Scoreboard = ReactLazyPreload(() => import("./components/scoreboard"));
 const Contribute = ReactLazyPreload(() => import("./components/contribute"));
 const Profile = ReactLazyPreload(() => import("./components/profile"));
 const Question = ReactLazyPreload(() => import("./components/question"));
+const Contact = React.lazy(() => import("./components/contact"));
 
 class Loading extends Component {
     render() {
@@ -320,6 +320,9 @@ class App extends Component {
                                                             })
                                                         }
                                                     />
+                                                </Route>
+                                                <Route path="/contact">
+                                                    <Contact />
                                                 </Route>
                                             </Suspense>
                                         </Switch>

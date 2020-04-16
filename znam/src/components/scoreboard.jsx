@@ -1,11 +1,14 @@
 import React, { Component } from "react";
-import { Typography } from "@material-ui/core";
+
 import { List, ListItem, ListItemText } from "@material-ui/core";
+import { Grow } from "@material-ui/core";
 
 import LeaderboardPlayer from "./leaderboardPlayer";
 
 import "./../styles/scoreboard.css";
 import { queryFetch } from "../js/common";
+import swal from '@sweetalert/with-react'
+import Block from "./block";
 
 class Scoreboard extends Component {
     state = {
@@ -20,20 +23,52 @@ class Scoreboard extends Component {
         if (typeof this.props.onMount == "function") this.props.onMount();
     }
 
+    emptyState() {
+        if (this.state.scoreboard.length > 0) return null;
+        else {
+            return (
+                <div class="center-vh">
+                    Сè уште нема статистики.
+                </div>
+            );
+        }
+    }
+
+    moreInfo(i) {
+        swal(
+            <div class="swal-container" style={{ height: "0.2em" }}>
+                <Block title="Поени" number={this.state.scoreboard[i].Score}/>
+                <Block title="Ранк" number={this.state.scoreboard[i].Rank}/>
+                <Block title="Точни" number={this.state.scoreboard[i].Q_Correct}/>
+                <Block title="Неточни" number={this.state.scoreboard[i].Q_Wrong}/>
+            </div>
+        );
+    }
+
     renderPlayers() {
         let playersDOM = [];
 
+        if (this.state.scoreboard.length === 0) return null;
+
         for (let i = 0; i < this.state.scoreboard.length; i++) {
             playersDOM.push(
-                <ListItem button dense>
-                    <div class="list-number">
-                        #{this.state.scoreboard[i].Rank}
-                    </div>
-                    <ListItemText
-                        primary={this.state.scoreboard[i].Player_Name}
-                    />
-                    {this.state.scoreboard[i].Score}
-                </ListItem>
+                <Grow in={true} timeout={500+(50*i)}>
+                    <ListItem button dense onClick={() => this.moreInfo(i)}>
+                        <div class="list-progress" style={(() => {
+                            let max = parseInt(this.state.scoreboard[0].Score);
+                            let cur = parseInt(this.state.scoreboard[i].Score);
+
+                            return { width: ((cur / max) * 100) + "%" };
+                        })()}></div>
+                        <div class="list-number">
+                            #{this.state.scoreboard[i].Rank}
+                        </div>
+                        <ListItemText
+                            primary={this.state.scoreboard[i].Display_Name}
+                        />
+                        {this.state.scoreboard[i].Score}
+                    </ListItem>
+                </Grow>
             );
         }
 
@@ -55,9 +90,7 @@ class Scoreboard extends Component {
     render() {
         return (
             <div id="scoreboard-container">
-                <div class="center-vh">
-                    Сè уште нема статистики.
-                </div>
+                {this.emptyState()}
 
                 <div id="scoreboard">
                     <List>{this.renderPlayers()}</List>

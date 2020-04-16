@@ -16,11 +16,20 @@ clickFX.volume = 0.5;
 
 class SubjectSelector extends Component {
     state = {
-        rated: true
+        rated: true,
+        initData: "undefined"
     }
 
     componentDidMount() {
         if (typeof this.props.onMount == "function") this.props.onMount();
+
+        queryFetch({
+            command: "get-init"
+        }).then(data => {
+            this.setState({
+                initData: data
+            });
+        });
     }
 
     renderSubjects() {
@@ -96,7 +105,29 @@ class SubjectSelector extends Component {
                                                 };
                                         })()}
                                     >
-                                        <div class="subject-progress"></div>
+                                        <div class="subject-progress" style={(() => {
+                                            if (this.state.initData !== "undefined") {
+                                                if (this.state.initData.length > 0) {
+                                                    for (let row of this.state.initData) {
+                                                        if (row.Subject === i) {
+                                                            let maxQuestions = parseInt(row.maxQuestions);
+                                                            let progress = parseInt(row.progress);
+
+                                                            if (maxQuestions === 0) return null;
+                                                            if (maxQuestions - progress < 10) {
+                                                                return {
+                                                                    height: "100%"
+                                                                };
+                                                            }
+
+                                                            return {
+                                                                height: ((progress / row.maxQuestions) * 100) + "%"
+                                                            };
+                                                        }
+                                                    }
+                                                } else { return null; }
+                                            } else { return null; }
+                                        })()}></div>
                                         <div class="center-vh subject-icon-img">
                                             {(() => {
                                                 for (let k = 0; k < playable.length; ++k) {
@@ -138,6 +169,9 @@ class SubjectSelector extends Component {
                         }
                         label="Регистрирај ме во статистиките"
                     />
+                </div>
+                <div id="notifications">
+                    
                 </div>
             </div>
         );

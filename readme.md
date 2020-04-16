@@ -2,31 +2,33 @@
 
 #### **Real Time Gaming in School?!**
 
-SchoolNet is a network which is designed to help teachers and students organize and colaborate together while making the classes and lessons more interactive with fun real-time games, statistics and awards. SchoolNet is and should be seen, only as a tool in the educational process. 
+SchoolNet is a network which is designed to help teachers and students organize and colaborate together while making the classes and lessons more interactive with fun real-time games, statistics and awards. SchoolNet is and should be seen, only as a tool in the educational process. The main SchoolNet platform is still in construction, so you won't be able to join it and play it. However we are releasing the ZNAM platform, which is a so-called "Cloud of Knowledge".
 
-## How does it work?
+## ZNAM
+
+ZNAM is a web-app that hosts questions on multiple school subjects for anyone to practice on. It was initially designed to digitize the questions from the national prom (high-school graduation) exam. However, we have further extended the capabilities, so anyone can contribute questions. The purpose of this platform is to create a national database or cloud of knowledge which would not only be useful to teachers and students, but also to scientists and inventors a like.
+
+## How does SchoolNet work?
 
 SchoolNet hosts games and its main goals are to connect teachers and students together with interactive real-time games.
 
 ## When to play?
 
 SchoolNet is designed to be used *only* in the school! *(Hell yeah!)*
-Seriosly, you can contribute and make levels from home too, but when you play on the system, everyone (the students and the teacher) should be gathered **together**. It's important to have face-to-face interactions in order to have coordination when starting and finishing levels.
+Seriosly, you can contribute and make levels from home too, but when you play on the system, everyone (the students and the teacher) should be gathered **together**. It's important to have face-to-face interactions, not only considering the coordination when starting and finishing levels, but also considering the social aspect. We don't want the digitalization of a system to impact the level of social interaction - we've seen enough of that already.
 
-## What do I need to join?
-  - Your school needs to be registered in our system [(*why?)](#FAQ)
-  - Your teacher needs to have an account
+## Is is hosted now?
 
-## FAQ
+**No, not yet.** We are still in development and any contribution or donation would speed the process a ton. Thank you.
 
-#### Is it free?
+## Plans for the future
 
-  - **ABSOLUTELY!**
-
-#### Can I register without registering the school?
-
-  - Currently, you **can't**. If you register in another school, you won't be able to play games.
-  - Our system is based on school categorization and we are thinking for hosting intra-school competitions, so it's important to have your school registered!
+Oh, we have huge plans and everyone is welcomed to fantasizes with us. Some of our plans include:
+ - SchoolNet's course based system
+ - SchoolNet's tournament system
+ - The SAKAM platform - a platform for voting and exhanging ideas and changes
+ - The ZBOR platform - Open Source downloadable national dictionary with cool statistics
+Come down to the [contribute section](#contribute) and put your signature on the [Hall of Fame](#hall-of-fame).
 
 ## Tech
 ****
@@ -59,7 +61,7 @@ SchoolNet uses a number of open source projects to work properly:
 
 ### Development
 
-> Because of the latest developments, SchoolNet officially implemented an *SSL* protocol which is much more secure. All you need to do is revert back to the HTTP server protocol. *We are building a guide on how to do that properly.*
+> Because of the latest developments, SchoolNet officially implemented an *SSL* protocol which is much more secure. For local development, all you need to do is revert back to the HTTP server protocol. *We are building a guide on how to do that properly.*
 
 If anyone wants to set up this server on their own computer, he can absolutely do it and here's how! We know that some of you might prefer Sublime, or Notepad++, or Visual Studio, but we **strongly** recommend **Visual Studio Code** as your main editor. It allows you to run multiple shell consoles inside the editor itself. Also, debugging Node.js app with Visual Studio Code is really easy! You can set breakpoints anywhere in the code! It's just beautiful!
 
@@ -178,11 +180,16 @@ When contributing follow the [Google JavaScript Style Guide](https://google.gith
 
 [Our repository](https://github.com/mitkonikov/SchoolNetUtilities) for Behind-the-scenes scripts and utilities is on GitHub too. 
 
+## Hall of Fame
+
+Here are people that contributed to the building of this project. We can't thank them enough!
+
+* Кирил Ѓоргиев - Processing of questions for the ZNAM platform
+
 ### Todos
 
 - Implement Material Design everywhere
-- Switch the Dashboard to React.js
-- Work on responsivness
+- Switch the SchoolNet Dashboard to React.js
 - Email server
   - Verification on sign-in
   - Forgot the password

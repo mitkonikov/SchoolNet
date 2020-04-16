@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import { Link } from "react-router-dom";
 
 import { Card, CardContent, ButtonBase } from "@material-ui/core";
@@ -17,6 +17,8 @@ import { queryFetch } from "./../js/common";
 import { subjectName, subjectIcons } from "../js/subjects";
 import Block from "./block";
 
+const EmptyState = React.lazy(() => import("./emptyState"));
+
 let hoverFX = new Audio("/audio/hover-2.mp3");
 
 class Profile extends Component {
@@ -24,10 +26,11 @@ class Profile extends Component {
         profileName: undefined,
         statistics: {
             questionsPlayed: 0,
-            questionsCount: 22,
+            questionsCount: 19,
             contributions: 0
         },
-        activities: []
+        activities: [],
+        fetched: false
     };
 
     componentDidMount() {
@@ -36,6 +39,22 @@ class Profile extends Component {
         queryFetch({ command: "profile-info" }).then(data =>
             this.setState(data)
         );
+    }
+
+    emptyState() {
+        if (!this.state.fetched) return null;
+
+        if (this.state.activities.length === 0)
+            return (
+                <Suspense fallback={null}>
+                    <div id="empty-state">
+                        <EmptyState />
+                    </div>
+                </Suspense>
+            );
+        else {
+            return null;
+        }
     }
 
     renderActivities() {
@@ -94,7 +113,7 @@ class Profile extends Component {
 
     render() {
         return (
-            <div>
+            <div class="full">
                 <div id="profile-header">
                     <Card variant="outlined" elevation={0}>
                         <ButtonBase>
@@ -148,21 +167,12 @@ class Profile extends Component {
                         <List class="activities-list">
                             {this.renderActivities()}
                         </List>
+                        {this.emptyState()}
                     </div>
                 </div>
 
                 <div id="logout-container">
                     <div id="feedback-container">
-                        <div id="feedback" style={{display: "none"}}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                disableElevation
-                                onMouseEnter={() => hoverFX.play()}
-                            >
-                                ИМАМ ИДЕА
-                            </Button>
-                        </div>
                         <div id="request-feature">
                             <Button
                                 variant="contained"
@@ -170,9 +180,9 @@ class Profile extends Component {
                                 disableElevation
                                 onMouseEnter={() => hoverFX.play()}
                                 component={Link}
-                                to="/settings"
+                                to="/contact"
                             >
-                                ОПЦИИ
+                                КОНТАКТ
                             </Button>
                         </div>
                     </div>

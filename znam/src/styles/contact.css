@@ -1,0 +1,23 @@
+.github-icon, .github-text {
+    width: fit-content;
+    display: inline-block;
+    color: white;
+}
+
+.icon-container {
+    width: 4em;
+    height: 4em;
+    position: relative;
+    float: right;
+}
+
+.github-icon {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.github-text {
+    width: calc(100% - 4.5em);
+    font-size: 0.9em;
+}

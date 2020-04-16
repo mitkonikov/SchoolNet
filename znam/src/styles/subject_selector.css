@@ -58,6 +58,13 @@
 #game-options {
     padding-left: 1em;
     padding-top: 1em;
+    margin-bottom: 1em;
+}
+
+#notifications {
+    height: 40%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #play-button-container {
