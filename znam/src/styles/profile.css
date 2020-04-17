@@ -20,7 +20,7 @@
 
 #profile-img-container {
     float: left;
-    padding: 1em;
+    padding: 2em;
 }
 
 #profile-img {
@@ -28,19 +28,19 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    height: 5em;
-    width: 5em;
+    height: 10em;
+    width: 10em;
     cursor: pointer;
 }
 
 #profile-content {
     text-align: left;
-    padding: 0.5em;
-    padding-top: 1em;
+    padding: 1em;
+    padding-top: 2em;
 }
 
 #profile-greeting {
-    font-size: 0.8em;
+    font-size: 1.6em;
     margin-bottom: 1em;
 }
 /*
@@ -63,7 +63,7 @@
 }
 
 #profile-statistics {
-    font-size: 0.5em;
+    font-size: 1em;
 }
 
 #all-questions {

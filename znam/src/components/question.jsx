@@ -121,7 +121,7 @@ class Question extends Component {
                                 this.onAnswerClick(e, i);
                             }}
                         >
-                            <CardContent>
+                            <CardContent style={{ fontSize: "2em" }}>
                                 <div class="ZNAMAnswer-active"></div>
                                 <div class="ZNAMAnswer-correct"></div>
                                 <div

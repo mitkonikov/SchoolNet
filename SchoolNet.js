@@ -174,6 +174,18 @@ app.get('/', function(req, res) {
     }*/
 });
 
+app.get('/pilot', (req, res) => {
+    if (req.isAuthenticated()) {
+        if (req.user.Role === 4) {
+            express.static(__dirname + '/pilot/build')(req, res);
+        } else {
+            req.redirect("/");
+        }
+    } else {
+        req.redirect("/");
+    }
+});
+
 app.get('/pin', (req, res) => {
     //res.sendFile(__dirname + '/client/guest/index.html');
     res.redirect('/');

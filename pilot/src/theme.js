@@ -3,10 +3,10 @@ import { createMuiTheme } from "@material-ui/core/styles";
 const palette = { // #ef6834
     type: "dark",
     primary: {
-        light: "#dd531d",
-        main: "#f26726", // "#dd531d",
-        dark: "#ee5e1b", // "#cc3914",
-        hover: "#c7490f",
+        light: "#44aed8",
+        main: "#44aed8", // "#dd531d",
+        dark: "#35a7d4", // "#cc3914",
+        hover: "#35a7d4",
         contrastText: "#fff"
     },
     secondary: {
@@ -47,9 +47,7 @@ const theme = createMuiTheme({
                 height: "100%",
                 borderRadius: "0",
                 borderWidth: "0",
-                text: {
-                    color: "#fff"
-                },
+                color: "#fff",
                 backgroundColor: palette.primary.dark
             }
         },
@@ -59,7 +57,7 @@ const theme = createMuiTheme({
                 height: "100%",
                 padding: "0",
                 backgroundColor: palette.primary.dark, // "#b84518",
-                color: "white",
+                color: "white", 
                 cursor: "pointer",
                 position: "absolute",
                 "&&:hover": {
