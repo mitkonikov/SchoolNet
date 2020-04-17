@@ -1,4 +1,4 @@
-var logErrorHandler;
+let logErrorHandler;
 
 module.exports.Error = function(ErrorHandler_ref) {
     logErrorHandler = ErrorHandler_ref.log;
@@ -10,10 +10,10 @@ module.exports.Error = function(ErrorHandler_ref) {
  * @param {*} data          Data inside the field
  * @param {*} userinfo      Information about the user that submits the data
  */
-var regexCheck = function(field, data, userinfo) {
-    var regexCheckExp = new RegExp(/^[абвгдѓежзѕијклљмнњопрстќуфхцчџшАБВГДЃЕЖЗЅИЈКЛЉМНЊОПРСТЌУФХЦЧЏШ\w]*$/);
+let regexCheck = function(field, data, userinfo) {
+    let regexCheckExp = new RegExp(/^[абвгдѓежзѕијклљмнњопрстќуфхцчџшАБВГДЃЕЖЗЅИЈКЛЉМНЊОПРСТЌУФХЦЧЏШ\w]*$/);
     if (!regexCheckExp.test(data)) {
-        var errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n " + field + " doesn't pass the regexCheck!";
+        let errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n " + field + " doesn't pass the regexCheck!";
         logErrorHandler("POST", userinfo.ip, null, errorDesc, userinfo);
         return false;
     }
@@ -27,9 +27,9 @@ var regexCheck = function(field, data, userinfo) {
  * @param {*} data          Data inside the field
  * @param {*} userinfo      Information about the user that submits the data
  */
-var emptyCheck = function(field, data, userinfo) {
+let emptyCheck = function(field, data, userinfo) {
     if (!(typeof data !== "undefined")) {
-        var errorDesc = "Tried to send an empty POST request bypassing the client-side Javascript! \n " + field + " is not defined!";
+        let errorDesc = "Tried to send an empty POST request bypassing the client-side Javascript! \n " + field + " is not defined!";
         logErrorHandler("POST", userinfo.ip, null, errorDesc, userinfo);
         return false;
     }
@@ -45,15 +45,15 @@ var emptyCheck = function(field, data, userinfo) {
  * @param {*} max           The maximum length of the data
  * @param {*} userinfo      Information about the user that submits the data
  */
-var lengthCheck = function(field, data, min, max, userinfo) {
+let lengthCheck = function(field, data, min, max, userinfo) {
     if (data.length < min) {
-        var errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n " + field + " is shorter than " + min + " characters.";
+        let errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n " + field + " is shorter than " + min + " characters.";
         logErrorHandler("POST", userinfo.ip, null, errorDesc, userinfo);
         return false;
     }
 
     if (data.length > max) {
-        var errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n " + field + " is longer than " + max + " characters.";
+        let errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n " + field + " is longer than " + max + " characters.";
         logErrorHandler("POST", userinfo.ip, null, errorDesc, userinfo);
         return false;
     }
@@ -64,7 +64,7 @@ var lengthCheck = function(field, data, min, max, userinfo) {
 /**
  * Main signin-check function
  */
-var signinCheck = function(req) {
+let signinCheck = function(req) {
     let username = req.sanitize(req.body.username);
     let password = req.sanitize(req.body.password);
     let school = req.sanitize(req.body.school);
@@ -92,9 +92,9 @@ var signinCheck = function(req) {
         return false;
     }
 
-    var regexCheckSchool = new RegExp(/^[\d]*$/);
+    let regexCheckSchool = new RegExp(/^[\d]*$/);
     if (!regexCheckSchool.test(school)) {
-        var errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n School doesn't pass the regexCheck";
+        let errorDesc = "Tried to create SQL injection bypassing the client-side Javascript! \n School doesn't pass the regexCheck";
         logErrorHandler("POST", ip, null, errorDesc, userinfo);
         return false;
     }
@@ -106,8 +106,8 @@ var signinCheck = function(req) {
  * Email check function
  * (There are standards that don't pass the function, but are very rare)
  */
-var emailCheck = function(email) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+let emailCheck = function(email) {
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
@@ -116,11 +116,11 @@ var emailCheck = function(email) {
  * @param {*} body Body of the req
  * @param {*} ip   IP of the user
  */
-var registerCheck = function(req) {
+let registerCheck = function(req) {
     let body = req.body;
     let ip = req.clientIp;
 
-    var data = {
+    let data = {
         firstname: body.firstname,
         lastname: body.lastname,
         email: body.email.trim(),
@@ -131,7 +131,7 @@ var registerCheck = function(req) {
         data['teacheremail'] = body.teacheremail;
     }
 
-    var userinfo = {
+    let userinfo = {
         username: body.username,
         ip: ip
     }
@@ -140,7 +140,7 @@ var registerCheck = function(req) {
         return false;
     }
 
-    for (var key in data) {
+    for (let key in data) {
         if (!emptyCheck(key, data[key], userinfo)) {
             return false;
         }
@@ -152,7 +152,7 @@ var registerCheck = function(req) {
 
     // email
     if (!emailCheck(data.email)) {
-        var errorDesc = "Bypassed the client-side Javascript! \n Email doesn't pass the emailCheck";
+        let errorDesc = "Bypassed the client-side Javascript! \n Email doesn't pass the emailCheck";
         logErrorHandler("POST", ip, null, errorDesc, data);
         return false;
     }
@@ -160,7 +160,7 @@ var registerCheck = function(req) {
     // teacheremail
     if (body.student == 'true') {
         if (!emailCheck(data.teacheremail)) {
-            var errorDesc = "Bypassed the client-side Javascript! \n Teacher email doesn't pass the emailCheck";
+            let errorDesc = "Bypassed the client-side Javascript! \n Teacher email doesn't pass the emailCheck";
             logErrorHandler("POST", ip, null, errorDesc, data);
             return false;
         }
@@ -168,17 +168,12 @@ var registerCheck = function(req) {
 
     // gender
     if (body.gender != "Male" && body.gender != "Female") {
-        var errorDesc = "Bypassed the client-side Javascript! \n Gender isn't Male or Female";
+        let errorDesc = "Bypassed the client-side Javascript! \n Gender isn't Male or Female";
         logErrorHandler("POST", ip, null, errorDesc, data);
         return false;
     }
 
     return true;
-}
-
-/** Custom-build error handler */
-function logErrorHandler(type, ip, user, error, userinfo) {
-    
 }
 
 module.exports.signinCheck = signinCheck;

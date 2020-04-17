@@ -3,9 +3,9 @@
  */
 
 /** database Controller */
-var database;
-var network;
-var gameLogic
+let database;
+let network;
+let gameLogic
 
 let Initialize = function(node_databaseController, node_gameLogic) {
     database = node_databaseController;

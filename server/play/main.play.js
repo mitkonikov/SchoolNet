@@ -1,7 +1,7 @@
 // Here we require the modules for each game
 tatkin_module = require("./tatkin/main.tatkin");
 
-var Initialize = function(server, passportPass, databaseController, network) {
+let Initialize = function(server, passportPass, databaseController, network) {
     let gameSocketModule = require("./gameSocket").init(server, passportPass, databaseController);
     let demoLoggerModule = require("./demoLogger");
     demoLoggerModule.buildDemoLogger(network);
@@ -21,7 +21,7 @@ var Initialize = function(server, passportPass, databaseController, network) {
 
     tatkin = tatkin_module.Initialize(API);
 
-    var Query = function(req, res, request_game) {
+    let Query = function(req, res, request_game) {
         if (request_game === 'tatkin' || request_game === 'contribute-tatkin') {
             tatkin.Query(req, res);
         } else if (request_game === 'game_info') {

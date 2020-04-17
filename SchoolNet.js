@@ -110,6 +110,14 @@ app.get('/favicon.ico', function(req, res) {
     res.sendFile(__dirname + '/favicon.ico');
 });
 
+app.get('/robots.txt', function(req, res) {
+    res.sendFile(__dirname + '/robots.txt');
+});
+
+app.get('/client/manifest.json', function(req, res) {
+    res.sendFile(__dirname + '/client/manifest.json');
+});
+
 let QueryModule = require("./server/query");
 QueryModule.Initialize(databaseController, gameLogic);
 app.post('/client/query', QueryModule.Query);
@@ -174,15 +182,15 @@ app.get('/', function(req, res) {
     }*/
 });
 
-app.get('/pilot', (req, res) => {
+app.use('/pilot', (req, res, next) => {
     if (req.isAuthenticated()) {
         if (req.user.Role === 4) {
-            express.static(__dirname + '/pilot/build')(req, res);
+            express.static(__dirname + '/pilot/build')(req, res, next);
         } else {
-            req.redirect("/");
+            res.redirect("/");
         }
     } else {
-        req.redirect("/");
+        res.redirect("/");
     }
 });
 

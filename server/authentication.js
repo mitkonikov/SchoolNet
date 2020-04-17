@@ -103,7 +103,7 @@ let Initialize = (app, network, req) => {
                 req.logIn(user, (err) => {
                     network.query("UPDATE tbl_stats AS tbl1 SET tbl1.Logins = (SELECT tbl1.Logins WHERE tbl1.ID = ?)+1 WHERE tbl1.ID = ?", [req.user.ID, req.user.ID]);
                     
-                    network.query("UPDATE tbl_students SET Redirect = ? WHERE ID = ?", ["ZNAM", req.user.ID], (err, rows) => {
+                    network.query("UPDATE tbl_students SET Redirect = ?, Online = ? WHERE ID = ?", ["ZNAM", 1, req.user.ID], (err, rows) => {
                         res.redirect('https://znam.schoolnet.mk/');
                     });
                 })

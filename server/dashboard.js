@@ -1,8 +1,8 @@
-var Initialize = function(databaseController, gameLogic) {
-    var QueryModule = require("./query.dashboard");
+let Initialize = function(databaseController, gameLogic) {
+    let QueryModule = require("./query.dashboard");
     QueryModule.Initialize(databaseController, gameLogic);
 
-    var UpdateModule = require("./update.dashboard");
+    let UpdateModule = require("./update.dashboard");
     // UpdateModule.Initialize(databaseController, gameLogic);
 
     return {

@@ -4,6 +4,7 @@ todo.txt
 /client/static/css/jquery.fullPage.css
 /client/static/js/jquery-3.3.1.js
 /client/static/js/jquery.fullpage.js
+/client/static/js/jquery.fullpage.full.js
 /client/static/js/p5.min.js
 /client/static/js/socket.io.js
 /client/static/js/swal.js

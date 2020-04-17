@@ -1,6 +1,6 @@
-var network;
+let network;
 
-var BuildHandler = function(network_ref) {
+let BuildHandler = function(network_ref) {
     network = network_ref;
 }
 
@@ -13,7 +13,7 @@ var BuildHandler = function(network_ref) {
  * @param {String} error    The error itself
  * @param {String} userinfo Additional userinfo
  */
-var log = function(type, ip, user, error, userinfo) {
+let loggingFunction = function(type, ip, user, error, userinfo) {
     console.log();
     console.log(" ========================= ");
     console.log(" == protectionChecks.js == ");
@@ -26,4 +26,4 @@ var log = function(type, ip, user, error, userinfo) {
 }
 
 module.exports.BuildHandler = BuildHandler;
-module.exports.log = log;
+module.exports.log = loggingFunction;

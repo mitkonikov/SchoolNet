@@ -427,6 +427,7 @@ img {
 
 .s-form {
   width: 18.75em;
+  width: 25.75em; /*without login form*/
   height: unset;
   padding: 0.625em 1.25em 0.625em 1.25em;
   margin: 0 auto 0 auto; }

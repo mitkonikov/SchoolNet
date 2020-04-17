@@ -3,13 +3,13 @@
  * @param {*} server                The server
  * @param {JSON} passportPass       Passport Pass contains references to store, passport and cookieParser
  */
-var gameSocket = function(server, passportPass, databaseController) {
+let gameSocket = function(server, passportPass, databaseController) {
     let network = databaseController.DB("db_net");
     let wordsDB = databaseController.DB("db_words");
 
-    var socketio                = require('socket.io');
-    var passportSocketIo        = require('passport.socketio');
-    var io                      = socketio(server, {'pingInterval': 5000, 'pingTimeout': 10000});
+    let socketio                = require('socket.io');
+    let passportSocketIo        = require('passport.socketio');
+    let io                      = socketio(server, {'pingInterval': 5000, 'pingTimeout': 10000});
 
     io.use(passportSocketIo.authorize({
         key:            process.env.SESSION_NAME,

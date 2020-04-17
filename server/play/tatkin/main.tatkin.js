@@ -1,11 +1,11 @@
-var TATKIN_WORD_COUNT = process.env.TATKIN_WORD_COUNT;
+let TATKIN_WORD_COUNT = process.env.TATKIN_WORD_COUNT;
 
 WORD_TYPES = ['imenka', 'pridavka', 'glagol', 'zamenka', 'broj', 'other'];
 
 /** From String Type to Int Type */
 function encodeWord(type) {
     if (type == -1) return -1;
-    for (var i = 0; i < WORD_TYPES.length; ++i) {
+    for (let i = 0; i < WORD_TYPES.length; ++i) {
         if (type === WORD_TYPES[i]) return i;
     }
     return 404;
@@ -17,14 +17,14 @@ function decodeWord(type) {
     return WORD_TYPES[type];
 }
 
-var Initialize = function(API) {
+let Initialize = function(API) {
     inGameSocket = require("./gameSocket.tatkin");
     inGameSocket.socket(API);
 
     let network = API.databaseController.DB("db_net");
     let wordsDB = API.databaseController.DB("db_words");
 
-    var Query = function(req, res) {
+    let Query = function(req, res) {
         if (req.body.game === 'tatkin') {
             if (req.body.command === 'list-games') {
                 network.table().Class.whereStudentID(req.user.ID, (class_ids) => {
@@ -56,20 +56,20 @@ var Initialize = function(API) {
             }
         } else if (req.body.game === 'contribute-tatkin') {
             if (req.body.command === 'get-word') {
-                var random_id = Math.floor(Math.random() * TATKIN_WORD_COUNT) + 1;
+                let random_id = Math.floor(Math.random() * TATKIN_WORD_COUNT) + 1;
                 wordsDB.query("SELECT ID, Word FROM tbl_words WHERE ID = ? AND Mistake = ?", [random_id, 0], function(err, rows) {
                     res.send(rows[0]);
                 })
             } else if (req.body.command === 'contribute') {
                 if (req.body.data) {
-                    var DATA = req.body.data;
-                    var MISTAKE = 0;
+                    let DATA = req.body.data;
+                    let MISTAKE = 0;
                     if (DATA.type == 'mistake') {
                         DATA.type = -1;
                         MISTAKE = 1;
                     }
 
-                    var word_contribution = {
+                    let word_contribution = {
                         ID : '',
                         Word_ID : parseInt(DATA.word_id),
                         Student_ID : req.user.ID,
@@ -99,7 +99,7 @@ var Initialize = function(API) {
                                 }
 
                                 if (rows) {
-                                    var updateSTAT = parseInt(rows[0].Crowd_Tatkin) + 1;
+                                    let updateSTAT = parseInt(rows[0].Crowd_Tatkin) + 1;
                                     network.query("UPDATE tbl_stats SET Crowd_Tatkin = ? WHERE ID = ?", [updateSTAT, req.user.ID], function(err, rows) {
                                         // ERROR HANDLING
                                     });

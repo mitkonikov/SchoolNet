@@ -1,12 +1,12 @@
-var app, network, crypto;
+let app, network, crypto;
 
-var BuildStudent = function(app_ref, network_ref, crypto_ref) {
+let BuildStudent = function(app_ref, network_ref, crypto_ref) {
     app = app_ref;
     network = network_ref;
     crypto = crypto_ref;
 }
 
-var Register = function(req, res) {
+let Register = function(req, res) {
     // REGISTER THE STUDENT
     // GET TEACHERS 
     network.query("SELECT * FROM tbl_students WHERE Email = ? AND School_ID = ?", [req.body.teacheremail, req.body.school], function(err, rows) {
@@ -18,8 +18,8 @@ var Register = function(req, res) {
 
         teacherID = rows[0].ID;
         
-        // var valuesINFO = ['', req.body.firstname + " " + req.body.lastname, '0000-00-00', teacherID, req.body.teacheremail
-        var valuesINFO = {
+        // let valuesINFO = ['', req.body.firstname + " " + req.body.lastname, '0000-00-00', teacherID, req.body.teacheremail
+        let valuesINFO = {
             ID : '',
             Display_Name : req.body.firstname + " " + req.body.lastname,
             Birthday : '0000-00-00'
@@ -27,11 +27,11 @@ var Register = function(req, res) {
             // Teacher_Email : req.body.teacheremail
         }
         
-        var salt = process.env.PASSPORT_SALT;
+        let salt = process.env.PASSPORT_SALT;
         salt = salt + '' + req.body.password;
-        var encPassword = crypto.createHash('sha256').update(salt).digest('hex');
+        let encPassword = crypto.createHash('sha256').update(salt).digest('hex');
         
-        var values = {
+        let values = {
             ID : '',
             Nickname : req.body.username,
             Password : encPassword,
@@ -57,20 +57,20 @@ var Register = function(req, res) {
             console.log(rows);
             
             network.query("SELECT ID FROM tbl_students WHERE Nickname = ? AND Password = ?", [values.Nickname, values.Password], function(err, rows) {
-                var ID = rows[0].ID;
+                let ID = rows[0].ID;
 
                 // STUDENTS_INFO
                 valuesINFO['ID'] = ID;
 
                 network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
                     // STATISTICS
-                    var valuesStats = {
+                    let valuesStats = {
                         ID : ID,
                         Last_Date_Login : new Date().toISOString().slice(0, 19).replace('T', ' '),
                         Successive_Logins : 1
                     }
                 
-                    var s_req = {
+                    let s_req = {
                         ID : '',
                         Student_ID : ID,
                         Teacher_Email : req.body.teacheremail
