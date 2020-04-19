@@ -416,37 +416,9 @@ img {
     height: 100%;
 }
 
-@media only screen and (max-height: 720px) {
-    .form-center {
-        height: 100%;   
-        width: 60vh;
-    }
-
-    .btn-special-text {
-        padding-left: 4em;
-        .btn-special-content {
-            font-size: 0.5em;
-        }
-    }
-}
-
-@media only screen and (max-width: 530px) {
-    .form-center {
-        width: 100%;
-        min-width: 360px;
-        height: 100%;
-    }
-
-    .btn-special-text {
-        padding-left: 4em;
-        .btn-special-content {
-            font-size: 0.5em;
-        }
-    }
-}
-
 .s-form {
     width: 18.75em;
+    width: 28.75em; /*without login form*/
     height: unset;
     padding: 0.625em 1.25em 0.625em 1.25em;
     margin: 0 auto 0 auto;
@@ -661,4 +633,40 @@ input:-webkit-autofill:focus {
     background-color: rgba(255, 255, 255, 0.1) !important;
     background-image: none !important;
     color: white !important;
+}
+
+
+@media only screen and (max-height: 720px) {
+    .form-center {
+        height: 100%;   
+        width: 60vh;
+    }
+
+    .btn-special-text {
+        padding-left: 4em;
+        .btn-special-content {
+            font-size: 0.5em;
+        }
+    }
+}
+
+@media only screen and (max-width: 530px) {
+    .form-center {
+        width: 100%;
+        min-width: 360px;
+        height: 100%;
+    }
+
+    .btn-special-text {
+        padding-left: 4em;
+        .btn-special-content {
+            font-size: 0.5em;
+        }
+    }
+
+    .s-form {
+        padding-left: 0;
+        padding-right: 0;
+        width: 100%;
+    }
 }

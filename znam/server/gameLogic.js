@@ -68,6 +68,14 @@ let getRandomIDs = (user, data, callback) => {
     // TODO: Account for the difficulty of the player and the difficulty of the question
     let setIDs = new Set();
 
+    if (typeof data.found !== "undefined") {
+        if (data.found.length > 0) {
+            for (let f of data.found) {
+                setIDs.add(f);
+            }
+        }
+    }
+
     while (setIDs.size != data.number + 5) {
         let currentRandom = getRandomInt(data.count - 1) + 1;
         setIDs.add(currentRandom);
@@ -100,9 +108,9 @@ let getRandomIDs = (user, data, callback) => {
             if (typeof questionsPlayed === "undefined" || questionsPlayed.length == 0) {
                 if (crossChecked.length < data.number) {
                     // this is the number required to come to ten IDs
-                    data.number = data.number - crossChecked.length;
+                    data.found = crossChecked;
                     getRandomIDs(user, data, (array) => {
-                        crossChecked = crossChecked.concat(array);
+                        crossChecked = JSON.parse(JSON.stringify(array));
                         callback(crossChecked);
                     });
                 } else {
@@ -123,14 +131,13 @@ let getRandomIDs = (user, data, callback) => {
 
             if (crossChecked.length < data.number) {
                 // this is the number required to come to ten IDs
-                data.number = data.number - crossChecked.length;
+                data.found = crossChecked;
                 getRandomIDs(user, data, (array) => {
-                    crossChecked = crossChecked.concat(array);
+                    crossChecked = JSON.parse(JSON.stringify(array));
                     callback(crossChecked);
                 });
             } else {
                 crossChecked = crossChecked.splice(0, data.number);
-                console.log(crossChecked); // You should have 10 random IDs
                 callback(crossChecked);
             }
         });
@@ -653,48 +660,52 @@ let endGame = (user, data, callback) => {
         // update the user status
         let rank = {
             Score: currentGame[0].Score,
-            Subject: currentGame[0].Subject
+            Q_Correct: data.Q_Correct,
+            Q_Wrong: data.Q_Wrong
         }
 
         ZNAMDB.query("UPDATE tbl_scoreboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ?", [data.Q_Correct, data.Q_Wrong, user], () => {
-            ZNAMDB.query("UPDATE tbl_student_stats SET Questions_Played = Questions_Played + 10 WHERE Student_ID = ?", user, () => {
-                if (currentGame[0].Rated == 1) {
-                    updateCustomRank(user, rank, (subjectRank) => { // update the subject rank
+            ZNAMDB.query("UPDATE tbl_leaderboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ?", [data.Q_Correct, data.Q_Wrong, user], () => {
+                ZNAMDB.query("UPDATE tbl_student_stats SET Questions_Played = Questions_Played + 10 WHERE Student_ID = ?", user, () => {
+                    if (currentGame[0].Rated == 1) {
                         updateRank(user, rank, () => {  // update the main rank
-                            getScoreboard({
-                                subject: currentGame[0].Subject,
-                                rank: subjectRank.newRank
-                            }, (endScoreboard) => {
-                                callback({
-                                    scoreboard: endScoreboard,
+                            rank.Subject = currentGame[0].Subject;
+                            updateCustomRank(user, rank, (subjectRank) => { // update the subject rank
+                                getScoreboard({
+                                    subject: currentGame[0].Subject,
                                     rank: subjectRank.newRank
+                                }, (endScoreboard) => {
+                                    callback({
+                                        scoreboard: endScoreboard,
+                                        rank: subjectRank.newRank
+                                    });
                                 });
                             });
                         });
-                    });
-                } else {
-                    getScoreboard({
-                        subject: currentGame[0].Subject,
-                        rank: 1
-                    }, (endScoreboard) => {
-                        callback({
-                            scoreboard: endScoreboard
+                    } else {
+                        getScoreboard({
+                            subject: currentGame[0].Subject,
+                            rank: 1
+                        }, (endScoreboard) => {
+                            callback({
+                                scoreboard: endScoreboard
+                            });
                         });
-                    });
-                }
+                    }
 
-                let activity = {
-                    Student_ID: user,
-                    Subject: currentGame[0].Subject,
-                    Score: currentGame[0].Score,
-                    Statistics: JSON.stringify({
-                        Correct: data.Q_Correct,
-                        Questions: (data.Q_Correct + data.Q_Wrong)
-                    })
-                };
-                
-                ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
-                ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user);
+                    let activity = {
+                        Student_ID: user,
+                        Subject: currentGame[0].Subject,
+                        Score: currentGame[0].Score,
+                        Statistics: JSON.stringify({
+                            Correct: data.Q_Correct,
+                            Questions: (data.Q_Correct + data.Q_Wrong)
+                        })
+                    };
+                    
+                    ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
+                    ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user);
+                });
             });
         });
     });
