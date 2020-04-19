@@ -1,6 +1,6 @@
 // SETUP THE HTTP AND HTTPS SERVERS
 const fs = require('fs');
-const keywords = require('./keywords');
+// const keywords = require('./keywords');
 
 /* UNCOMMENT THIS IF YOU DONT HAVE NGINX SETUP
  * Also, change the ports:
