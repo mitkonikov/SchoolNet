@@ -69,6 +69,43 @@ If anyone wants to set up this server on their own computer, he can absolutely d
 
 ##### STEP 1: Download the repository
 
+If you already have the GitHub setup for Desktop and Visual Studio Code, just clone the repository. But if you don't have it, here's how to set it up.
+
+**On a 64bit machine:**
+ - *Optional:* Download Visual Studio Code. (We highly recommend it!)
+ - Download Git Bash
+ - Download GitHub Desktop
+
+and have a GUI where you can clone the repository and watch it for further changes. With a press of a button, GitHub Desktop can connect it to Visual Studio Code.
+
+**On 32bit machine**, you can't download GitHub Desktop thus requiring you to clone the repository from the Git Bash. Just bear with us, it takes couple of minutes.
+
+  - Step 1: Login into Github and fork SchoolNet
+  - Step 2: Run Git Bash
+
+The steps we are going to describe next are taken from [this GitHub help page](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh).
+
+  - Step 3: Generate a SSH Key pair with this command in your Git Bash: 
+  `ssh-keygen -t rsa -b 4096 -C "your@email.com"`
+    - `Enter file in which to save the key: ` - Here just press ENTER
+    - Enter a specific keyphrase, remember it, this will be your password
+    - You have the key
+  - Step 4: Run this command: `clip < ~/.ssh/id_rsa.pub` - This will copy the key to keyboard
+  - Step 5: Go in your GitHub settings
+  - Step 6: Go in the SSH and GPG Keys
+  - Step 7: Create a new SSH Key, name it whatever, and paste the key we just copied
+
+That's it! Now you are authenticated and ready to clone the repository!
+> We recommend cloning the repository directly on the C drive, hence our first command:
+
+```shell
+$ cd "C:/"
+$ git clone git@github.com:mitkonikov/SchoolNet.git
+```
+
+IN WORSE CASE SCENARIO: <br>
+If you really don't want to be directly connected to GitHub and lose the ability to pull request any changes, you can download the repository as a .ZIP file.
+
 ##### STEP 2: Download dependecies
 
 SchoolNet requires [Node.js](https://nodejs.org/) v10.15.0 to run.
@@ -125,7 +162,9 @@ There are 4 databases that SchoolNet uses:
 
 We have example databases that will help you set up this project, private informations (such as account info. or statistical user information) will never be made public!
 
-In the XAMPP's installation folder, you are going to see `mysql` folder, in the `data` folder you would put the three example database folders.
+In the XAMPP's installation folder, you are going to see `mysql` folder, in the `data` folder you would put the four example database folders.
+
+We will later provide Schema-only files for even cleaner database.
 
 ##### STEP 5: Port setup
 
@@ -147,6 +186,7 @@ Because we have implemented Material Design in our project, it requires some kin
 
 You shouldn't have any problems with the file names when building the SASS files into CSS, but if you do, just report them here.
 
+For now, we have our Python AI in this repo, thus it requires you to download Python version > 3.6.2 if you want to try out the Tatkin game. We will shortly be making a script for you to setup Python in no time. We use the env variable 'PYTHON' to turn on/off the AI.
 
 ##### NOTES:
 

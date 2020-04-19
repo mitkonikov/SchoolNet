@@ -1,5 +1,5 @@
 const fs = require('fs');
-const keywords = require('./keywords');
+// const keywords = require('./keywords');
 
 /*
  * We are commenting these lines, because we started using NGINX

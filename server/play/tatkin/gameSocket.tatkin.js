@@ -35,9 +35,12 @@ let tatkinSocket = function(API) {
     let demo_path = "./server/demos/";
     let HEARTBEAT_INTERVAL;
 
-    console.log("Starting AI...");
-    const spawn = require("child_process").spawn;
-    const pythonProcess = pythonSetup(spawn, wordsDB);
+    let pythonProcess;
+    if (process.env.PYTHON) {
+        console.log("Starting AI...");
+        const spawn = require("child_process").spawn;
+        pythonProcess = pythonSetup(spawn, wordsDB);
+    }
 
     // temporary comments
     // pythonProcess.stdin.write("20\n");
