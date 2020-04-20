@@ -36,7 +36,7 @@ class EndScreen extends Component {
                         #{currentPlayer.Rank}
                     </div>
                     <ListItemText
-                        primary={currentPlayer.Player_Name}
+                        primary={currentPlayer.Display_Name}
                     />
                     {currentPlayer.Score}
                 </ListItem>
