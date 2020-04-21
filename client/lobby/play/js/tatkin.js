@@ -199,7 +199,9 @@ function enterGame(GAME_ID) {
         console.log(data);
 
         if (!GOT_AWARDS) {
-            SOCKET.emit("get player awards");
+            setTimeout(() => {
+                SOCKET.emit("get player awards");
+            }, 1000);
             GOT_AWARDS = true;
         }
 
@@ -238,6 +240,7 @@ function setPlayerAwards(data) {
     // data.Level
     // data.maxLevelXP
     // data.Correct?
+    console.log("awards data: ", data);
 
     if (data.prevScore) {
         $("#level-xp").show();
@@ -246,7 +249,7 @@ function setPlayerAwards(data) {
         $("#level-xp").text("");
     }
 
-    let XP = data.prevScore + data.gameScore;
+    let XP = parseInt(data.prevScore) + parseInt(data.gameScore);
     let prevXP_WIDTH = 100.00 * data.prevScore / data.maxLevelXP;
     let postXP_WIDTH = 100.00 * XP / data.maxLevelXP;
 

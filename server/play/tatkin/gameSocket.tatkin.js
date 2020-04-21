@@ -6,15 +6,6 @@
  *      GameEngine:         GameEngine
  */
 
-function getTime() {
-    let CURRENT_DATE_TIME = new Date().toISOString().replace('T', ' ');
-    CURRENT_DATE_TIME = CURRENT_DATE_TIME.replace('Z', '');
-    let CURRENT_TIME_TRIMMED = CURRENT_DATE_TIME.split(" ")[1].replace(/:/g, '');
-    CURRENT_TIME_TRIMMED = CURRENT_TIME_TRIMMED.replace('.', '');
-
-    return CURRENT_TIME_TRIMMED;
-}
-
 function getRoom(socket_rooms) {
     return Object.keys(socket_rooms)[1];
 }
@@ -358,8 +349,6 @@ function pythonSetup(spawn, wordsDB) {
  * @param {Number}  i           INDEX of the word
  */
 function randomGeneratedWord(obj, i) {
-    console.log("imaginary");
-
     // get the count of total words in the pool
     obj.wordsDB.query("SELECT (SELECT COUNT(*) FROM tbl_generated_words) AS Words_Avail", (err, rows) => {
         if (err) {
@@ -434,9 +423,6 @@ function randomGeneratedWord(obj, i) {
  */
 function trueWord(obj, i) {
     let WORD_ID = Math.floor(Math.random() * process.env.TATKIN_WORD_COUNT) + 1;
-
-    console.log("true");
-
     obj.wordsDB.query("SELECT ID, Word FROM tbl_words WHERE ID = ? AND Mistake = ?", [WORD_ID, 0], (err, rows) => {
         if (rows.length) {
             if (rows[0].Word.length > 4) { // TODO: Remove this
@@ -778,7 +764,7 @@ function HEARTBEAT(obj, socket) {
                                         let current_demo_path = obj.demo_path + obj.demo_table + ".json";
                                         obj.demo.finishLog(null, rows, current_demo_path, () => {
                                             let logThatItIsLogged = {
-                                                Time: getTime(),
+                                                Time: obj.GameEngine.getTime(),
                                                 Source: "server",
                                                 Command: "demo written"
                                             }
@@ -879,37 +865,39 @@ function HEARTBEAT(obj, socket) {
                                                 obj.GameEngine.getRecordTime(obj.demo_table, {
                                                     Source: student, Command: "submit-" + level }, (answer) => {
                                                     
-                                                    let dataAnswer = JSON.parse(answer.Data);
-                                                    let timeAnswer = answer.Time;
-                                                    
-                                                    let diff = timeAnswer - stat_time;
-                                                    
-                                                    console.log("Client Answer: " + dataAnswer.Answer + " at time diff of " + diff);
-                                                    if (dataAnswer.Answer == info.Truthfulness) {
-                                                        // its right
-                                                        obj.GameEngine.record(obj.demo_table, {
-                                                            Source: student,
-                                                            Command: "correct-" + level, 
-                                                            Data: "1"
-                                                        });
+                                                    if (answer) {
+                                                        let dataAnswer = JSON.parse(answer.Data);
+                                                        let timeAnswer = answer.Time;
+                                                        
+                                                        let diff = timeAnswer - stat_time;
+                                                        
+                                                        console.log("Client Answer: " + dataAnswer.Answer + " at time diff of " + diff);
+                                                        if (dataAnswer.Answer == info.Truthfulness) {
+                                                            // its right
+                                                            obj.GameEngine.record(obj.demo_table, {
+                                                                Source: student,
+                                                                Command: "correct-" + level, 
+                                                                Data: "1"
+                                                            });
 
-                                                        obj.GameEngine.getRecord(obj.demo_table, { Source: student, Command: "score" }, (current_score) => {
-                                                            obj.GameEngine.updateRecord(obj.demo_table, { Source: student, Command: "score", Data: (parseInt(current_score) + 100).toString() });
-                                                        });
-                                                    } else {
-                                                        // wrong
+                                                            obj.GameEngine.getRecord(obj.demo_table, { Source: student, Command: "score" }, (current_score) => {
+                                                                obj.GameEngine.updateRecord(obj.demo_table, { Source: student, Command: "score", Data: (parseInt(current_score) + 100).toString() });
+                                                            });
+                                                        } else {
+                                                            // wrong
+                                                            obj.GameEngine.record(obj.demo_table, {
+                                                                Source: student,
+                                                                Command: "correct-" + level, 
+                                                                Data: "0"
+                                                            });
+                                                        }
+
                                                         obj.GameEngine.record(obj.demo_table, {
                                                             Source: student,
-                                                            Command: "correct-" + level, 
-                                                            Data: "0"
+                                                            Command: "check-time-" + level, 
+                                                            Data: diff.toString()
                                                         });
                                                     }
-
-                                                    obj.GameEngine.record(obj.demo_table, {
-                                                        Source: student,
-                                                        Command: "check-time-" + level, 
-                                                        Data: diff.toString()
-                                                    });
                                                 });
                                             }
                                             

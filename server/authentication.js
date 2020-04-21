@@ -25,15 +25,19 @@ let Initialize = (app, network, req) => {
 
     // COOKIE
     let store = new MySQLStore(MySQLOptions);
+    let cookieSettings = {
+        maxAge: 1000 * 60 * 60 * 24 * 3,
+        expires: 1000 * 60 * 60 * 24 * 3
+    }
+
+    if (process.env.NODE_ENV === "production") {
+        cookieSettings.domain = '.schoolnet.mk';
+    }
 
     app.use(sess({
         name: process.env.SESSION_NAME,
         secret: process.env.SESSION_SECRET,
-        cookie: {
-            domain: '.schoolnet.mk',
-            maxAge: 1000 * 60 * 60 * 24 * 3,
-            expires: 1000 * 60 * 60 * 24 * 3
-        },
+        cookie: cookieSettings,
         store:  store,
         resave: true,
         saveUninitialized: true
@@ -80,7 +84,7 @@ let Initialize = (app, network, req) => {
                 
                         if (!user) { return res.send("incorrect"); }
                         
-                        req.logIn(user, function(err) {
+                        req.logIn(user, (err) => {
                             if (err) { 
                                 ErrorHandler.log("SQL", req.clientIp, null, err);
                                 // further print the username entered
@@ -101,8 +105,6 @@ let Initialize = (app, network, req) => {
     app.get('/auth/facebook/callback', (req, res) => {
             passport_module.passport.authenticate('facebook', (err, user, info) => {
                 req.logIn(user, (err) => {
-                    network.query("UPDATE tbl_stats AS tbl1 SET tbl1.Logins = (SELECT tbl1.Logins WHERE tbl1.ID = ?)+1 WHERE tbl1.ID = ?", [req.user.ID, req.user.ID]);
-                    
                     network.query("UPDATE tbl_students SET Redirect = ?, Online = ? WHERE ID = ?", ["ZNAM", 1, req.user.ID], (err, rows) => {
                         res.redirect('https://znam.schoolnet.mk/');
                     });

@@ -59,15 +59,15 @@ SchoolNet uses a number of open source projects to work properly:
 
 **Thanks to all the devs working on these amazing projects!**
 
-### Development
-
-> Because of the latest developments, SchoolNet officially implemented an *SSL* protocol which is much more secure. For local development, all you need to do is revert back to the HTTP server protocol. *We are building a guide on how to do that properly.*
+## Development
 
 If anyone wants to set up this server on their own computer, he can absolutely do it and here's how! We know that some of you might prefer Sublime, or Notepad++, or Visual Studio, but we **strongly** recommend **Visual Studio Code** as your main editor. It allows you to run multiple shell consoles inside the editor itself. Also, debugging Node.js app with Visual Studio Code is really easy! You can set breakpoints anywhere in the code! It's just beautiful!
 
+> You don't need to follow every step to develop the ZNAM platform. For exclusive development of the front-end of ZNAM you only need the first step to set up the repository and after that, the development of React is described [here](https://github.com/mitkonikov/SchoolNet/blob/master/znam/README.md).
+
 > **PAY ATTENTION**: The **API** for external games is not finished! You should **NOT** develop games for it, without contacting us!
 
-##### STEP 1: Download the repository
+### STEP 1: Download the repository
 
 If you already have the GitHub setup for Desktop and Visual Studio Code, just clone the repository. But if you don't have it, here's how to set it up.
 
@@ -98,15 +98,17 @@ The steps we are going to describe next are taken from [this GitHub help page](h
 That's it! Now you are authenticated and ready to clone the repository!
 > We recommend cloning the repository directly on the C drive, hence our first command:
 
-```shell
+```sh
 $ cd "C:/"
 $ git clone git@github.com:mitkonikov/SchoolNet.git
 ```
 
-IN WORSE CASE SCENARIO: <br>
+##### IN WORSE CASE SCENARIO: <br>
 If you really don't want to be directly connected to GitHub and lose the ability to pull request any changes, you can download the repository as a .ZIP file.
 
-##### STEP 2: Download dependecies
+<br>
+
+### STEP 2: Download dependecies
 
 SchoolNet requires [Node.js](https://nodejs.org/) v10.15.0 to run.
 
@@ -130,13 +132,23 @@ You would also need the missing libraries from the `/client/static/js` and the `
 /client/static/js/swal.js
 ```
 
+Here are some download links for the libraries:
+ - [jquery-3.3.1.js](https://code.jquery.com/jquery-3.3.1.min.js) - Even though it's minified version, just copy the code to a normal `jquery-3.3.1.js` file
+ - [p5.min.js](https://p5js.org/download/)
+ - [socket.io](https://cdnjs.com/libraries/socket.io)
+ - [swal.js](https://cdn.jsdelivr.net/npm/sweetalert2@9)
+
+We are going to modify the way of serving of these files as we implement the Reactframe. But, for now, this remains a pain. *(TODO)*
+
 * There is a file in the `css` and `js` folder listing the missing files there.
 
 You should only see errors about the connection to the databases. Now it's the time to install XAMPP!
 
 * Download XAMPP and install the Apache server and the MySQL database.
 
-##### STEP 3: .env FILE
+<br>
+
+### STEP 3: .env FILE
 
 Create .env file in the main directory with the following options:
 
@@ -149,24 +161,34 @@ DATABASE_PASS = <here the database password>
 SESSION_NAME = <session name>
 SESSION_SECRET = <!session secret!>
 PASSPORT_SALT = <salt>
-TATKIN_WORD_COUNT = 50000
+TATKIN_WORD_COUNT = 3000
 ```
 
-##### STEP 4: Database setup
+Default XAMPP/MySQL username is `"root"` with empty password (`""`).<br>
+Session Name, Secret and password salt are not important for development.<br>
+Even though we have more than 100 000 words in the Tatkin's word database, we only supply the example database file with a liitle more than 4000. So, it's safe to say that you should put the `TATKIN_WORD_COUNT = 3000`. <br>
+We know that this is not the full .env file, but it's the bare minimum you should have to start developing.
+
+<br>
+
+### STEP 4: Database setup
 
 There are 4 databases that SchoolNet uses:
-* **db_net** - Main database where everything about the users is stored *(PRIVATE)*
-* **db_records** - Database where records of games that are currently played are stored *(PRIVATE)*
-* **db_words** - Database filled with words from Wikipedia and contributions from the users *(PUBLIC)*
-* **db_znam** - Database for the ZNAM platform *(PRIVATE)* *(LACK OF EXAMPLE DATABASE)*
+  * **db_net** - Main database where everything about the users is stored *(PRIVATE)*
+  * **db_records** - Database where records of games that are currently played are stored *(PRIVATE)*
+  * **db_words** - Database filled with words from Wikipedia and contributions from the users *(PUBLIC)*
+  * **db_znam** - Database for the ZNAM platform *(PRIVATE)*
 
-We have example databases that will help you set up this project, private informations (such as account info. or statistical user information) will never be made public!
+To set up the databases in myphpadmin follow the next steps:
+ * Step 1: Extract the `example_databases.zip`
+ * Step 2: Import the `structure.sql` file in phpmyadmin. You should get four databases with empty tables.
+ * Step 3: Import the `schoolnetdbs.json` file in phpmyadmin to get example entries in the tables.
 
-In the XAMPP's installation folder, you are going to see `mysql` folder, in the `data` folder you would put the four example database folders.
+Regarding private informations (such as account info. or statistical user information), they will never be made public!
 
-We will later provide Schema-only files for even cleaner database.
+<br>
 
-##### STEP 5: Port setup
+### STEP 5: Port setup
 
 Now is the time to set up the ports.
 Our default ports are:
@@ -180,7 +202,9 @@ Go to `http://localhost:3000/` and if there are no error messages, hooray!
 
 **Go, have fun!**
 
-##### OPTIONAL: STEP 6: Development
+<br>
+
+### OPTIONAL: STEP 6: Development
 
 Because we have implemented Material Design in our project, it requires some kind of SASS compiler/watcher. We use webpack's watch command. Before running the server, just run the command: `npm run watch`
 
@@ -188,16 +212,16 @@ You shouldn't have any problems with the file names when building the SASS files
 
 For now, we have our Python AI in this repo, thus it requires you to download Python version > 3.6.2 if you want to try out the Tatkin game. We will shortly be making a script for you to setup Python in no time. We use the env variable 'PYTHON' to turn on/off the AI.
 
-##### NOTES:
+### NOTES:
 
 * SchoolNet is a **really complex** network, you are going to need a couple of hours if not days to set it up...
 * Ok, so, here are some things you should know:
 * SchoolNet uses [.env](https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786) variables
 * The *StartCluster.js* module is used only in production, don't use it. Start the server by running directly `node [server]`.
-* The SSL Port we are using is 443
 * We are using SCSS for the main SchoolNet project, but yet there's no implementation for it in the React frontends (including ZNAM)
+* In production we implemented the *SSL* protocol and use HTTPS server, however in development we left the HTTP server, so you can easily try it at home.
 
-##### Sources, useful links:
+### Sources, useful links:
 
 * Node.js [docs](https://nodejs.org/api/)
 * NPM [docs](https://docs.npmjs.com/)
@@ -228,8 +252,8 @@ Here are people that contributed to the building of this project. We can't thank
 
 ### Todos
 
-- Implement Material Design everywhere
 - Switch the SchoolNet Dashboard to React.js
+- Implement Material Design everywhere
 - Email server
   - Verification on sign-in
   - Forgot the password

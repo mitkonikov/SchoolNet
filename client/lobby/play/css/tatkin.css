@@ -1,5 +1,6 @@
 body {
     background-color: var(--color-0-2-1);
+    font-family: 'Roboto';
 }
 
 #interface-wrapper {
@@ -26,19 +27,18 @@ body {
 
 #game-name {
     font-size: 1em;
-    font-family: 'Roboto-Bold';
+    font-weight: 700;
     height: 18%;
 }
 
 #question {
-    font-family: 'Roboto-Regular';
     font-size: 1.2em;
     height: 18%;
 }
 
 #word {
     font-size: 2em;
-    font-family: 'Roboto-Thin';
+    font-weight: 100;
 
     height: 18%;
 }
@@ -175,7 +175,7 @@ body {
 #cont-gotoBack-wrap {
     height: 4%;
     font-size: 1em;
-    font-family: 'Roboto-Thin';
+    font-weight: 100;
     background-color: rgb(17, 35, 51);
 }
 
@@ -187,7 +187,7 @@ body {
     padding-left: 5em;
     padding-right: 5em;
     font-size: 1.2em;
-    font-family: 'Roboto-Light';
+    font-weight: 300;
 }
 
 #message-cont {
@@ -204,7 +204,7 @@ body {
     margin-top: -0.13em;
     margin-left: 0.2em;
     font-size: 6em;
-    font-family: 'Roboto-Thin';
+    font-weight: 100;
 }
 
 #score-rt-text {
@@ -226,7 +226,7 @@ body {
     /* margin-right: 0.3em; */
     float: left;
     font-size: 8em;
-    font-family: 'Roboto-Thin';
+    font-weight: 100;
     letter-spacing: -0.2em;
     text-align: right;
 }
@@ -235,7 +235,6 @@ body {
     width: 7em;
     height: 0em;
     font-size: 1.3em;
-    font-family: 'Roboto-Regular';
     /* float: left; */
     text-align: right;
     padding: -3em;
@@ -247,7 +246,7 @@ body {
     margin-top: 5.4em;
     margin-right: 1em;
     font-size: 1.1em;
-    font-family: 'Roboto-Thin';
+    font-weight: 100;
     float: right;
 }
 
@@ -259,7 +258,7 @@ body {
 
 #awards-title-cont {
     font-size: 1.2em;
-    font-family: 'Roboto-Bold';
+    font-weight: 700;
     text-align: center;
     padding: 0.7em;
 }
@@ -287,12 +286,12 @@ body {
     padding: 1%;
     padding-top: 1em;
     padding-left: 27%;
-    font-family: 'Roboto-Light';
+    font-weight: 300;
     font-size: 1.5em;
 }
 
 #final-xp, #final-place, #final-level {
-    font-family: 'Roboto-Bold';
+    font-weight: 700;
 }
 
 #progressbar-row {
@@ -321,19 +320,19 @@ body {
     height: 100%;
     width: 100%;
     float: left;
-
+    position: relative;
     /*transform: translate(0, -67%);*/
 }
 
 #level-xp {
     text-align: center;
-    font-family: 'Roboto-Bold';
+    font-weight: 700;
 }
 
 #level-count-cont {
     width: 100%;
     font-size: 1.2em;
-    font-family: 'Roboto-Light';
+    font-weight: 300;
     text-align: center;
     padding: 0.3em;
     padding-bottom: 1em;
@@ -351,11 +350,11 @@ body {
 
 #leaderboard-container {
     height: 40%;
+    width: 100%;
 }
 
 .best-scores {
     height: 20%;
-    width: 100%;
     padding: 0.4em;
     padding-left: 1em;
     padding-right: 1em;
@@ -368,7 +367,7 @@ body {
 .best-scores .place {
     float: left;
     font-size: 2em;
-    font-family: 'Roboto-Bold';
+    font-weight: 700;
 
     position: relative;
     top: 50%;
@@ -388,7 +387,7 @@ body {
 .best-scores .score {
     float: right;
     font-size: 1.2em;
-    font-family: 'Roboto-Bold';
+    font-weight: 700;
 
     position: relative;
     top: 50%;
@@ -409,7 +408,7 @@ body {
     }
 
     .options-wrapper {
-        font-family: 'Roboto-Light';
+        font-weight: 300;
         letter-spacing: 0.08em;
         font-size: 0.9em;
     }

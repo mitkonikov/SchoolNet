@@ -54,10 +54,12 @@ let Initialize = function(network, crypto) {
                             return done(null, false);
                         }
 
-                        network.query(
-                            "UPDATE tbl_students SET Online = ? WHERE ID = ?",
-                            [1, rows[0].ID]
-                        );
+                        network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [1, rows[0].ID]);
+                        network.query("UPDATE tbl_stats SET Logins = Logins + 1 WHERE ID = ?", [rows[0].ID]);
+                            
+                        let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                        network.query("UPDATE tbl_stats SET Last_Date_Login = ? WHERE ID = ?", [loginTime, rows[0].ID]);
+
                         done(null, rows[0]);
                     }
                 );
@@ -85,17 +87,17 @@ let Initialize = function(network, crypto) {
                 let encAccessToken = accessToken;
 
                 network.query(
-                    "SELECT * FROM tbl_students WHERE FB_ID = ?",
-                    [FB_ID],
-                    (err, qfb_id) => {
+                    "SELECT * FROM tbl_students WHERE FB_ID = ?", [FB_ID], (err, qfb_id) => {
                         if (err) console.trace(err);
 
                         if (typeof qfb_id != "undefined" && qfb_id.length != 0) {
                             //if (encAccessToken == qfb_id[0].FB_AccessToken) {
-                            network.query(
-                                "UPDATE tbl_students SET Online = ? WHERE ID = ?",
-                                [0, qfb_id[0].ID]
-                            );
+                            network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, qfb_id[0].ID]);
+                            
+                            let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                            network.query("UPDATE tbl_stats SET Last_Date_Login = ? WHERE ID = ?", [loginTime, qfb_id[0].ID]);
+                            network.query("UPDATE tbl_stats SET Logins = Logins + 1 WHERE ID = ?", [qfb_id[0].ID]);
+
                             done(null, qfb_id[0]);
                             //}
                         } else {
@@ -114,13 +116,8 @@ let Initialize = function(network, crypto) {
                                 values[FB_RefreshToken] = refreshToken;
                             }
 
-                            network.query(
-                                "INSERT INTO tbl_students SET ?",
-                                values,
-                                () => {
-                                    network.query(
-                                        "SELECT * FROM tbl_students WHERE FB_AccessToken = ? AND FB_ID = ?",
-                                        [encAccessToken, FB_ID],
+                            network.query("INSERT INTO tbl_students SET ?", values, () => {
+                                    network.query("SELECT * FROM tbl_students WHERE FB_AccessToken = ? AND FB_ID = ?", [encAccessToken, FB_ID],
                                         (err, newRows) => {
                                             let Registered_ID = newRows[0].ID;
 
@@ -130,29 +127,25 @@ let Initialize = function(network, crypto) {
                                             };
 
                                             // INSERT AT STUDENTS INFO
-                                            network.query(
-                                                "INSERT INTO tbl_students_info SET ?",
-                                                valuesINFO,
-                                                function(err, rows) {
-                                                    // STATISTICS
-                                                    let valuesStats = {
-                                                        ID: Registered_ID,
-                                                        Last_Date_Login: new Date()
-                                                            .toISOString()
-                                                            .slice(0, 19)
-                                                            .replace("T", " "),
-                                                        Successive_Logins: 1,
-                                                        Logins: 0
-                                                    };
+                                            network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
+                                                // STATISTICS
+                                                let valuesStats = {
+                                                    ID: Registered_ID,
+                                                    Last_Date_Login: new Date()
+                                                        .toISOString()
+                                                        .slice(0, 19)
+                                                        .replace("T", " "),
+                                                    Successive_Logins: 1,
+                                                    Logins: 0
+                                                };
 
-                                                    network.query(
-                                                        "INSERT INTO tbl_stats SET ?",
-                                                        valuesStats
-                                                    );
+                                                network.query(
+                                                    "INSERT INTO tbl_stats SET ?",
+                                                    valuesStats
+                                                );
                                                     
-                                                    done(null, newRows[0]);
-                                                }
-                                            );
+                                                done(null, newRows[0]);
+                                            });
                                         }
                                     );
                                 }

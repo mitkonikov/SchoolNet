@@ -2,9 +2,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory ( `cd znam` ), you can run:
 
-### `npm start`
+### `npm run start`
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -16,7 +16,7 @@ If you have a problem with the webpack versions, we discuss this here. In short 
 
 TODO: Make an automated script to deal with the .env files.
 
-### `npm test`
+### `npm run test`
 
 Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
@@ -34,7 +34,7 @@ Currently, our build directory is ignored from the GitHub repo, so don't try to 
 
 ## App crashing
 
-For some reason Bodymovin from npm includes an older version of the plugin build, thus unable to parse our new animation file. Check the `fetched` state in `emptyState.jsx` to be false. If that doesn't work, just remove the `<ReactBodymovin options={bodymovinOptions} />` in `emptyState.jsx` while developing and please don't pull request the change. Put it back or ignore the change before requesting. If you wondering how we fixed it, we downloaded the latest version of the `bodymovin_light.min.js` and copied the code to the `./node_modules/bodymovin/build/player/bodymovin_light.min.js`. 
+For some reason Bodymovin from npm includes an older version of the plugin build, thus unable to parse our new animation file. Try setting the `fetched` state in `emptyState.jsx` to be `false` (by default, it's `false`). If that doesn't work, just remove the `<ReactBodymovin options={bodymovinOptions} />` in `emptyState.jsx` while developing and please don't pull request the change. Put it back or ignore the change before requesting. If you wondering how we fixed it, we downloaded the latest version of the `bodymovin_light.min.js` and copied the code to the `./node_modules/bodymovin/build/player/bodymovin_light.min.js`. 
 
 ## Learn More
 
