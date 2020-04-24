@@ -19,7 +19,7 @@ let Connect = function(databases_connect) {
 }
 
 let contact = (user, data, callback) => {
-    rateLimiterContact.consume(user).them(() => {
+    rateLimiterContact.consume(user).then(() => {
         if (typeof data.message === "undefined") {
             callback({ status: "error", message: "empty" });
             return;
@@ -38,6 +38,8 @@ let contact = (user, data, callback) => {
         ZNAMDB.query("INSERT INTO tbl_contact SET ?", entry, () => {
             callback({ status: "success" });
         });
+    }).catch(() => {
+        callback({ status: "error", message: "limit" });
     });
 }
 
