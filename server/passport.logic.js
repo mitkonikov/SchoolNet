@@ -77,10 +77,6 @@ let Initialize = function(network, crypto) {
                 callbackURL: process.env.FACEBOOK_CALLBACK_URL
             },
             function(accessToken, refreshToken, profile, done) {
-                console.log("Access Token: ", accessToken);
-                console.log("Refresh Token: ", refreshToken);
-                console.log("Profile: ", profile._json);
-
                 let FB_NAME = profile._json.name;
                 let FB_ID = profile._json.id;
 
@@ -166,17 +162,8 @@ let Initialize = function(network, crypto) {
             },
             
             function(accessToken, refreshToken, profile, done) {
-                /*User.findOrCreate({ googleId: profile.id }, function (err, user) {
-                    return done(err, user);
-                });*/
-
-                console.log("Access Token: ", accessToken);
-                console.log("Refresh Token: ", refreshToken);
-                console.log("Profile: ", profile);
-
-                // let G_NAME = profile.name;
                 let G_ID = profile.id;
-                let G_NAME = "";
+                let G_NAME = profile.displayName;
 
                 network.query(
                     "SELECT * FROM tbl_students WHERE G_ID = ?", [G_ID], (err, qg_id) => {

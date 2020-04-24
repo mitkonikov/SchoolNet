@@ -114,7 +114,7 @@ let Initialize = (app, network, req) => {
     );
 
     app.get('/auth/google', (req, res) => {
-        passport_module.passport.authenticate('google')(req, res);
+        passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
     });
 
     app.get('/auth/google/callback', (req, res) => {
