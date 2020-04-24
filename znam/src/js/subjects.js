@@ -15,11 +15,11 @@ let subjectName = [
     "ФИЗИКА",
     "ХЕМИЈА",
     "БИОЛОГИЈА",
-    "ИНФОРМАТИКА",
-    "ГЕОГРАФИЈА",
+    "СОЦИОЛОГИЈА",
+    "БИЗНИС",
     "ИСТОРИЈА"
 ];
 
-let subjectIcons = [MacedonianIcon, MathIcon, EnglishIcon, PhysicsIcon, ChemistryIcon, BiologyIcon, ComputerIcon, GeoIcon, HistoryIcon];
+let subjectIcons = [MacedonianIcon, MathIcon, EnglishIcon, PhysicsIcon, ChemistryIcon, BiologyIcon, GeoIcon, GeoIcon, HistoryIcon];
 
 export { subjectName, subjectIcons };

@@ -20,6 +20,7 @@ dashboard_admin.js
 /client/static/css/portfolio-bundle.css
 /client/static/css/portfolioBundle.js
 /server/demos
+/server/python/deploy.py
 keywords.js
 tests.js
 /tests

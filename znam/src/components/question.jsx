@@ -27,7 +27,7 @@ class Question extends Component {
                 ID: [-1, -1, -1, -1],
                 content: ["", "", "", ""],
             },
-            score: "",
+            score: 0,
             timeLeft: 30,
         },
     };

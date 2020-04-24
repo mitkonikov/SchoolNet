@@ -91,10 +91,14 @@ html, body, #fullheight {
     height: 8em;
 }
 
-#facebook-signin {
+#facebook-signin, #google-signin {
     width: 3em;
     height: 3em;
     color: white;
+}
+
+.auth-icon {
+    display: inline-block;
 }
 
 .noselect {

@@ -111,8 +111,6 @@ class App extends Component {
     }
 
     selectSubject(response) {
-        console.log("subject select: ", response);
-
         this.setState({ intro: true });
         Question.preload();
     }
@@ -145,7 +143,6 @@ class App extends Component {
         queryFetch({
             command: "get-question",
         }).then((question) => {
-            console.log("question: ", question);
             // start the game
             if (firstTime) {
                 this.setState({
@@ -170,7 +167,6 @@ class App extends Component {
     }
 
     submitAnswer(data) {
-        console.log("submitting answer: ", data);
         /*
         this.setState({
             question: {
@@ -196,8 +192,6 @@ class App extends Component {
             command: "submit-answer",
             data: { token: data },
         }).then((data) => {
-            console.log(data);
-
             // data.correctToken
             // data.score
             // data.nextLevel

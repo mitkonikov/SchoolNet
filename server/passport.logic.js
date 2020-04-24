@@ -8,6 +8,8 @@ let Initialize = function(network, crypto) {
     let flash = require("connect-flash");
     let passport = require("passport");
     let LocalStrategy = require("passport-local").Strategy;
+    let FacebookStrategy = require("passport-facebook").Strategy;
+    let GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
     // PASSPORT
     app.use(flash());
@@ -66,8 +68,6 @@ let Initialize = function(network, crypto) {
             }
         )
     );
-
-    FacebookStrategy = require("passport-facebook").Strategy;
 
     passport.use(
         new FacebookStrategy(
@@ -156,6 +156,95 @@ let Initialize = function(network, crypto) {
             }
         )
     );
+
+    passport.use(
+        new GoogleStrategy(
+            {
+                clientID: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                callbackURL: process.env.GOOGLE_CALLBACK_URL
+            },
+            
+            function(accessToken, refreshToken, profile, done) {
+                /*User.findOrCreate({ googleId: profile.id }, function (err, user) {
+                    return done(err, user);
+                });*/
+
+                console.log("Access Token: ", accessToken);
+                console.log("Refresh Token: ", refreshToken);
+                console.log("Profile: ", profile);
+
+                // let G_NAME = profile.name;
+                let G_ID = profile.id;
+                let G_NAME = "";
+
+                network.query(
+                    "SELECT * FROM tbl_students WHERE G_ID = ?", [G_ID], (err, qg_id) => {
+                        if (err) console.trace(err);
+
+                        if (typeof qg_id != "undefined" && qg_id.length != 0) {
+                            network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, qg_id[0].ID]);
+                            
+                            let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                            network.query("UPDATE tbl_stats SET Last_Date_Login = ? WHERE ID = ?", [loginTime, qg_id[0].ID]);
+                            network.query("UPDATE tbl_stats SET Logins = Logins + 1 WHERE ID = ?", [qg_id[0].ID]);
+
+                            done(null, qg_id[0]);
+                        } else {
+                            // create a user
+                            let values = {
+                                ID: "",
+                                Role: 0,
+                                Valid: 1,
+                                Online: 1,
+                                G_ProfileName: G_NAME,
+                                G_AccessToken: accessToken,
+                                G_ID: G_ID
+                            };
+
+                            if (typeof refreshToken != "undefined") {
+                                values[G_RefreshToken] = refreshToken;
+                            }
+
+                            network.query("INSERT INTO tbl_students SET ?", values, () => {
+                                    network.query("SELECT * FROM tbl_students WHERE G_AccessToken = ? AND G_ID = ?", [accessToken, G_ID],
+                                        (err, newRows) => {
+                                            let Registered_ID = newRows[0].ID;
+
+                                            let valuesINFO = {
+                                                ID: Registered_ID,
+                                                Display_Name: G_NAME
+                                            };
+
+                                            // INSERT AT STUDENTS INFO
+                                            network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
+                                                // STATISTICS
+                                                let valuesStats = {
+                                                    ID: Registered_ID,
+                                                    Last_Date_Login: new Date()
+                                                        .toISOString()
+                                                        .slice(0, 19)
+                                                        .replace("T", " "),
+                                                    Successive_Logins: 1,
+                                                    Logins: 0
+                                                };
+
+                                                network.query(
+                                                    "INSERT INTO tbl_stats SET ?",
+                                                    valuesStats
+                                                );
+                                                    
+                                                done(null, newRows[0]);
+                                            });
+                                        }
+                                    );
+                                }
+                            );
+                        }
+                    }
+                );
+        }
+    ));
 
     passport.serializeUser(function(user, done) {
         done(null, user.ID);

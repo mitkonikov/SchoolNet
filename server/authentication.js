@@ -113,6 +113,21 @@ let Initialize = (app, network, req) => {
         }
     );
 
+    app.get('/auth/google', (req, res) => {
+        passport_module.passport.authenticate('google')(req, res);
+    });
+
+    app.get('/auth/google/callback', (req, res) => {
+            passport_module.passport.authenticate('google', (err, user, info) => {
+                req.logIn(user, (err) => {
+                    network.query("UPDATE tbl_students SET Redirect = ?, Online = ? WHERE ID = ?", ["ZNAM", 1, req.user.ID], (err, rows) => {
+                        res.redirect('https://znam.schoolnet.mk/');
+                    });
+                })
+            })(req, res);
+        }
+    );
+
     app.get('/deauth/facebook/callback', (req, res) => {
         
     });

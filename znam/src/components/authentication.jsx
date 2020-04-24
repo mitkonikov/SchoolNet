@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import FacebookIcon from "@material-ui/icons/Facebook";
+import GoogleIcon from "./../img/google-icon.svg";
 import { IconButton, Divider } from "@material-ui/core";
 
 import { Alert } from "@material-ui/lab";
@@ -32,11 +33,12 @@ class Authentication extends Component {
                         <div id="platform-icon-img" />
                     </div>
                     <div id="introduction">
-                        ЗНАМ е платформа на SchoolNet. <Divider /> Овде
-                        бесплатно може да се натпреварувате на прашања од
-                        различни предмети. <br />
+                        Овде бесплатно може да се натпреварувате на прашања од
+                        различни предмети. <Divider />
+                        
                         <div style={{ fontSize: "0.8em", paddingTop: "1em" }}>
-                            SchoolNet официјално е се уште во изработка, но ЗНАМ
+                            ЗНАМ е платформа на SchoolNet. <br></br>
+                            SchoolNet официјално е сѐ уште во изработка, но ЗНАМ
                             е екслузивно отворена за сите.
                         </div>
                     </div>
@@ -44,13 +46,24 @@ class Authentication extends Component {
                         <AuthMessage/>
                         <div id="login-buttons">
                             <div class="center-vh">
-                                <IconButton
-                                    onClick={() => {
-                                        window.location.href += "auth/facebook";
-                                    }}
-                                >
-                                    <FacebookIcon id="facebook-signin" />
-                                </IconButton>
+                                <div class="auth-icon">
+                                    <IconButton
+                                        onClick={() => {
+                                            window.location.href += "auth/facebook";
+                                        }}
+                                    >
+                                        <FacebookIcon id="facebook-signin" />
+                                    </IconButton>
+                                </div>
+                                <div class="auth-icon">
+                                    <IconButton
+                                        onClick={() => {
+                                            window.location.href += "auth/google";
+                                        }}
+                                    >
+                                        <img src={GoogleIcon} id="google-signin" alt="Google"/>
+                                    </IconButton>
+                                </div>
                             </div>
                         </div>
                     </div>
