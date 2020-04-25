@@ -1,4 +1,4 @@
-.github-icon, .github-text {
+.github-icon, .github-text, .connect-text {
     width: fit-content;
     display: inline-block;
     color: white;
@@ -20,4 +20,15 @@
 .github-text {
     width: calc(100% - 4.5em);
     font-size: 0.9em;
+}
+
+.connect-text {
+    display: flex;
+}
+
+.card-flex {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
 }

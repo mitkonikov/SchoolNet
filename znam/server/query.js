@@ -20,6 +20,10 @@ let Query = function(req, res) {
         let userIsAuth = req.isAuthenticated();
         if (userIsAuth) {
             network.table().isFirstTimeLogIn(req.user.ID, (firstTime) => {
+                let provider = [];
+                if (req.user.FB_ID != "") provider.push("facebook");
+                if (req.user.G_ID != "") provider.push("google");
+
                 if (!firstTime) {
                     database.DB("db_znam").query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", req.user.ID, (err, currentGames) => {
                         if (typeof currentGames != "undefined" && currentGames.length > 0) {
@@ -27,18 +31,21 @@ let Query = function(req, res) {
                                 res.send({
                                     isAuth: 1,
                                     intro: true,
-                                    inGame: false
+                                    inGame: false,
+                                    provider: provider
                                 });
                             } else {
                                 res.send({
                                     isAuth: 1,
                                     intro: false,
-                                    inGame: true
+                                    inGame: true,
+                                    provider: provider
                                 });
                             }                            
                         } else {
                             res.send({
-                                isAuth: 1
+                                isAuth: 1,
+                                provider: provider
                             });
                         }
                     });
@@ -47,7 +54,8 @@ let Query = function(req, res) {
                         "INSERT INTO tbl_student_stats SET ?", { Student_ID: req.user.ID }, () => {
                             res.send({
                                 isAuth: 1,
-                                firstTime: firstTime
+                                firstTime: firstTime,
+                                provider: provider
                             });
                         }
                     );

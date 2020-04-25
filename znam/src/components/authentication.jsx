@@ -15,7 +15,7 @@ function AuthMessage() {
             <div id="login-alert">
                 <Alert severity="warning">
                     <span class="noselect">
-                        Поради спам, мора да се најавите преку Facebook
+                        Поради спам, мора да се најавите преку Facebook или Google
                     </span>
                 </Alert>
             </div>

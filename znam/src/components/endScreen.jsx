@@ -16,6 +16,9 @@ let getEndMessage = [
 
 class EndScreen extends Component {
     renderPlayers() {
+        if (typeof this.props.endScore === "undefined") return null;
+        if (typeof this.props.endScore.scoreboard === "undefined") return null;
+
         let playersDOM = [];
 
         for (let i = 0; i < 10; i++) {
@@ -52,15 +55,17 @@ class EndScreen extends Component {
                 <div id="end-screen-message">
                     <Typography variant="h5" align="center">
                         {(() => {
-                            if (this.props.endScore.score <= 200) {
-                                return getEndMessage[0];
-                            } else if (
-                                this.props.endScore.score > 200 &&
-                                this.props.endScore.score < 1000
-                            ) {
-                                return getEndMessage[1];
-                            } else if (this.props.endScore.score === 1000) {
-                                return getEndMessage[2];
+                            if (this.props.endScore && this.props.endScore.score) {
+                                if (this.props.endScore.score <= 200) {
+                                    return getEndMessage[0];
+                                } else if (
+                                    this.props.endScore.score > 200 &&
+                                    this.props.endScore.score < 1000
+                                ) {
+                                    return getEndMessage[1];
+                                } else if (this.props.endScore.score === 1000) {
+                                    return getEndMessage[2];
+                                }
                             }
                         })()}
                     </Typography>
@@ -69,8 +74,12 @@ class EndScreen extends Component {
                             <div id="platform-icon-img" />
                         </div>
                         <div class="flex-fill">
-                            <div class="center-vh">
-                                <Block title="Поени" number={this.props.endScore.score}/>
+                            <div class="center-vh" id="score-block-container">
+                                <Block title="Поени" number={(() => {
+                                    if (this.props.endScore && this.props.endScore.score) {
+                                        return this.props.endScore.score;
+                                    }
+                                })()}/>
                             </div>
                         </div>
                     </div>

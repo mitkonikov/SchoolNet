@@ -72,6 +72,25 @@ let DB = function(database) {
             });
         }
 
+        let getLoginProvider = (user, callback) => {
+            currentDB.query("SELECT FB_ID, G_ID FROM tbl_students WHERE ID = ?", user, (err, rows) => {
+                if (typeof rows != "undefined") {
+                    provider = [];
+                    if (rows[0].FB_ID != "") {
+                        provider.push("facebook");
+                    }
+                    
+                    if (rows[0].G_ID != "") {
+                        provider.push("google");
+                    }
+
+                    callback({ provider: provider });
+                } else {
+                    callback({ status: "error" });
+                }
+            });
+        }
+
         /**
          * Gets the basic info for a user with specific nickname
          * TODO: Have every user a unique profile URL
@@ -433,6 +452,7 @@ let DB = function(database) {
             isFirstTimeLogIn,
             getUserByNickname,
             getInfoUser,
+            getLoginProvider,
             searchUsers,
             getStatistics,
             followUser,

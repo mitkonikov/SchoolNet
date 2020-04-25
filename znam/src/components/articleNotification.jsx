@@ -16,7 +16,7 @@ class ArticleNotification extends Component {
             <Collapse in={this.state.show} {...(this.state.show ? { timeout: 1000 } : {})}>
                 <div class="notify-container">
                     <Card elevation={0}>
-                        <ButtonBase>
+                        <ButtonBase component='div'>
                             <div class="notify-padding" style={{
                                 backgroundColor: this.props.data.color
                             }}>

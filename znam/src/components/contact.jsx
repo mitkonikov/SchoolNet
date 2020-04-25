@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { TextField, Button, Card } from "@material-ui/core";
-import { IconButton, Link } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 
 import swal from "sweetalert";
 
@@ -10,6 +10,8 @@ import "./../styles/contact.css";
 import { updateFetch } from "./../js/common";
 
 import GitHubIcon from '@material-ui/icons/GitHub';
+import FacebookIcon from '@material-ui/icons/Facebook';
+import GoogleIcon from "./../img/google-icon.svg";
 
 let hoverFX = new Audio("/audio/hover-2.mp3");
 
@@ -27,6 +29,52 @@ class Contact extends Component {
                 this.setState({ contact: memoryMessage });
             }
         }
+    }
+
+    renderSwitchIcon(connectTo) {
+        switch (connectTo) {
+            case "Facebook":
+                return (
+                    <FacebookIcon fontSize="large"/>
+                )
+            case "Google":
+                return (
+                    <img src={GoogleIcon} alt="Google" style={{ width: "2em" }}/>
+                )
+            default:
+                return null;
+        }
+    }
+
+    renderConnectButton() {
+        if (this.props.provider.length > 1) return null;
+
+        let connectTo = "";
+        for (let i = 0; i < this.props.provider.length; ++i) {
+            if (this.props.provider[i] === "facebook") connectTo = "Google";
+            if (this.props.provider[i] === "google") connectTo = "Facebook";
+        }
+
+        if (connectTo === "") return null;
+
+        return (
+            <Card elevation={0}>
+                <div class="card-padding card-flex" style={{ height: "5em" }}>
+                    <div class="connect-text">
+                        Конектирај ја твојата сметка со {connectTo}
+                    </div>
+                    <div class="icon-container" style={{ display: "flex" }}>
+                        <div class="github-icon">
+                            <IconButton onClick={() => {
+                                    window.location.href += "auth/connect/" + connectTo;
+                                }} >
+                                {this.renderSwitchIcon(connectTo)}
+                            </IconButton>
+                        </div>
+                    </div>
+                </div>
+            </Card>
+        )
     }
 
     render() {
@@ -112,15 +160,19 @@ class Contact extends Component {
                         </div>
                         <div class="icon-container">
                             <div class="github-icon">
-                                <IconButton>
-                                    <GitHubIcon fontSize="large" onClick={() => {
+                                <IconButton onClick={() => {
                                         window.location = "https://github.com/mitkonikov/SchoolNet";
-                                    }} />
+                                    }} >
+                                    <GitHubIcon fontSize="large"/>
                                 </IconButton>
                             </div>
                         </div>
                     </div>
                 </Card>
+
+                <div class="separator"/>
+                
+                {this.renderConnectButton()}
             </div>
         );
     }

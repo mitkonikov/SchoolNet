@@ -56,7 +56,8 @@ class App extends Component {
                 rank: undefined,
                 playerName: undefined, // TODO...
             },
-            question: undefined
+            question: undefined,
+            provider: []
         };
 
         this.history = createBrowserHistory();
@@ -102,6 +103,10 @@ class App extends Component {
             if (data.inGame) {
                 this.setState({ inGame: true });
                 this.fetchNextQuestion(false);
+            }
+
+            if (data.provider) {
+                this.setState({ provider: data.provider });
             }
         });
 /*
@@ -316,7 +321,7 @@ class App extends Component {
                                                     />
                                                 </Route>
                                                 <Route path="/contact">
-                                                    <Contact />
+                                                    <Contact provider={this.state.provider}/>
                                                 </Route>
                                             </Suspense>
                                         </Switch>
