@@ -185,7 +185,6 @@ let Initialize = function(network, crypto) {
                 callbackURL: process.env.GOOGLE_CALLBACK_URL,
                 passReqToCallback: true
             },
-            
             function(req, accessToken, refreshToken, profile, done) {
                 /*User.findOrCreate({ googleId: profile.id }, function (err, user) {
                     return done(err, user);

@@ -1005,11 +1005,29 @@ let getActivities = (user, callback) => {
 let getStudentStats = (user, callback) => {
     ZNAMDB.query("SELECT * FROM tbl_student_stats WHERE Student_ID = ?", user, (err, stats) => {
         ZNAMDB.query("SELECT COUNT(*) As Count FROM tbl_questions WHERE Valid = 1", (err, qCount) => {
-            callback({
-                questionsPlayed: stats[0].Questions_Played,
-                contributions: stats[0].Contributions,
+            let response = {
                 questionsCount: parseInt(qCount[0].Count)
-            });
+            }
+            
+            if (typeof stats === "undefined" || stats.length == 0) {
+                ZNAMDB.query("INSERT INTO tbl_student_stats SET ?", {
+                    Student_ID: user
+                });
+
+                response = {
+                    ...response,
+                    questionsPlayed: 0,
+                    contributions: 0,
+                }
+            } else {
+                response = {
+                    ...response,
+                    questionsPlayed: stats[0].Questions_Played,
+                    contributions: stats[0].Contributions,
+                }
+            }
+            
+            callback(response);
         });
     });
 }
