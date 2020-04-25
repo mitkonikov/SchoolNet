@@ -1,8 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 
 let queryFetch = body => {
-
-    return fetch("query", {
+    return fetch(domain() + "query", {
         method: "POST",
         headers: {
             'Accept': 'application/json',
@@ -13,7 +12,7 @@ let queryFetch = body => {
 };
 
 let updateFetch = body => {
-    return fetch("update", {
+    return fetch(domain() + "update", {
         method: "POST",
         headers: {
             'Accept': 'application/json',
@@ -22,6 +21,12 @@ let updateFetch = body => {
         body: JSON.stringify(body)
     }).then(response => response.json());
 };
+
+let domain = () => {
+    let loc = window.location.href;
+    let atMK = loc.indexOf(".mk");
+    return loc.substring(0, atMK + 4);
+}
 
 const useFitText = () => {
     const MIN_FONT_SIZE = 20;
@@ -92,4 +97,4 @@ const ReactLazyPreload = importStatement => {
     return Component;
 };
 
-export { queryFetch, updateFetch, useFitText, ReactLazyPreload };
+export { queryFetch, updateFetch, useFitText, ReactLazyPreload, domain };

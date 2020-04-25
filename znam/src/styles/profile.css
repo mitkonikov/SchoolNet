@@ -35,13 +35,13 @@
 
 #profile-content {
     text-align: left;
-    padding: 1em;
-    padding-top: 2em;
+    padding: 0.5em;
+    padding-top: 1em;
 }
 
 #profile-greeting {
-    font-size: 1.6em;
-    margin-bottom: 1em;
+    font-size: 1.3em;
+    margin-bottom: 0.5em;
 }
 /*
 #feedback-container {
@@ -63,7 +63,7 @@
 }
 
 #profile-statistics {
-    font-size: 1em;
+    font-size: 0.9em;
 }
 
 #all-questions {
@@ -93,4 +93,9 @@
 #empty-state {
     width: 100%;
     height: 100%;
+}
+
+.edit-button {
+    display: inline-block;
+    margin-left: 0.3em;
 }

@@ -7,7 +7,7 @@ import swal from "sweetalert";
 
 import "./../styles/contribute.css";
 import "./../styles/contact.css";
-import { updateFetch } from "./../js/common";
+import { updateFetch, domain } from "./../js/common";
 
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FacebookIcon from '@material-ui/icons/Facebook';
@@ -66,7 +66,7 @@ class Contact extends Component {
                     <div class="icon-container" style={{ display: "flex" }}>
                         <div class="github-icon">
                             <IconButton onClick={() => {
-                                    window.location.href += "auth/connect/" + connectTo;
+                                    window.location.href = domain() + "auth/connect/" + connectTo;
                                 }} >
                                 {this.renderSwitchIcon(connectTo)}
                             </IconButton>

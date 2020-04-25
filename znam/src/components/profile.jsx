@@ -2,7 +2,7 @@ import React, { Component, Suspense } from "react";
 import { Link } from "react-router-dom";
 
 import { Card, CardContent, ButtonBase } from "@material-ui/core";
-import { Button } from "@material-ui/core";
+import { Button, IconButton } from "@material-ui/core";
 import { LinearProgress } from "@material-ui/core";
 import {
     List,
@@ -12,10 +12,14 @@ import {
     ListItemText
 } from "@material-ui/core";
 
+import EditIcon from '@material-ui/icons/Edit';
+
 import "./../styles/profile.css";
-import { queryFetch } from "./../js/common";
+import { queryFetch, updateFetch } from "./../js/common";
 import { subjectName, subjectIcons } from "../js/subjects";
 import Block from "./block";
+
+import swal from "sweetalert";
 
 const EmptyState = React.lazy(() => import("./emptyState"));
 
@@ -116,7 +120,7 @@ class Profile extends Component {
             <div class="full">
                 <div id="profile-header">
                     <Card variant="outlined" elevation={0}>
-                        <ButtonBase>
+                        <ButtonBase disableRipple component="div" style={{ fontSize: "0.9em" }}>
                             <CardContent>
                                 <div id="profile-img-container">
                                     <div id="profile-img" />
@@ -130,9 +134,71 @@ class Profile extends Component {
                                             )
                                                 return "Здраво!";
                                             return (
-                                                "Здраво, " +
-                                                this.state.profileName +
-                                                "!"
+                                                <div>
+                                                    {"Здраво, " +
+                                                    this.state.profileName +
+                                                    "!"}
+                                                    <div class="edit-button">
+                                                        <IconButton onClick={() => {
+                                                            swal({
+                                                                title: 'Промена на име',
+                                                                text: 'Сакате да си го промените името кое се прикажува? Повелете, слободно...',
+                                                                content: "input",
+                                                                button: {
+                                                                    text: "ПРОМЕНИ",
+                                                                    closeModal: false,
+                                                                },
+                                                                inputValidator: (value) => {
+                                                                    if (!value) return "";
+                                                                    if (value.length < 5) return "";
+                                                                }
+                                                            }).then((result) => {
+                                                                if (!result) {
+                                                                    swal({
+                                                                        title: 'Проблем',
+                                                                        text: 'Хмм... Мислам дека не работи така :)',
+                                                                        icon: 'error'
+                                                                    });
+                                                                    return true;
+                                                                }
+
+                                                                if (result.length < 7) {
+                                                                    swal({
+                                                                        title: 'Проблем',
+                                                                        text: 'Не штеди... Помалку од седум букви не е дозволено!',
+                                                                        icon: 'error'
+                                                                    });
+                                                                    return true;
+                                                                }
+
+                                                                updateFetch({
+                                                                    command: 'display-name-change',
+                                                                    data: {
+                                                                        displayname: result
+                                                                    }
+                                                                }).then((response) => {
+                                                                    if (response.status === 'success') {
+                                                                        this.setState({ profileName: result });
+                                                                        swal.stopLoading();
+                                                                        swal.close();
+                                                                    } else {
+                                                                        swal({
+                                                                            title: 'Проблем',
+                                                                            text: 'Се појави проблем со промената, пробајте пак...',
+                                                                            icon: 'error'
+                                                                        });
+                                                                    }
+                                                                }).catch(() => {
+                                                                    swal({
+                                                                        title: 'Проблем',
+                                                                        text: 'Се појави проблем со промената, пробајте пак...',
+                                                                        icon: 'error'
+                                                                    });
+                                                                });
+                                                            })
+                                                        }}> <EditIcon fontSize="small"/> </IconButton>
+                                                    </div>
+                                                </div>
                                             );
                                         })()}
                                     </div>
