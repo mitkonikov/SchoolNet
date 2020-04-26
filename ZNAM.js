@@ -75,6 +75,10 @@ app.get('*', (req, res, next) => {
     express.static(__dirname + '/znam/build', { fallthrough: false })(req, res, next);
 });
 
+app.use((req, res) => {
+    res.status(404).redirect('/');
+});
+
 server.listen(process.env.PORT_ZNAM);
 console.log('\x1b[32m%s\x1b[0m', "ZNAM Server Started.");
 
