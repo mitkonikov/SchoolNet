@@ -66,13 +66,13 @@ app.post('/update', UpdateModule.Update);
 
 app.use('/client/common', express.static(__dirname + '/client/common'));
 
-let redirectURLs = ['/score', '/profile', '/contribute']
+let redirectURLs = ['/score', '/profile', '/contribute', '/contact']
 for (let rurl of redirectURLs) {
     app.get(rurl, (req, res) => res.redirect('/'));
 }
 
 app.get('*', (req, res) => {
-    express.static(__dirname + '/znam/build')(req, res);
+    express.static(__dirname + '/znam/build', { fallthrough: false })(req, res);
 });
 
 server.listen(process.env.PORT_ZNAM);
