@@ -71,8 +71,8 @@ for (let rurl of redirectURLs) {
     app.get(rurl, (req, res) => res.redirect('/'));
 }
 
-app.get('*', (req, res) => {
-    express.static(__dirname + '/znam/build', { fallthrough: false })(req, res);
+app.get('*', (req, res, next) => {
+    express.static(__dirname + '/znam/build', { fallthrough: false })(req, res, next);
 });
 
 server.listen(process.env.PORT_ZNAM);
