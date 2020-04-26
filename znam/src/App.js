@@ -300,6 +300,9 @@ class App extends Component {
                                                                 currentPage: 1,
                                                             })
                                                         }
+                                                        onFail={() => {
+                                                            window.location.href = window.location.origin;
+                                                        }}
                                                     />
                                                 </Route>
                                                 <Route path="/contribute">

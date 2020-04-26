@@ -18,7 +18,18 @@ class Scoreboard extends Component {
     componentDidMount() {
         queryFetch({
             command: "get-leaderboard",
-        }).then((data) => this.setState({ scoreboard: data }));
+        }).then((data) => {
+            if (data.status) {
+                if (data.status === "error") {
+                    if (typeof this.props.onFail == "function") {
+                        this.props.onFail();
+                    }
+                    return;
+                }
+            }
+
+            this.setState({ scoreboard: data });
+        });
 
         if (typeof this.props.onMount == "function") this.props.onMount();
     }

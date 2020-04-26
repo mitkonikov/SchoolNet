@@ -148,6 +148,8 @@ let Query = function(req, res) {
                 });
             });
         });
+    } else {
+        res.send({ status: "error", message: "unauth" });
     }
 }
 
