@@ -78,10 +78,6 @@ let Initialize = function(network, crypto) {
                 passReqToCallback: true
             },
             function(req, accessToken, refreshToken, profile, done) {
-                console.log("Access Token: ", accessToken);
-                console.log("Refresh Token: ", refreshToken);
-                console.log("Profile: ", profile._json);
-
                 let FB_NAME = profile._json.name;
                 let FB_ID = profile._json.id;
                 let encAccessToken = accessToken;
@@ -189,10 +185,6 @@ let Initialize = function(network, crypto) {
                 /*User.findOrCreate({ googleId: profile.id }, function (err, user) {
                     return done(err, user);
                 });*/
-
-                console.log("Access Token: ", accessToken);
-                console.log("Refresh Token: ", refreshToken);
-                console.log("Profile: ", profile);
 
                 // let G_NAME = profile.name;
                 let G_ID = profile.id;

@@ -101,11 +101,9 @@ let Initialize = (app, network, req) => {
     app.get('/auth/connect/:provider', (req, res) => {
         if (req.isAuthenticated()) {
             if (req.params.provider == "Facebook" && req.user.FB_ID == "") {
-                console.log("connect user to facebook account");
                 passport_module.passport.authenticate('facebook')(req, res);
             } else if (req.params.provider == "Google" && req.user.G_ID == "") {
-                console.log("connect user to google account");
-                passport_module.passport.authenticate('google')(req, res);
+                passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
             } else {
                 res.redirect('/');
             }
@@ -120,8 +118,6 @@ let Initialize = (app, network, req) => {
 
     app.get('/auth/facebook/callback', (req, res) => {
             passport_module.passport.authenticate('facebook', (err, user, info) => {
-                console.log(info);
-
                 if (err) {
                     res.send("Sorry... A server problem.");
                     return;

@@ -53,7 +53,6 @@ class SubjectSelector extends Component {
                                 for (let k = 0; k < playable.length; ++k) {
                                     if (i === playable[k]) {
                                         // create game
-                                        console.log("creating game...");
                                         queryFetch({
                                             command: 'play-znam',
                                             data: {
