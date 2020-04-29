@@ -6,6 +6,9 @@ import { IconButton, Divider } from "@material-ui/core";
 
 import { Alert } from "@material-ui/lab";
 
+// let Latex = require("react-latex");
+// <Latex>{`$3^{4 \\div 5}$`}</Latex>
+
 function AuthMessage() {
     let hide = localStorage.getItem("authNotFirstTime");
 

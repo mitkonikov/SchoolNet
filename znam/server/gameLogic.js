@@ -649,7 +649,7 @@ let getInitStats = (user, callback) => {
 
                 callback(data);
             } else {
-                callback(null);
+                callback({ status: "empty" });
             }
         });
     });
@@ -996,9 +996,11 @@ let getActivities = (user, callback) => {
             for (let a of activities) {
                 a.Statistics = JSON.parse(a.Statistics);
             }
-        }
 
-        callback(activities);
+            callback(activities);
+        } else {
+            callback([]);
+        }
     });
 }
 

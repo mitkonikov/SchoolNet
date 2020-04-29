@@ -26,6 +26,12 @@ class SubjectSelector extends Component {
         queryFetch({
             command: "get-init"
         }).then(data => {
+            if (data.status) {
+                if (data.status === "empty") {
+                    return;
+                }
+            }
+            
             this.setState({
                 initData: data
             });

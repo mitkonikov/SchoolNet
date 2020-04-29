@@ -40,9 +40,10 @@ class Profile extends Component {
     componentDidMount() {
         if (typeof this.props.onMount == "function") this.props.onMount();
 
-        queryFetch({ command: "profile-info" }).then(data =>
-            this.setState(data)
-        );
+        queryFetch({ command: "profile-info" }).then(data => {
+            this.setState(data);
+            this.setState({ fetched: true });
+        });
     }
 
     emptyState() {
@@ -177,11 +178,22 @@ class Profile extends Component {
                                                                         displayname: result
                                                                     }
                                                                 }).then((response) => {
-                                                                    if (response.status === 'success') {
+                                                                    let problem = false;
+                                                                    if (response.status === "success") {
                                                                         this.setState({ profileName: result });
                                                                         swal.stopLoading();
                                                                         swal.close();
-                                                                    } else {
+                                                                    } else if (response.status === "failed") {
+                                                                        if (response.message === "limit") {
+                                                                            swal({
+                                                                                title: 'Проблем',
+                                                                                text: 'Не поминале 10 дена од последната промена на името!',
+                                                                                icon: 'error'
+                                                                            });
+                                                                        } else { problem = true; }
+                                                                    } else { problem = true; }
+
+                                                                    if (problem) {
                                                                         swal({
                                                                             title: 'Проблем',
                                                                             text: 'Се појави проблем со промената, пробајте пак...',
