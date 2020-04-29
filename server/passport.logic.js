@@ -82,24 +82,22 @@ let Initialize = function(network, crypto) {
                 let FB_ID = profile._json.id;
                 let encAccessToken = accessToken;
 
-                if (req.isAuthenticated() && req.params.provider) {
-                    if (req.params.provider == "Facebook") {
-                        let FBEntry = {
-                            FB_ProfileName: FB_NAME,
-                            FB_AccessToken: encAccessToken,
-                            FB_ID: FB_ID
-                        }
-
-                        if (typeof refreshToken != "undefined") {
-                            FBEntry[FB_RefreshToken] = refreshToken;
-                        }
-
-                        network.query("UPDATE tbl_students SET ? WHERE ID = ?", [FBEntry, req.user.ID], () => {
-                            network.query("SELECT * FROM tbl_students WHERE ID = ?", [req.user.ID], (err, rows) => {
-                                done(null, rows[0]);
-                            });
-                        });
+                if (req.isAuthenticated() && req.user.FB_ID == '' && req.user.G_ID != '') {
+                    let FBEntry = {
+                        FB_ProfileName: FB_NAME,
+                        FB_AccessToken: encAccessToken,
+                        FB_ID: FB_ID
                     }
+                    
+                    if (typeof refreshToken != "undefined") {
+                        FBEntry[FB_RefreshToken] = refreshToken;
+                    }
+                    
+                    network.query("UPDATE tbl_students SET ? WHERE ID = ?", [FBEntry, req.user.ID], () => {
+                        network.query("SELECT * FROM tbl_students WHERE ID = ?", [req.user.ID], (err, rows) => {
+                            done(null, rows[0]);
+                        });
+                    });
                 } else {
                     network.query(
                         "SELECT * FROM tbl_students WHERE FB_ID = ?", [FB_ID], (err, qfb_id) => {
@@ -190,24 +188,22 @@ let Initialize = function(network, crypto) {
                 let G_ID = profile.id;
                 let G_NAME = profile.displayName;
 
-                if (req.isAuthenticated() && req.params.provider) {
-                    if (req.params.provider == "Google") {
-                        let GEntry = {
-                            G_ProfileName: G_NAME,
-                            G_AccessToken: accessToken,
-                            G_ID: G_ID
-                        }
-
-                        if (typeof refreshToken != "undefined") {
-                            GEntry[G_RefreshToken] = refreshToken;
-                        }
-
-                        network.query("UPDATE tbl_students SET ? WHERE ID = ?", [GEntry, req.user.ID], () => {
-                            network.query("SELECT * FROM tbl_students WHERE ID = ?", [req.user.ID], (err, rows) => {
-                                done(null, rows[0]);
-                            });
-                        });
+                if (req.isAuthenticated() && req.user.FB_ID != '' && req.user.G_ID == '') {
+                    let GEntry = {
+                        G_ProfileName: G_NAME,
+                        G_AccessToken: accessToken,
+                        G_ID: G_ID
                     }
+
+                    if (typeof refreshToken != "undefined") {
+                        GEntry[G_RefreshToken] = refreshToken;
+                    }
+
+                    network.query("UPDATE tbl_students SET ? WHERE ID = ?", [GEntry, req.user.ID], () => {
+                        network.query("SELECT * FROM tbl_students WHERE ID = ?", [req.user.ID], (err, rows) => {
+                            done(null, rows[0]);
+                        });
+                    });
                 } else {
                     network.query(
                         "SELECT * FROM tbl_students WHERE G_ID = ?", [G_ID], (err, qg_id) => {
