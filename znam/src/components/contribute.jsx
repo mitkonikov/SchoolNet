@@ -26,7 +26,7 @@ class Contribute extends Component {
             <div class="contribute-container center-vh">
                 <ArticleNotification
                     data={{
-                        title: "Придонесување.",
+                        title: "Придонесување",
                         content:
                             "Секој има право да придонесува интересни прашања на платформата. Притоа, секое прашање е прегледувано од страна на администраторите.",
                         color: "secondary",

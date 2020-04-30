@@ -9,6 +9,9 @@ import Typography from "@material-ui/core/Typography";
 
 import { LinearProgress, Chip } from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
+import swal from "sweetalert";
+
+import { queryFetch } from './../js/common';
 
 class Question extends Component {
     constructor(props) {
@@ -161,8 +164,35 @@ class Question extends Component {
         return (
             <div id="small-footer">
                 <div id="center-v" class="noselect">
+                    <div style={{
+                        display: "inline-block",
+                        float: "left",
+                        cursor: "pointer",
+                        fontWeight: "700"
+                    }}
+                    onClick={() => {
+                        swal({
+                            title: "Излези од играта",
+                            text: "Прашањата кои веќе ги одговори ќе останат валидни. Дали си сигурен дека сакаш да излезеш од оваа игра?",
+                            icon: "warning",
+                            buttons: ["Врати се", "Потврди!"],
+                            dangerMode: true
+                        }).then((willExit) => {
+                            if (willExit) {
+                                queryFetch({
+                                    command: "end-game"
+                                }).then((response) => {
+                                    console.log(response);
+                                    swal.close();
+                                    this.props.onGameOver(response);
+                                })
+                            } else {
+                                swal.close();
+                            }
+                        });
+                    }}>Излези од играта</div>
                     <Typography variant="caption">
-                        Поддржано од SchoolNet
+                        Овозможено од SchoolNet
                     </Typography>
                 </div>
             </div>

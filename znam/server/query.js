@@ -27,7 +27,7 @@ let Query = function(req, res) {
                 if (!firstTime) {
                     database.DB("db_znam").query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", req.user.ID, (err, currentGames) => {
                         if (typeof currentGames != "undefined" && currentGames.length > 0) {
-                            if (currentGames[0].Current_Level === 0) {
+                            if (parseInt(currentGames[0].Current_Level) == 0) {
                                 res.send({
                                     isAuth: 1,
                                     intro: true,
@@ -88,6 +88,13 @@ let Query = function(req, res) {
                 GameLogic.getScoreboard((response) => res.send(response));
             } else if (commandSanitized === 'get-leaderboard') {
                 GameLogic.getLeaderboard((response) => res.send(response));
+            } else if (commandSanitized === 'end-game') {
+                GameLogic.endGame(req.user.ID, (response) => {
+                    res.send({
+                        gameOver: true,
+                        ...response
+                    });
+                });
             } else if (commandSanitized === 'profile-info') {
                 network.table("tbl_students_info").getInfoMe(req.user.ID, (rows) => {
                     GameLogic.getStudentStats(req.user.ID, (stats) => {

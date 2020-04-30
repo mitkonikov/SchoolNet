@@ -67,6 +67,8 @@ class SubjectSelector extends Component {
                                                         text: "Немаме доволно прашања на овој предмет за да играте уште еднаш. Ви препорачуваме да придонесете неколку прашања!",
                                                         icon: "error"
                                                     });
+                                                } else if (data.message === "game exists") {
+                                                    window.location.href = window.location.origin;
                                                 } else {
                                                     swal({
                                                         title: "Упс...",

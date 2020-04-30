@@ -171,6 +171,13 @@ class App extends Component {
         });
     }
 
+    onGameOver(data) {
+        this.setState({ endScore: data });
+        setTimeout(() => {
+            this.setState({ endScreen: true });
+        }, 4000);
+    }
+
     submitAnswer(data) {
         /*
         this.setState({
@@ -213,10 +220,7 @@ class App extends Component {
                 // data.scoreboard: endScoreboard.scoreboard,
                 // ? data.rank: endScoreboard.rank
 
-                this.setState({ endScore: data });
-                setTimeout(() => {
-                    this.setState({ endScreen: true });
-                }, 4000);
+                this.onGameOver(data);
 
                 return;
             }
@@ -255,6 +259,7 @@ class App extends Component {
                             submitAnswer={this.submitAnswer}
                             ref={this.questionUI}
                             onMount={this.questionMounted}
+                            onGameOver={this.onGameOver}
                         />
                     );
                 }
@@ -333,7 +338,7 @@ class App extends Component {
                             </div>
 
                             {(() => {
-                                if (this.state.isAuth === 1) {
+                                if (this.state.isAuth === 1 && !this.state.inGame) {
                                     return (
                                         <div class="navbar-container">
                                             <BottomNavigation

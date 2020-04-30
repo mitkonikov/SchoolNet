@@ -221,7 +221,7 @@ class Profile extends Component {
                                                     marginBottom: "0.2em"
                                                 }}
                                             >
-                                                Прашања играни: {this.state.statistics.questionsPlayed}/{this.state.statistics.questionsCount}
+                                                Одговорени прашања: {this.state.statistics.questionsPlayed}/{this.state.statistics.questionsCount}
                                             </div>
                                             <LinearProgress
                                                 variant="determinate"
