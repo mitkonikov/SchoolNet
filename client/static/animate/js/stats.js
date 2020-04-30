@@ -65,7 +65,7 @@ function draw() {
     image(grClone, 0, 0);
 
     // TODO: UNCOMMENT
-    // drawStatsText();
+    drawStatsText();
 
     noLoop();
 }
@@ -163,7 +163,7 @@ function drawStatsText() {
     textAlign(CENTER, CENTER);
     textSize(HEIGHT / 40.00);
     text('Статистики во вистинско време', WIDTH / 2, HEIGHT / 2);
-
+/*
     if (!gotServerData) {
         getStatistics().then((response) => {
             printTextStats(response);
@@ -173,7 +173,7 @@ function drawStatsText() {
         });
     } else {
         printTextStats(cacheServerData);
-    }
+    }*/
 }
 
 function printTextStats(response) {
