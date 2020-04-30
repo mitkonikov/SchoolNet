@@ -170,16 +170,13 @@ app.get('/', function(req, res) {
         console.log("User " + ip + " requested index.html");
         prev_ip = ip;
     }
-/*
+
     indexRequestsCount += 1;
     if (indexRequestsCount % 10 == 0) {
-        network.query("SELECT Stat_Count From tbl_stats_web WHERE Stat_Name = ?", 'Index Requests', function(err, rows) {
-            currentStatCount = rows[0].Stat_Count;
-            currentStatCount += indexRequestsCount;
-            network.query("UPDATE tbl_stats_web SET Stat_Count = ? WHERE Stat_Name = 'Index Requests'", currentStatCount);
-            indexRequestsCount = 0;
-        });
-    }*/
+        let currentStatCount = indexRequestsCount;
+        network.query("UPDATE tbl_stats_web SET Stat_Count = Stat_Count + ? WHERE Stat_Name = 'Index Requests'", currentStatCount);
+        indexRequestsCount = 0;
+    }
 });
 
 app.use('/pilot', (req, res, next) => {

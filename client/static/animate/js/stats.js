@@ -64,7 +64,8 @@ function draw() {
 
     image(grClone, 0, 0);
 
-    drawStatsText();
+    // TODO: UNCOMMENT
+    // drawStatsText();
 
     noLoop();
 }

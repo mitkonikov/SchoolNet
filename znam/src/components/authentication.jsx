@@ -31,7 +31,15 @@ class Authentication extends Component {
         return (
             <React.Fragment>
                 <div class="center-v noselect">
-                    <div id="platform-title">ЗНАМ</div>
+                    <div id="platform-title">ЗНАМ
+                        <span style={{ 
+                            fontSize: "0.4em",
+                            color: "#246369",
+                            top: 0,
+                            position: "absolute",
+                            marginLeft: "0.3em"
+                        }}>BETA</span>
+                    </div>
                     <div id="platform-icon-auth" class="noselect">
                         <div id="platform-icon-img" />
                     </div>
