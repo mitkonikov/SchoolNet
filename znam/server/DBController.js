@@ -77,8 +77,6 @@ let contribute = (user, data, callback) => {
             }),
         }
 
-        console.log(entry);
-
         if (typeof data.Difficulty === "undefined")
             entry.Difficulty = 1500;
         else

@@ -8,7 +8,7 @@ import LockIcon from "@material-ui/icons/Lock";
 
 import "./../styles/subject_selector.css";
 import { queryFetch } from "../js/common";
-import { subjectName, subjectIcons } from "../js/subjects";
+import { subjectName, subjectIcons, playable } from "../js/subjects";
 import swal from "sweetalert";
 
 let clickFX = new Audio("/audio/click-3h.mp3");  
@@ -40,7 +40,6 @@ class SubjectSelector extends Component {
 
     renderSubjects() {
         let subjectDOM = [];
-        let playable = [8];
 
         for (let i = 0; i < 9; i++) {
             subjectDOM.push(

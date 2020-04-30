@@ -81,7 +81,6 @@ let tatkinSocket = function(API) {
                     GameEngine.updateCurrentLevel(demo_table, "-1");
                     
                     // start the heartbeat
-                    console.log("Heartbeat started!");
                     HEARTBEAT_INTERVAL = setInterval(() => HEARTBEAT(obj, socket), 1000);        
                 });
 
@@ -211,7 +210,6 @@ let tatkinSocket = function(API) {
                 });
 
                 socket.on("submit", (eventData) => {
-                    console.log("submitted data: " + eventData);
                     // Number, Word_ID, Word, Answer
 
                     let parseData = {

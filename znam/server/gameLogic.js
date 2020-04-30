@@ -411,7 +411,6 @@ let startGame = (user, callback) => {
 
 let queryNextQuestion = (data, callback) => {
     queryQuestion(data.currentQuestion, (rawQuestion) => {
-        console.log("next raw question: ", rawQuestion);
         let state = {
             questionNumber: data.currentGame[0].Current_Level,
             question: rawQuestion.Question,
