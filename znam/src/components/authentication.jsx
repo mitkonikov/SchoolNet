@@ -56,7 +56,7 @@ class Authentication extends Component {
                     <div id="auth-container">
                         <AuthMessage/>
                         <div id="login-buttons">
-                            <div class="center-vh">
+                            <div class="center-vh" style={{ width: "12em" }}>
                                 <div class="auth-icon">
                                     <IconButton
                                         onClick={() => {

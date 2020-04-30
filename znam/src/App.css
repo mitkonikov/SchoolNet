@@ -99,6 +99,7 @@ html, body, #fullheight {
 
 .auth-icon {
     display: inline-block;
+    width: 6em;
 }
 
 .noselect {
