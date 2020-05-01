@@ -116,7 +116,7 @@ Install the dependencies from the package file and start the server.
 
 ```sh
 $ cd schoolnet
-$ npm install ./package.json
+$ npm install .
 $ node SchoolNet.js
 ```
 

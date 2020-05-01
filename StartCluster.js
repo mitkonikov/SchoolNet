@@ -47,7 +47,7 @@ if (cluster.isMaster) {
     }, 1000);
     
     
-    fs.watchFile("./watcher", (curr, prev) => {
+    fs.watchFile("./server/watcher", (curr, prev) => {
         console.log("Restart received, reloading workers");
 
         // delete the cached module, so we can reload the app

@@ -25,3 +25,11 @@ keywords.js
 tests.js
 /tests
 ecosystem.config.js
+
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
+ormconfig.json
