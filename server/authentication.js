@@ -98,6 +98,12 @@ let Initialize = (app, network, req) => {
     //        });
     });
 
+    app.post('/auth/info', (req, res) => {
+        res.send({
+            isAuth: req.isAuthenticated()
+        });
+    });
+
     app.get('/auth/connect/:provider', (req, res) => {
         if (req.isAuthenticated()) {
             if (req.params.provider == "Facebook" && req.user.FB_ID == "") {
@@ -116,7 +122,10 @@ let Initialize = (app, network, req) => {
         passport_module.passport.authenticate('facebook')(req, res);
     });
 
-    app.get('/auth/facebook/callback', (req, res) => {
+    app.get('/auth/facebook/:platform', (req, res) => {
+        if (req.params.platform != "callback") {
+            passport_module.passport.authenticate('facebook')(req, res);
+        } else {
             passport_module.passport.authenticate('facebook', (err, user, info) => {
                 if (err) {
                     res.send("Sorry... A server problem.");
@@ -127,10 +136,10 @@ let Initialize = (app, network, req) => {
                     network.query("UPDATE tbl_students SET Redirect = ?, Online = ? WHERE ID = ?", ["ZNAM", 1, req.user.ID], (err, rows) => {
                         res.redirect('https://znam.schoolnet.mk/');
                     });
-                })
+                });
             })(req, res);
         }
-    );
+    });
 
     app.get('/auth/google', (req, res) => {
         passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);

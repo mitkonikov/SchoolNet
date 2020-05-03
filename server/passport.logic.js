@@ -78,6 +78,8 @@ let Initialize = function(network, crypto) {
                 passReqToCallback: true
             },
             function(req, accessToken, refreshToken, profile, done) {
+                console.log(req.params);
+                
                 let FB_NAME = profile._json.name;
                 let FB_ID = profile._json.id;
                 let encAccessToken = accessToken;
@@ -184,7 +186,8 @@ let Initialize = function(network, crypto) {
                     return done(err, user);
                 });*/
 
-                // let G_NAME = profile.name;
+                console.log(req.params);
+
                 let G_ID = profile.id;
                 let G_NAME = profile.displayName;
 
