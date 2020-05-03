@@ -68,7 +68,7 @@ let Initialize = (app, network, req) => {
                 }*/
     
                 //if (google_response.success) {
-                if (true) {
+                if (false) {
                 
                     if (!protectionChecks.signinCheck(req)) {
                         res.send('incorrect');
@@ -94,6 +94,8 @@ let Initialize = (app, network, req) => {
                             res.send("success");
                         });
                     })(req, res, next);
+                } else {
+                    res.send("failed");
                 }
     //        });
     });
