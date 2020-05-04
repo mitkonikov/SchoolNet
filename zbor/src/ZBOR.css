@@ -1,0 +1,64 @@
+@font-face {
+    font-family: Kapak;
+    src: url(/res/Kapak.ttf); 
+}
+
+.card-flex {
+	display: flex;
+}
+
+.card-container {
+	position: relative;
+	margin: 0.5em;
+}
+
+.word-day {
+	height: 6em;
+}
+
+.big-word {
+	font-size: 3em;
+	font-family: 'Kapak';
+}
+
+#search-bar-container {
+	display: flex;
+	flex: 1;
+}
+
+#search-icon-container {
+    display: flex;
+	width: 3em;
+	height: 3em;
+	transform: translate(0, 0.5em);
+}
+
+.search-card {
+	height: 15em;
+}
+
+.search-card-padding {
+	padding: 0em 0em 0em 0.5em;
+	margin-top: 0.5em;
+}
+
+.connect-word {
+	height: 9em;
+}
+
+.ai-word {
+	height: fit-content;
+}
+
+#ai-refresh-container {    
+	position: absolute;
+    bottom: 0;
+    right: 0;
+	margin: 0.5em;
+}
+
+.navbar-container {
+    position: fixed;
+    width: 100vw;
+    bottom: 0vh;
+}

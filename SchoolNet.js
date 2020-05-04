@@ -39,6 +39,9 @@ let ErrorHandler        = require("./server/ErrorHandler");
 
 let databases           = require('./server/dbConnection');
 
+let ZBORAPI             = require('./build/ZBORAPI.js');
+ZBORAPI.connect();
+
 /** The Main Controller Module for database access */
 let databaseController  = require('./server/databaseController');
 databaseController.Connect(databases, {
@@ -46,8 +49,6 @@ databaseController.Connect(databases, {
 });
 
 let BLOCKED           = require('blocked-at');
-
-let fetch = require('node-fetch');
 
 let timer = BLOCKED(function(ms, stack) {
     // console.log('\x1b[31m%s\x1b[0m', "MAIN THREAD BLOCKED FOR " + ms + "ms");
@@ -64,7 +65,7 @@ let gameLogic = require('./server/play/main.play').Initialize(server, auth.passp
 let indexRequestsCount = 0;
 let prev_ip = false;
 
-if (process.env.READY == 1) {
+if (parseInt(process.env.READY) == 1) {
     let student_module = require("./server/student");
     student_module.BuildStudent(app, network, auth.crypto);
 
@@ -135,6 +136,10 @@ app.post('/client/dashboard/query', QueryDashboard.Query);
 app.post('/client/dashboard/update', function(req, res) {
     res.send("under construction");
 });
+
+app.post('/zbor/api/light', ZBORAPI.light);
+app.post('/zbor/api/query', ZBORAPI.query);
+app.use('/zbor', express.static(__dirname + '/zbor/build'));
 
 // this is for another project
 //app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));

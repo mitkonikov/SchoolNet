@@ -57,7 +57,6 @@
     "watch": "webpack --watch",
     "build": "webpack",
     "start": "webpack-dev-server",
-    "deploy": "C:/Python36/python.exe c:/SchoolNet/server/python/deploy.py",
     "tsnode": "ts-node src/ZBORAPI.ts",
     "zbor": "cd build && node ZBORAPI.js"
   },
