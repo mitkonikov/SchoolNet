@@ -10,6 +10,7 @@
 }
 
 $znam-color: #f26726;
+$zbor-color: #1b4f52;
 
 #znamBtn {
     background-color: $znam-color;
@@ -25,6 +26,26 @@ $znam-color: #f26726;
 
     animation: pop 0.5s ease-out;
 	background: radial-gradient(circle at center, darken($color: $znam-color, $amount: 12%) 5%, darken($color: $znam-color, $amount: 8%) 6%);
+	background-size: 100% 100%;
+	background-position: center center;
+	background-repeat: no-repeat;
+    transform-origin: center;
+}
+
+#zborBtn {
+    background-color: $zbor-color;
+}
+
+#zborBtn:hover {
+    background-color: darken($color: $zbor-color, $amount: 8%);
+}
+
+#zborBtn.active {
+    /*background-color: #163c4b;
+    color: #ffffff;*/
+
+    animation: pop 0.5s ease-out;
+	background: radial-gradient(circle at center, darken($color: $zbor-color, $amount: 12%) 5%, darken($color: $zbor-color, $amount: 8%) 6%);
 	background-size: 100% 100%;
 	background-position: center center;
 	background-repeat: no-repeat;

@@ -26,6 +26,24 @@
   -webkit-transform-origin: center;
           transform-origin: center; }
 
+#zborBtn {
+  background-color: #1b4f52; }
+
+#zborBtn:hover {
+  background-color: #113133; }
+
+#zborBtn.active {
+  /*background-color: #163c4b;
+    color: #ffffff;*/
+  -webkit-animation: pop 0.5s ease-out;
+          animation: pop 0.5s ease-out;
+  background: radial-gradient(circle at center, #0c2324 5%, #113133 6%);
+  background-size: 100% 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-transform-origin: center;
+          transform-origin: center; }
+
 #znam-logo {
   width: 3.5em;
   float: left; }
