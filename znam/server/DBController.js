@@ -18,7 +18,13 @@ let Connect = function(databases_connect) {
     rateLimiterContact = new databases.limiter.RateLimiterMySQL(options, databases.limiter.ready);
 }
 
-let contact = (user, data, callback) => {
+let contact = (user, ip, data, callback) => {
+    let consumer = user;
+
+    if (typeof user === "undefined") {
+        consumer = ip;
+    }
+
     rateLimiterContact.consume(user).then(() => {
         if (typeof data.message === "undefined") {
             callback({ status: "error", message: "empty" });

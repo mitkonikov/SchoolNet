@@ -151,7 +151,7 @@ let Initialize = function(network, crypto) {
                                                             .slice(0, 19)
                                                             .replace("T", " "),
                                                         Successive_Logins: 1,
-                                                        Logins: 0
+                                                        Logins: 1
                                                     };
 
                                                     network.query(
@@ -256,7 +256,7 @@ let Initialize = function(network, crypto) {
                                                             .slice(0, 19)
                                                             .replace("T", " "),
                                                         Successive_Logins: 1,
-                                                        Logins: 0
+                                                        Logins: 1
                                                     };
 
                                                     network.query(

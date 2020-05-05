@@ -16,6 +16,11 @@ let Initialize = function(node_databaseController, node_ZNAMDBC, node_GameLogic)
 }
 
 let Update = function(req, res) {
+    if (req.body.command == "contact") {
+        ZNAMDBC.contact(req.user.ID, req.clientIp, req.body.data, (response) => res.send(response));
+        return;
+    }
+
     if (req.isAuthenticated()) {
         let data = req.body.data;
 
@@ -23,9 +28,6 @@ let Update = function(req, res) {
             // TODO: Return JSON in SchoolNet Core [res.send("success")]
             case 'contribute':
                 ZNAMDBC.contribute(req.user.ID, req.body.data, (response) => res.send(response));
-                break;
-            case 'contact':
-                ZNAMDBC.contact(req.user.ID, req.body.data, (response) => res.send(response));
                 break;
             case 'display-name-change':
                 if (data.displayname && data.displayname.length >= 5 && data.displayname.length <= 100) {

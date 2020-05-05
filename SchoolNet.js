@@ -139,6 +139,7 @@ app.post('/client/dashboard/update', function(req, res) {
 
 app.post('/zbor/api/light', ZBORAPI.light);
 app.post('/zbor/api/query', ZBORAPI.query);
+app.post('/zbor/api/update', ZBORAPI.update);
 app.use('/zbor', express.static(__dirname + '/zbor/build'));
 
 // this is for another project

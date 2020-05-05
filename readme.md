@@ -46,6 +46,7 @@ SchoolNet uses a number of open source projects to work properly:
 * [jQuery](http://jquery.com) - duh
 * [Fullpage.js](https://alvarotrigo.com/fullPage/) - An older open source version used just for the home screen
 * [MySQL](https://www.mysql.com/) - The world's most popular open source database
+* [TypeORM](https://typeorm.io/#/) - Object-relational mapping library
 * [XAMPP](https://www.apachefriends.org/download.html) - An Apache friend
 * [Python](http://python.org) - The language in the back-end for our AI
 * [Tensorflow](http://tensorflow.org) - You haven't heard of it? **Machine learning**, mate...
@@ -249,6 +250,10 @@ When contributing follow the [Google JavaScript Style Guide](https://google.gith
 Here are people that contributed to the building of this project. We can't thank them enough!
 
 * Кирил Ѓоргиев - Processing of questions for the ZNAM platform
+
+## Our libraries
+
+* LightQuery-ORM - A library developed for direct quering to the database by AJAX JSON requests. This library works on top of the QueryBuilder from TypeORM.
 
 ### Todos
 

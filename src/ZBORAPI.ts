@@ -6,22 +6,11 @@ import { WordDay } from "./entity/WordDay";
 import { WordConnection } from "./entity/WordConnection";
 
 import { light as Light, lightUp, lightSwitch } from "./lightquery-orm";
+import { ContactEntry } from "./entity/ContactEntry";
 
 let connection: Connection;
 
-export const connect = async () => {
-    try {
-        connection = getConnection()
-    } catch(err) {
-        connection = await createConnection();
-    }
-
-    lightUp(connection);
-    lightSwitch(switchCallback);
-    return connection;
-}
-
-const switchCallback = (key) => {
+let switchCallback = (key) => {
     let repository: any;
     let failed: boolean;
 
@@ -44,6 +33,18 @@ const switchCallback = (key) => {
         repository,
         failed
     }
+}
+
+export const connect = async () => {
+    try {
+        connection = getConnection()
+    } catch(err) {
+        connection = await createConnection();
+    }
+
+    lightUp(connection);
+    lightSwitch(switchCallback);
+    return connection;
 }
 
 export const light = async (req, res) => {
@@ -86,13 +87,36 @@ export const query = async (req, res) => {
             
             break;
         }
-        case "contribute": {
-            res.send("development");
+        case "contact": {
+            let contactEntry = new ContactEntry();
+            contactEntry.Contact = req.body.data.message;
+            contactEntry.Student_IP = req.clientIp;
+
+            let exists = await connection
+                .getRepository(ContactEntry)    
+                .find(contactEntry)
+
+            if (exists.length === 0) {
+                await connection
+                    .getRepository(ContactEntry)
+                    .insert(contactEntry)
+                    .catch((err) => {
+                        console.log(err);
+                    });
+
+                res.send({ status: "success" });
+            } else {
+                res.send({ status: "error", message: "limit" });
+            }
             break;
         }
         default: {
-            res.send("unregistered command");
+            res.send({ status: "error" });
             break;
         }
     }
+}
+
+export const update = async (req, res) => {
+    res.send({ status: "error" });
 }
