@@ -136,9 +136,6 @@ body {
   display: none;
   min-height: 100vh; }
 
-.no-padding {
-  padding: 0; }
-
 label {
   color: var(--color-text-main);
   font-size: 1em; }
@@ -622,3 +619,6 @@ input:-webkit-autofill:focus {
     padding-left: 0;
     padding-right: 0;
     width: 100%; } }
+
+.no-padding {
+  padding: 0; }
