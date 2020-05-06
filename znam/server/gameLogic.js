@@ -277,6 +277,11 @@ let submitAnswer = (user, data, callback) => {
     // user = req.body.user
 
     ZNAMDB.query("SELECT * FROM tbl_current_games WHERE Student_ID = ?", user, (err, currentGame) => {
+        if (err) {
+            console.trace(err);
+            console.log(currentGame);
+        }
+
         let Demo_ID = currentGame[0].Demo_ID;
         let Subject = currentGame[0].Subject;
         GameEngine.getLastRecord(Demo_ID, { Command: "question" }, (lastQ) => {
@@ -295,12 +300,16 @@ let submitAnswer = (user, data, callback) => {
                 Correct: correct,
                 Question_ID: lastQData.ID
             }, () => {
-                updateScore(user, currentGame[0].Score + scoreUpdate, (err, setScore) => {
-                    console.log(currentGame[0]);
+                updateScore(user, parseInt(currentGame[0].Score) + scoreUpdate, (err, setScore) => {
+                    if (err) {
+                        console.trace(err);
+                        console.log(currentGame[0]);
+                    }
+
                     if (parseInt(currentGame[0].Current_Level) < 10) {
                         callback({
                             correctToken: parseInt(lastQData.trueID),
-                            score: currentGame[0].Score + scoreUpdate,
+                            score: parseInt(currentGame[0].Score) + scoreUpdate,
                             nextLevel: parseInt(currentGame[0].Current_Level) + 1
                         });
 
@@ -316,7 +325,7 @@ let submitAnswer = (user, data, callback) => {
                         endGame(user, (endScoreboard) => {
                             callback({
                                 correctToken: parseInt(lastQData.trueID),
-                                score: currentGame[0].Score + scoreUpdate,
+                                score: parseInt(currentGame[0].Score) + scoreUpdate,
                                 gameOver: true,
                                 ...endScoreboard
                             })
@@ -731,20 +740,20 @@ let endGame = (user, callback) => {
                                 scoreboard: endScoreboard
                             });
                         });
-                    
-                        let activity = {
-                            Student_ID: user,
-                            Subject: currentGame[0].Subject,
-                            Score: currentGame[0].Score,
-                            Statistics: JSON.stringify({
-                                Correct: qCorrect,
-                                Questions: (qCorrect + qWrong)
-                            })
-                        };
-                        
-                        ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
-                        ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user);
                     }
+
+                    let activity = {
+                        Student_ID: user,
+                        Subject: currentGame[0].Subject,
+                        Score: currentGame[0].Score,
+                        Statistics: JSON.stringify({
+                            Correct: qCorrect,
+                            Questions: (qCorrect + qWrong)
+                        })
+                    };
+                    
+                    ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
+                    ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user);
                 });
             });
         });
