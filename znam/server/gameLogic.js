@@ -438,6 +438,7 @@ let queryNextQuestion = (data, callback) => {
                     });
                 });
             });
+            return;
         }
 
         let state = {
