@@ -301,7 +301,7 @@ let submitAnswer = (user, data, callback) => {
                         callback({
                             correctToken: parseInt(lastQData.trueID),
                             score: currentGame[0].Score + scoreUpdate,
-                            nextLevel: currentGame[0].Current_Level + 1
+                            nextLevel: parseInt(currentGame[0].Current_Level) + 1
                         });
 
                         calculateRating({
@@ -416,7 +416,7 @@ let calculateRating = (data) => {
 
 let startGame = (user, callback) => {
     ZNAMDB.query("SELECT Current_Level FROM tbl_current_games WHERE Student_ID = ?", user, (err, level) => {
-        if (typeof level != "undefined" && level[0].Current_Level == 0) {
+        if (typeof level != "undefined" && parseInt(level[0].Current_Level) == 0) {
             ZNAMDB.query("UPDATE tbl_current_games SET Status = ?, Current_Level = ?, Time_Left = 30 WHERE Student_ID = ?", [1, 1, user], (err, rows) => {
                 callback({ status: "success" });
             });
@@ -443,7 +443,7 @@ let queryNextQuestion = (data, callback) => {
         }
 
         let state = {
-            questionNumber: data.currentGame[0].Current_Level,
+            questionNumber: parseInt(data.currentGame[0].Current_Level),
             question: rawQuestion.Question,
             answers: {
                 ID: [],
@@ -514,7 +514,7 @@ let getNextQuestion = (user, callback) => {
         }
 
         let questionIDs = JSON.parse(currentGame[0].Questions);
-        let currentQuestion = questionIDs[currentGame[0].Current_Level - 1];
+        let currentQuestion = questionIDs[parseInt(currentGame[0].Current_Level) - 1];
         let Subject = currentGame[0].Subject;
 
         let Demo_ID = currentGame[0].Demo_ID;
