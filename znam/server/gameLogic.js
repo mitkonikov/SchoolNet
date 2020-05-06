@@ -671,10 +671,10 @@ let endGame = (user, callback) => {
                     Q_Wrong: qWrong
                 }
 
-                ZNAMDB.query("UPDATE tbl_scoreboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ? AND Subject = ?", [qCorrect, qWrong, user, currentGame[0].Subject], () => {
-                    ZNAMDB.query("UPDATE tbl_leaderboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ?", [qCorrect, qWrong, user], () => {
-                        ZNAMDB.query("UPDATE tbl_student_stats SET Questions_Played = Questions_Played + 10 WHERE Student_ID = ?", user, () => {
-                            if (currentGame[0].Rated == 1) {
+                ZNAMDB.query("UPDATE tbl_student_stats SET Questions_Played = Questions_Played + 10 WHERE Student_ID = ?", user, () => {
+                    if (currentGame[0].Rated == 1) {
+                        ZNAMDB.query("UPDATE tbl_scoreboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ? AND Subject = ?", [qCorrect, qWrong, user, currentGame[0].Subject], () => {
+                            ZNAMDB.query("UPDATE tbl_leaderboard SET Q_Correct = Q_Correct + ?, Q_Wrong = Q_Wrong + ? WHERE Student_ID = ?", [qCorrect, qWrong, user], () => {
                                 updateRank(user, rank, () => {  // update the main rank
                                     rank.Subject = currentGame[0].Subject;
                                     updateCustomRank(user, rank, (subjectRank) => { // update the subject rank
@@ -689,31 +689,31 @@ let endGame = (user, callback) => {
                                         });
                                     });
                                 });
-                            } else {
-                                getScoreboard({
-                                    subject: currentGame[0].Subject,
-                                    rank: 1
-                                }, (endScoreboard) => {
-                                    callback({
-                                        scoreboard: endScoreboard
-                                    });
-                                });
-                            }
-
-                            let activity = {
-                                Student_ID: user,
-                                Subject: currentGame[0].Subject,
-                                Score: currentGame[0].Score,
-                                Statistics: JSON.stringify({
-                                    Correct: qCorrect,
-                                    Questions: (qCorrect + qWrong)
-                                })
-                            };
-                            
-                            ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
-                            ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user);
+                            });
                         });
-                    });
+                    } else {
+                        getScoreboard({
+                            subject: currentGame[0].Subject,
+                            rank: 1
+                        }, (endScoreboard) => {
+                            callback({
+                                scoreboard: endScoreboard
+                            });
+                        });
+                    
+                        let activity = {
+                            Student_ID: user,
+                            Subject: currentGame[0].Subject,
+                            Score: currentGame[0].Score,
+                            Statistics: JSON.stringify({
+                                Correct: qCorrect,
+                                Questions: (qCorrect + qWrong)
+                            })
+                        };
+                        
+                        ZNAMDB.query("INSERT INTO tbl_activities SET ?", activity);
+                        ZNAMDB.query("DELETE FROM tbl_current_games WHERE Student_ID = ?", user);
+                    }
                 });
             });
         });
