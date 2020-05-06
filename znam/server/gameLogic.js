@@ -282,6 +282,11 @@ let submitAnswer = (user, data, callback) => {
             console.log(currentGame);
         }
 
+        if (typeof currentGame[0] == "undefined") {
+            console.log("possible err: ", err);
+            return;
+        }
+
         let Demo_ID = currentGame[0].Demo_ID;
         let Subject = currentGame[0].Subject;
         GameEngine.getLastRecord(Demo_ID, { Command: "question" }, (lastQ) => {
