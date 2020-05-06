@@ -296,7 +296,8 @@ let submitAnswer = (user, data, callback) => {
                 Question_ID: lastQData.ID
             }, () => {
                 updateScore(user, currentGame[0].Score + scoreUpdate, (err, setScore) => {
-                    if (currentGame[0].Current_Level < 10) {
+                    console.log(currentGame[0]);
+                    if (parseInt(currentGame[0].Current_Level) < 10) {
                         callback({
                             correctToken: parseInt(lastQData.trueID),
                             score: currentGame[0].Score + scoreUpdate,
@@ -428,7 +429,7 @@ let startGame = (user, callback) => {
 
 let queryNextQuestion = (data, callback) => {
     queryQuestion(data.currentQuestion, (rawQuestion) => {
-        if (typeof rawQuestion == "undefined") {
+        if ((typeof rawQuestion == "undefined" || typeof data.currentGame =="undefined") || parseInt(data.currentGame[0].Current_Level) > 10) {
             ZNAMDB.query("SELECT Score FROM tbl_current_games WHERE Student_ID = ?", data.user, (err, lastScore) => {
                 endGame(data.user, (endScoreboard) => {
                     callback({
