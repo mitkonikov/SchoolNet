@@ -12,18 +12,20 @@
 	margin: 0.5em;
 }
 
-.word-day {
-	height: 6em;
-}
-
 .big-word {
 	font-size: 3em;
+	font-family: 'Kapak';
+}
+
+.medium-word {
+	font-size: 2em;
 	font-family: 'Kapak';
 }
 
 #search-bar-container {
 	display: flex;
 	flex: 1;
+	margin-right: 3em;
 }
 
 #search-icon-container {
@@ -33,17 +35,15 @@
 	transform: translate(0, 0.5em);
 }
 
-.search-card {
-	height: 15em;
-}
-
 .search-card-padding {
 	padding: 0em 0em 0em 0.5em;
 	margin-top: 0.5em;
 }
 
-.connect-word {
-	height: 9em;
+.search-help {
+	position: absolute;
+	top: 0.5em;
+	right: 0.5em;
 }
 
 .ai-word {
@@ -58,7 +58,7 @@
 }
 
 .navbar-container {
-    position: fixed;
+    position: absolute;
     width: 100vw;
     bottom: 0vh;
 }

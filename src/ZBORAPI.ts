@@ -5,7 +5,7 @@ import { WordGenerated } from "./entity/WordGenerated";
 import { WordDay } from "./entity/WordDay";
 import { WordConnection } from "./entity/WordConnection";
 
-import { light as Light, lightUp, lightSwitch } from "./lightquery-orm";
+import { light as Light } from "./lightquery-orm";
 import { ContactEntry } from "./entity/ContactEntry";
 
 let connection: Connection;
@@ -42,13 +42,11 @@ export const connect = async () => {
         connection = await createConnection();
     }
 
-    lightUp(connection);
-    lightSwitch(switchCallback);
     return connection;
 }
 
 export const light = async (req, res) => {
-    let response = await Light(req.body);
+    let response = await Light(connection, req.body, switchCallback);
     res.send(response);
 }
 

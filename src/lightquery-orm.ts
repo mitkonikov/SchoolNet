@@ -1,17 +1,6 @@
 import { Connection } from "typeorm";
 
-let connection: Connection;
-let switchCallback: Function;
-
-export const lightUp = (connection_api) => {
-    connection = connection_api;
-}
-
-export const lightSwitch = (callback) => {
-    switchCallback = callback;
-}
-
-export const light = async (model) => {
+export const light = async (connection: Connection, model, switchCallback: Function) => {
     let keys = Object.keys(model);
     let result = { };
 
@@ -52,20 +41,27 @@ export const light = async (model) => {
                 }
             }
 
-            let whereStatement = "";
-            let whereData = { }
+            let whereQuery = [];
             if (WHERE) {
                 let whereKeys = Object.keys(winput);
 
                 for (let i = 0; i < whereKeys.length; ++i) {
                     if (typeof columnNames[whereKeys[i]] != "undefined") {
-                        if (winput.like) {
+                        let whereStatement = "";
+                        let whereData = { };
+                        
+                        if (winput[whereKeys[i]][0] === "%" || winput[whereKeys[i]][winput[whereKeys[i]].length - 1] === "%") {
                             whereStatement = whereKeys[i] + " like :" + whereKeys[i] + "param";
-                            whereData[whereKeys[i] + "param"] = "%" + winput[whereKeys[i]] + "%";
+                            whereData[whereKeys[i] + "param"] = winput[whereKeys[i]];
                         } else {
-                            whereStatement = whereKeys[0] + " = :" + whereKeys[i] + "param";
+                            whereStatement = whereKeys[i] + " = :" + whereKeys[i] + "param";
                             whereData[whereKeys[i] + "param"] = winput[whereKeys[i]];
                         }
+
+                        whereQuery.push({
+                            whereStatement,
+                            whereData
+                        });
                     }
                 }
             }
@@ -82,8 +78,12 @@ export const light = async (model) => {
                         .createQueryBuilder()
                         .select(queries)
 
-                    if (WHERE)
-                        query.where(whereStatement, whereData)
+                    if (WHERE) {
+                        query.where(whereQuery[0].whereStatement, whereQuery[0].whereData);
+                        for (let i = 1; i < whereQuery.length; ++i) {
+                            query.andWhere(whereQuery[i].whereStatement, whereQuery[i].whereData);
+                        }
+                    }
                         
                     result[key] = await query
                         .take(limit)
@@ -91,17 +91,22 @@ export const light = async (model) => {
 
                     // SQL
                     /*let query2 = await connection
-                        .getRepository(repository)
+                        .getRepository(repo.repository)
                         .createQueryBuilder()
                         .select(queries)
 
-                    if (WHERE)
-                        query2.where(whereStatement, whereData)
+                    if (WHERE) {
+                        query2.where(whereQuery[0].whereStatement, whereQuery[0].whereData);
+                        for (let i = 1; i < whereQuery.length; ++i) {
+                            query2.andWhere(whereQuery[i].whereStatement, whereQuery[i].whereData);
+                        }
+                    }
                         
                     result[key + "sql"] = await query2
                         .take(limit)
                         .getSql();*/
                 } catch (err) {
+                    result[key] = "error";
                     console.log(err);
                 }
             }

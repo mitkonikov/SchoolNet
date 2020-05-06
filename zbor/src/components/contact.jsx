@@ -7,9 +7,11 @@ import swal from "sweetalert";
 
 import "./../styles/contribute.css";
 import "./../styles/contact.css";
-import { updateFetch, domain } from "../js/common";
+import { queryFetch } from "../js/common";
 
 import GitHubIcon from '@material-ui/icons/GitHub';
+import GradeIcon from '@material-ui/icons/Grade';
+import StorageIcon from '@material-ui/icons/Storage';
 
 class Contact extends Component {
     state = {
@@ -30,6 +32,25 @@ class Contact extends Component {
     render() {
         return (
             <div class="contribute-container center-vh">
+                <Card elevation={0}>
+                    <div class="card-padding">
+                        <div class="github-text">
+                            ЗБОР е мала апликација со множество на зборови извлечени од македонската Википедија. Таа се стреми да го направи првиот македонски речник со отворен извор.
+                        </div>
+                        <div class="icon-container">
+                            <div class="github-icon">
+                                <IconButton onClick={() => {
+                                        window.location = "https://schoolnet.mk";
+                                    }} >
+                                    <GradeIcon fontSize="large"/>
+                                </IconButton>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+
+                <div class="separator"/>
+
                 <form noValidate autoComplete="off">
                     <TextField
                         id="contact-input"
@@ -69,7 +90,7 @@ class Contact extends Component {
                             color="primary"
                             disableElevation
                             onClick={() => {
-                                updateFetch({
+                                queryFetch({
                                     command: "contact",
                                     data: {
                                         message: this.state.contact
@@ -113,6 +134,25 @@ class Contact extends Component {
                                         window.location = "https://github.com/mitkonikov/SchoolNet";
                                     }} >
                                     <GitHubIcon fontSize="large"/>
+                                </IconButton>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+
+                <div class="separator"/>
+
+                <Card elevation={0}>
+                    <div class="card-padding">
+                        <div class="github-text">
+                            Во скоро време, ЗБОР ќе им дозволи на сите да го симнат целиот речник придонесувајќи за развитокот на јазикот.
+                        </div>
+                        <div class="icon-container">
+                            <div class="github-icon">
+                                <IconButton onClick={() => {
+                                        window.location = "https://schoolnet.mk";
+                                    }} >
+                                    <StorageIcon fontSize="large"/>
                                 </IconButton>
                             </div>
                         </div>

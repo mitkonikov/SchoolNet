@@ -2,8 +2,7 @@ import React, { Component, Suspense } from "react";
 import "./common.css";
 import "./ZBOR.css";
 
-import { TextField, IconButton } from "@material-ui/core";
-import { Card, CardContent, ButtonBase } from "@material-ui/core";
+import { Card, CardContent } from "@material-ui/core";
 import { BottomNavigation, BottomNavigationAction } from "@material-ui/core";
 import { Switch, Route, Link, Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
@@ -62,7 +61,11 @@ class ZBOR extends Component {
                 where: { Day: new Date().toISOString().split("T")[0] },
             },
         }).then((res) => {
-            this.setState({ wordDay: res.word_of_the_day[0] });
+            if (res.word_of_the_day.length !== 0) {
+                let wordOfTheDay = res.word_of_the_day[0];
+                wordOfTheDay.Word = wordOfTheDay.Word.toUpperCase();
+                this.setState({ wordDay: wordOfTheDay });
+            }
         });
     }
 
@@ -91,6 +94,8 @@ class ZBOR extends Component {
                                                                     "absolute",
                                                                 marginLeft:
                                                                     "0.3em",
+                                                                marginTop:
+                                                                    "0.4em"
                                                             }}
                                                         >
                                                             BETA
@@ -99,8 +104,11 @@ class ZBOR extends Component {
 
                                                     <div className="card-container word-day">
                                                         <Card>
-                                                            <CardContent>
-                                                                <div>
+                                                            <CardContent style={{
+                                                                position: "relative",
+                                                                paddingBottom: "0.6em"
+                                                            }}>
+                                                                <div style={{ marginBottom: "0.2em"}}>
                                                                     Збор на
                                                                     денот
                                                                 </div>
@@ -110,6 +118,14 @@ class ZBOR extends Component {
                                                                             .state
                                                                             .wordDay
                                                                             .Word
+                                                                    }
+                                                                </div>
+                                                                <div>
+                                                                    {
+                                                                        this
+                                                                            .state
+                                                                            .wordDay
+                                                                            .Description
                                                                     }
                                                                 </div>
                                                             </CardContent>

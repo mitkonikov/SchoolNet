@@ -1,5 +1,6 @@
 
 .form-center-container {
+    position: absolute;
     width: 100%;
     height: 100%;
 }
@@ -8,7 +9,7 @@
     position: absolute;
     left: 50%;
 	width: 50vh;
-	height: calc(100% - 70px);
+	height: calc(100% - 57px);
     -webkit-transform: translate(-50%, 0%);
     transform: translate(-50%, 0%);
     box-sizing: border-box;
@@ -31,37 +32,57 @@
     font-family: 'Kapak';
     font-size: 3em;
     text-align: center;
+    margin-top: 0.2em;
+}
+
+.separator {
+    margin-bottom: 1em;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #0000001c; 
+}
+   
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #0000001c; 
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #0000001c; 
 }
 
 @media only screen and (max-height: 720px) {
-    .form-center-container {
-        height: calc(100% - 65px);
-    }
-
     .form-center {
         font-size: 0.9em;
         width: 30em;
-        height: 100%;
+        height: calc(100% - 57px);
         position: absolute;
         top: 0%;
         left: 50%;
         -webkit-transform: translate(-50%, 0%);
         transform: translate(-50%, 0%);
+        overflow: auto;
     }
 
     .form-center-v {
         width: 100%;
+        height: 100%;
     }
 }
 
 @media only screen and (max-width: 530px) {
-    .form-center-container {
-        height: calc(100% - 65px);
-    }
-
     .form-center {
         width: 30em;
-        height: 100%;
+        height: calc(100% - 57px);
         position: absolute;
         top: 0%;
         left: 50%;
@@ -71,17 +92,14 @@
     
     .form-center-v {
         width: 100%;
+        height: 100%;
     }
 }
 
 @media only screen and (max-width: 482px) {
-    .form-center-container {
-        height: calc(100% - 65px);
-    }
-
     .form-center {
         width: 100%;
-        height: 100%;
+        height: calc(100% - 57px);
         position: absolute;
         top: 0%;
         left: 0%;
@@ -91,5 +109,6 @@
 
     .form-center-v {
         width: 100%;
+        height: 100%;
     }
 }

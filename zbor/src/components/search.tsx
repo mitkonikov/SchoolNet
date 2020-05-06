@@ -2,15 +2,18 @@ import React, { Component } from "react";
 
 import { Card, CardContent } from "@material-ui/core";
 import { TextField, IconButton } from "@material-ui/core";
-import { Grow, ListItem, ListItemText } from "@material-ui/core";
+import { Grow, ListItem, ListItemText, Collapse } from "@material-ui/core";
 
-import SearchIcon from "@material-ui/icons/Search";
+import HelpIcon from "@material-ui/icons/Help";
+
+import swal from "sweetalert";
 
 import { lightFetch } from "./../js/common";
 
 type State = {
     word: Array<any>;
     searchValue: string;
+    searching: boolean;
 };
 
 export default class Connect extends Component {
@@ -21,19 +24,25 @@ export default class Connect extends Component {
 
         this.state = {
             word: [],
-            searchValue: ""
-        }
+            searchValue: "",
+            searching: false,
+        };
 
         this.onSearch = this.onSearch.bind(this);
     }
 
-    onSearch() {
+    onSearch(value: string) {
         lightFetch({
             word: {
                 select: ["ID", "Word", "Wiki_Frq"],
-                where: { Word: this.state.searchValue, like: true },
+                where: { Word: "%" + value + "%", limit: 5 },
             },
-        }).then((res) => this.setState({ word: res.word }));
+        }).then((res) => {
+            this.setState({
+                searching: true,
+                word: res.word,
+            });
+        });
     }
 
     renderList() {
@@ -42,6 +51,8 @@ export default class Connect extends Component {
         let wordDOM = [];
 
         for (let i = 0; i < this.state.word.length; ++i) {
+            if (typeof this.state.word[i].Word == "undefined") continue;
+
             wordDOM.push(
                 <Grow in={true} timeout={500 + 50 * i}>
                     <ListItem
@@ -62,34 +73,56 @@ export default class Connect extends Component {
 
     render() {
         return (
-            <div className="card-container search-card">
-                <Card>
-                    <CardContent>
-                        <div className="search-card-padding card-flex">
-                            <div id="search-bar-container">
-                                <TextField
-                                    id="search-bar"
-                                    label="Пребарај"
-                                    size="small"
-                                    inputProps={{
-                                        maxLength: 150,
-                                    }}
-                                    onChange={this.onSearch}
-                                />
+            <Collapse in={this.state.searching} collapsedHeight={"6em"}>
+                <div className="card-container search-card">
+                    <Card>
+                        <CardContent
+                            style={{
+                                position: "relative",
+                                paddingBottom: "0.6em",
+                            }}
+                        >
+                            <div className="search-card-padding card-flex">
+                                <div id="search-bar-container">
+                                    <TextField
+                                        id="search-bar"
+                                        label="Пребарај"
+                                        size="small"
+                                        inputProps={{
+                                            maxLength: 150,
+                                        }}
+                                        autoComplete="off"
+                                        onChange={(event) => {
+                                            this.setState({
+                                                searchValue: event.target.value.toLowerCase(),
+                                            });
+                                            this.onSearch(
+                                                event.target.value.toLowerCase()
+                                            );
+                                        }}
+                                    />
+                                </div>
                             </div>
-                            <div id="search-icon-container">
+                            <div className="search-list">
+                                {this.renderList()}
+                            </div>
+                            <div className="search-help">
                                 <IconButton
-                                    aria-label="search"
-                                    onClick={this.onSearch}
+                                    aria-label="help"
+                                    onClick={() => {
+                                        swal(
+                                            "Објаснување",
+                                            "Пребарај колку пати одреден збор се појавил на Википедија."
+                                        );
+                                    }}
                                 >
-                                    <SearchIcon />
+                                    <HelpIcon />
                                 </IconButton>
                             </div>
-                        </div>
-                        <div>{this.renderList()}</div>
-                    </CardContent>
-                </Card>
-            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </Collapse>
         );
     }
 }

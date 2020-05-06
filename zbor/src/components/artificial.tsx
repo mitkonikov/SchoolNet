@@ -16,20 +16,29 @@ export default class Artificial extends Component {
         super(props);
 
         this.state = {
-            word: "ШАПКА"
+            word: ""
         }
 
         this.onSearch = this.onSearch.bind(this);
     }
 
+    componentDidMount() {
+        this.onSearch();
+    }
+
     onSearch() {
         lightFetch({
-            generated_words: {
+            generated_word: {
                 select: ["Word"],
                 where: { ID: getRandomInt(0, 1000) }
             }
         }).then((res) => {
-            this.setState({ word: res.generated_words[0].toUpperCase() });
+            let wordRes = res.generated_word[0].Word.toUpperCase();
+            if (wordRes.length > 13) {
+                this.onSearch();
+            } else {
+                this.setState({ word: wordRes });
+            }
         });
     }
 
@@ -42,7 +51,7 @@ export default class Artificial extends Component {
                         height: "fit-content",
                         paddingBottom: "0.5em"
                     }}>
-                        <div>Збор создаден од вештачка интелигенција</div>
+                        <div style={{ marginBottom: "0.2em"}}>Збор создаден од вештачка интелигенција</div>
                         <div
                             className="big-word"
                         >

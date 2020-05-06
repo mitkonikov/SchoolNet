@@ -49,7 +49,7 @@ class Scoreboard extends Component {
         swal(
             <div class="swal-container" style={{ height: "0.2em" }}>
                 <Block title="Поени" number={this.state.scoreboard[i].Score}/>
-                <Block title="Ранк" number={this.state.scoreboard[i].Rank}/>
+                <Block title="Ранг" number={this.state.scoreboard[i].Rank}/>
                 <Block title="Точни" number={this.state.scoreboard[i].Q_Correct}/>
                 <Block title="Неточни" number={this.state.scoreboard[i].Q_Wrong}/>
             </div>
