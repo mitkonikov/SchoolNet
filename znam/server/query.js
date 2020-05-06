@@ -34,6 +34,13 @@ let Query = function(req, res) {
                                     inGame: false,
                                     provider: provider
                                 });
+                            } else if (parseInt(currentGames[0].Current_Level) > 10) {
+                                GameLogic.endGame(req.user.ID, (response) => {
+                                    res.send({
+                                        gameOver: true,
+                                        ...response
+                                    })
+                                });
                             } else {
                                 res.send({
                                     isAuth: 1,

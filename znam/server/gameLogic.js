@@ -189,7 +189,7 @@ let generateQuestions = (user, data, callback) => {
     ZNAMDB.query("SELECT ID FROM tbl_questions ORDER BY ID DESC LIMIT 1", (err, countQuery) => {
         let count = parseInt(countQuery[0].ID);
 
-        getRandomIDs(user, { 
+        getRandomIDs(user, {
             count: count, 
             number: 10,
             subject: data.subject
@@ -429,7 +429,7 @@ let startGame = (user, callback) => {
 
 let queryNextQuestion = (data, callback) => {
     queryQuestion(data.currentQuestion, (rawQuestion) => {
-        if ((typeof rawQuestion == "undefined" || typeof data.currentGame =="undefined") || parseInt(data.currentGame[0].Current_Level) > 10) {
+        if ((typeof rawQuestion == "undefined" || typeof data.currentGame == "undefined") || parseInt(data.currentGame[0].Current_Level) > 10) {
             ZNAMDB.query("SELECT Score FROM tbl_current_games WHERE Student_ID = ?", data.user, (err, lastScore) => {
                 endGame(data.user, (endScoreboard) => {
                     callback({
