@@ -68,7 +68,9 @@ class Profile extends Component {
         if (typeof this.state.activities === "undefined")
             return;
 
-        for (let i = 0; i < this.state.activities.length; i++) {
+        let len = this.state.activities.length;
+        if (len === 0) return null;
+        for (let i = len - 1; i >= 0; i--) {
             activitiesDOM.push(
                 <ListItem button dense>
                     <ListItemAvatar>
@@ -89,7 +91,11 @@ class Profile extends Component {
                                 style={{ width: "1em" }}
                             />
                         </Avatar>
-                        <div class="connect-activities"></div>
+                        {(() => {
+                            if (i !== 0) return (
+                                <div class="connect-activities"></div>
+                            )
+                        })()}
                     </ListItemAvatar>
                     <ListItemText
                         primary={
@@ -103,7 +109,7 @@ class Profile extends Component {
 
                             if (correct === null || questions === null) return "";
 
-                            return correct + "/" + questions + " Точни одговори";
+                            return correct + "/" + questions + " точни одговори";
                         })()}
                     />
                     <span class="activity-score">

@@ -108,6 +108,13 @@ export const query = async (req, res) => {
             }
             break;
         }
+        case "flag-word": {
+            res.send({ status: "error" });
+            // ID
+            // Flag
+
+            
+        }
         default: {
             res.send({ status: "error" });
             break;

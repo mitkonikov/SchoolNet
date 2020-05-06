@@ -51,6 +51,7 @@
 #about-info {
     height: 50%;
     width: 100%;
+    overflow: auto;
 }
 
 #request-feature {

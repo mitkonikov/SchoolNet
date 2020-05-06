@@ -11,6 +11,8 @@ import { queryFetch } from "../js/common";
 import { subjectName, subjectIcons, playable } from "../js/subjects";
 import swal from "sweetalert";
 
+import ArticleNotification from "./articleNotification";
+
 let clickFX = new Audio("/audio/click-3h.mp3");  
 clickFX.volume = 0.5;
 
@@ -177,7 +179,14 @@ class SubjectSelector extends Component {
                     />
                 </div>
                 <div id="notifications">
-                    
+                    <ArticleNotification
+                        data={{
+                            title: "Прашањата на ЗНАМ",
+                            content:
+                                "До сега имаме само прашања извлечени од испитите по државна матура во 2019 и 2018. Не бидете разочарани ако не ги погодете сите, тие се тешки прашања.",
+                            color: "secondary",
+                        }}
+                    />
                 </div>
             </div>
         );

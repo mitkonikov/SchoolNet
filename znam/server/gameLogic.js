@@ -40,15 +40,25 @@ let setQuestions = (user, data, callback) => {
  */
 let queryQuestion = (ID, callback) => {
     ZNAMDB.query("SELECT * FROM tbl_questions WHERE ID = ?", [ID], (err, questionInfo) => {
-        callback(questionInfo[0]);
+        if (err) {
+            console.trace(err);
+            callback({ status: "error" });
+        } else {
+            callback(questionInfo[0]);
+        }
     });
 }
 
 let checkIfQuestionsExist = (list, subject, callback) => {
     ZNAMDB.query("SELECT ID FROM tbl_questions WHERE ID IN (" + list.join() + ") AND Subject = ? AND Valid = ?", [subject, 1], (err, rows) => {
+        if (err) {
+            console.trace(err);
+            return;
+        }
+        
         let response = [];
 
-        if (typeof rows !== "undefined" && rows.length > 0) {
+        if (typeof rows != "undefined" && rows.length > 0) {
             for (let row of rows) {
                 response.push(row.ID);
             }
@@ -404,13 +414,32 @@ let calculateRating = (data) => {
 }
 
 let startGame = (user, callback) => {
-    ZNAMDB.query("UPDATE tbl_current_games SET Status = ?, Current_Level = ?, Time_Left = 30 WHERE Student_ID = ?", [1, 1, user], (err, rows) => {
-        callback({ status: "success" });
+    ZNAMDB.query("SELECT Current_Level FROM tbl_current_games WHERE Student_ID = ?", user, (err, level) => {
+        if (typeof level != "undefined" && level[0].Current_Level == 0) {
+            ZNAMDB.query("UPDATE tbl_current_games SET Status = ?, Current_Level = ?, Time_Left = 30 WHERE Student_ID = ?", [1, 1, user], (err, rows) => {
+                callback({ status: "success" });
+            });
+        } else {
+            console.trace(err);
+            callback({ status: "error" });
+        }
     });
 }
 
 let queryNextQuestion = (data, callback) => {
     queryQuestion(data.currentQuestion, (rawQuestion) => {
+        if (typeof rawQuestion == "undefined") {
+            ZNAMDB.query("SELECT Score FROM tbl_current_games WHERE Student_ID = ?", data.user, (err, lastScore) => {
+                endGame(data.user, (endScoreboard) => {
+                    callback({
+                        score: lastScore[0].Score,
+                        gameOver: true,
+                        ...endScoreboard
+                    });
+                });
+            });
+        }
+
         let state = {
             questionNumber: data.currentGame[0].Current_Level,
             question: rawQuestion.Question,
