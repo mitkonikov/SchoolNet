@@ -1015,7 +1015,7 @@ let getTimeLeft = (user, callback) => {
 // We are using this same exact interval as a MySQL Event
 let updateTime = () => {
     setInterval(() => {
-        ZNAMDB.query("SELECT * tbl_current_games WHERE Time_Left = 0 AND Status = 1", (err, rows) => {
+        ZNAMDB.query("SELECT * FROM tbl_current_games WHERE Time_Left = 0 AND Status = 1", (err, rows) => {
             if (typeof rows != "undefined" && rows.length > 0) {
                 for (let row of rows) {
                     submitAnswer(row.Student_ID, {
