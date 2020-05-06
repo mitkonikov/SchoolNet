@@ -114,7 +114,8 @@ let getRandomIDs = (user, data, callback) => {
                         callback(crossChecked);
                     });
                 } else {
-                    callback(crossChecked.splice(0, data.number));
+                    crossChecked = crossChecked.splice(0, data.number)
+                    callback(crossChecked);
                 }
 
                 return;
@@ -137,7 +138,7 @@ let getRandomIDs = (user, data, callback) => {
                     callback(crossChecked);
                 });
             } else {
-                crossChecked.splice(0, data.number);
+                crossChecked = crossChecked.splice(0, data.number);
                 callback(crossChecked);
             }
         });
