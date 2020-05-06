@@ -124,7 +124,7 @@ let getRandomIDs = (user, data, callback) => {
             for (let qp = 0; qp < questionsPlayed.length; ++qp) {
                 for (let i = 0; i < 10; ++i) {
                     if (questionsPlayed[qp].Question_ID == crossChecked[i]) {
-                        crossChecked = crossChecked.splice(i, 1);
+                        crossChecked.splice(i, 1);
                     }
                 }
             }
@@ -137,7 +137,7 @@ let getRandomIDs = (user, data, callback) => {
                     callback(crossChecked);
                 });
             } else {
-                crossChecked = crossChecked.splice(0, data.number);
+                crossChecked.splice(0, data.number);
                 callback(crossChecked);
             }
         });
