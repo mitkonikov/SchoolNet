@@ -32,3 +32,18 @@
     justify-content: center;
     align-items: center;
 }
+
+.caption-container {
+    text-align: right;
+}
+
+.small-link {
+    display: inline-block;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    font-size: 0.9em
+}
+
+.small-link:active {
+    background-color: rgba(0, 0, 0, 0.12);
+}

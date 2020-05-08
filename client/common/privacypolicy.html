@@ -11,9 +11,28 @@
 
         <link rel="stylesheet" href="/client/static/css/style_common.css" />
         <link rel="manifest" href="/client/manifest.json" />
+
+        <style>
+            .main {
+                padding: 2em;
+                width: 45em;
+                position: absolute;
+                left: 50%;
+                transform: translate(-50%, 0);
+            }
+
+            @media screen and (max-width: 50em) {
+                .main {
+                    position: relative;
+                    width: auto;
+                    left: 0;
+                    transform: translate(0, 0);
+                }
+            }
+        </style>
     </head>
     <body style="overflow-y: scroll; background-color: #00364c;">
-        <div style="padding: 2em">
+        <div class="main">
             <h1>Privacy Policy of SchoolNet</h1>
 
             <br />
