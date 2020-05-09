@@ -40,7 +40,9 @@ let ErrorHandler        = require("./server/ErrorHandler");
 let databases           = require('./server/dbConnection');
 
 let ZBORAPI             = require('./build/ZBORAPI.js');
+let PILOTAPI            = require('./build/PILOTAPI.js');
 ZBORAPI.connect();
+PILOTAPI.connect();
 
 /** The Main Controller Module for database access */
 let databaseController  = require('./server/databaseController');
@@ -142,6 +144,30 @@ app.post('/zbor/api/query', ZBORAPI.query);
 app.post('/zbor/api/update', ZBORAPI.update);
 app.use('/zbor', express.static(__dirname + '/zbor/build'));
 
+app.post('/pilot/api/light', (req, res) => {
+    if (req.isAuthenticated() && req.user.Role === 4) {
+        PILOTAPI.light(req, res);
+    } else {
+        res.send({ status: "unauth" });
+    }
+});
+
+app.post('/pilot/api/query', (req, res) => {
+    if (req.isAuthenticated() && req.user.Role === 4) {
+        PILOTAPI.query(req, res);
+    } else {
+        res.send({ status: "unauth" });
+    }
+});
+
+app.use('/pilot', (req, res, next) => {
+    if (req.isAuthenticated() && req.user.Role === 4) {
+        express.static(__dirname + '/pilot/build')(req, res, next);
+    } else {
+        res.redirect("/");
+    }
+});
+
 // this is for another project
 //app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));
 
@@ -182,18 +208,6 @@ app.get('/', function(req, res) {
         let currentStatCount = indexRequestsCount;
         network.query("UPDATE tbl_stats_web SET Stat_Count = Stat_Count + ? WHERE Stat_Name = 'Index Requests'", currentStatCount);
         indexRequestsCount = 0;
-    }
-});
-
-app.use('/pilot', (req, res, next) => {
-    if (req.isAuthenticated()) {
-        if (req.user.Role === 4) {
-            express.static(__dirname + '/pilot/build')(req, res, next);
-        } else {
-            res.redirect("/");
-        }
-    } else {
-        res.redirect("/");
     }
 });
 

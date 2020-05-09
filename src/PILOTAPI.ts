@@ -42,7 +42,7 @@ export const query = async (req, res) => {
         case "get-verify-question": {
             let question = await connection
                 .getRepository(Question)
-                .find({ Valid: false });
+                .find({ Valid: false, Verified: false });
 
             if (question.length == 0) {
                 res.send({ status: "empty" });
@@ -57,9 +57,10 @@ export const query = async (req, res) => {
 
             let question = await connection
                 .getRepository(Question)
-                .update({ ID: data.ID }, { Valid: data.Valid })
+                .update({ ID: data.ID }, { Valid: data.Valid, Verified: true });
 
             res.send({ status: "success" });
+            break;
         }
         default: {
             res.send({ status: "error" });

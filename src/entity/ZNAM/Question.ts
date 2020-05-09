@@ -44,8 +44,11 @@ export class Question extends BaseEntity {
     Played: number;
 
     @Column()
-    Got_Corrent: number;
+    Got_Correct: number;
 
     @Column({ type: "tinyint", width: 1, default: 1 })
     Rated: boolean;
+
+    @Column({ type: "tinyint", width: 1 })
+    Verified: boolean;
 }

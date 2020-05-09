@@ -120,18 +120,29 @@ export const query = async (req, res) => {
                 contribution.Student_ID = 0;
                 contribution.Student_IP = req.clientIp;
 
-                let response = await connection
-                    .getRepository(WordContribution)
-                    .insert(contribution);
+                let exists = await connection
+                    .getRepository(WordContribution)    
+                    .find(contribution)
+            
+                let success = false;
+                if (exists.length === 0) {
+                    let response = await connection
+                        .getRepository(WordContribution)
+                        .insert(contribution);
 
-                if (response.raw.affectedRows == 1) {
-                    res.send({ status: "success" });
-                } else {
+                    if (response.raw.affectedRows == 1) {
+                        res.send({ status: "success" });
+                        success = true;
+                    }
+                }
+
+                if (!success) {
                     res.send({ status: "error" });
                 }
             } else {
-                res.send({ status: "error" });
+                res.send({ status: "error"});
             }
+            
             break;
         }
         default: {
