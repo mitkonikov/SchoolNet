@@ -5,10 +5,11 @@ import { TextField, IconButton } from "@material-ui/core";
 import { Grow, ListItem, ListItemText, Collapse } from "@material-ui/core";
 
 import HelpIcon from "@material-ui/icons/Help";
+import ClearIcon from '@material-ui/icons/Clear';
 
 import swal from "sweetalert";
 
-import { lightFetch } from "./../js/common";
+import { lightFetch, queryFetch } from "./../js/common";
 
 type State = {
     word: Array<any>;
@@ -29,6 +30,7 @@ export default class Connect extends Component {
         };
 
         this.onSearch = this.onSearch.bind(this);
+        this.onMistake = this.onMistake.bind(this);
     }
 
     onSearch(value: string) {
@@ -42,6 +44,38 @@ export default class Connect extends Component {
                 searching: true,
                 word: res.word,
             });
+        });
+    }
+
+    onMistake(id: number) {
+        swal({
+            title: "Означи како грешка?",
+            icon: "warning",
+            buttons: ["Врати се", "Потврди!"],
+            dangerMode: true
+        }).then((isMistake) => {
+            if (isMistake) {
+                queryFetch({
+                    command: "flag-word",
+                    data: {
+                        ID: id,
+                        Mistake: true
+                    }
+                }).then((response) => {
+                    console.log(response);
+                    if (response.status === "success") {
+                        swal({
+                            title: "Благодариме!",
+                            text: "Благодариме на придонесот!",
+                            icon: "success"
+                        });
+                    } else {
+                        swal.close();
+                    }
+                })
+            } else {
+                swal.close();
+            }
         });
     }
 
@@ -62,6 +96,13 @@ export default class Connect extends Component {
                         key={this.state.word[i].ID}
                     >
                         <ListItemText primary={this.state.word[i].Word} />
+                        <div className="mistake-button-icon">
+                            <IconButton 
+                                onClick={() => this.onMistake(this.state.word[i].ID)}
+                                style={{ padding: "6px" }}>
+                                    <ClearIcon fontSize="small" color="error"/>
+                            </IconButton>
+                        </div>
                         {this.state.word[i].Wiki_Frq}
                     </ListItem>
                 </Grow>
@@ -86,6 +127,7 @@ export default class Connect extends Component {
                                 <div id="search-bar-container">
                                     <TextField
                                         id="search-bar"
+                                        className="text-field"
                                         label="Пребарај"
                                         size="small"
                                         inputProps={{

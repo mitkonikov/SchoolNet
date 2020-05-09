@@ -144,7 +144,8 @@ export default class Connect extends Component {
                         <div className="search-card-padding card-flex">
                             <div id="connect-search-bar-container">
                                 <TextField
-                                    id="search-bar"
+                                    id="connect-bar"
+                                    className="text-field"
                                     label=""
                                     size="small"
                                     inputProps={{

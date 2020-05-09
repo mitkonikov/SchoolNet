@@ -28,7 +28,7 @@ export const light = async (connection: Connection, model, switchCallback: Funct
         let repo = switchCallback(key);
 
         if (!repo.failed) {
-            let temp = repo.repository.getRepository().metadata.columns;
+            let temp = connection.getRepository(repo.repository).metadata.columns;
             let columnNames = {};
             for (let t of temp) {
                 columnNames[t.propertyName] = t.type;

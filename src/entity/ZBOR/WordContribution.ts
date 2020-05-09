@@ -13,6 +13,9 @@ export class WordContribution extends BaseEntity {
     @Column()
     Student_ID: number;
 
+    @Column()
+    Student_IP: string;
+
     @Column({ type: "tinyint", width: 4 })
     Type: number;
 

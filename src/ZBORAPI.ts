@@ -1,12 +1,13 @@
 import "reflect-metadata";
 import { createConnection, Connection, getConnection } from "typeorm";
-import { Words } from "./entity/Words";
-import { WordGenerated } from "./entity/WordGenerated";
-import { WordDay } from "./entity/WordDay";
-import { WordConnection } from "./entity/WordConnection";
+import { Words } from "./entity/ZBOR/Words";
+import { WordGenerated } from "./entity/ZBOR/WordGenerated";
+import { WordDay } from "./entity/ZBOR/WordDay";
+import { WordConnection } from "./entity/ZBOR/WordConnection";
 
 import { light as Light } from "./lightquery-orm";
-import { ContactEntry } from "./entity/ContactEntry";
+import { ContactEntry } from "./entity/ZBOR/ContactEntry";
+import { WordContribution } from "./entity/ZBOR/WordContribution";
 
 let connection: Connection;
 
@@ -37,9 +38,9 @@ let switchCallback = (key) => {
 
 export const connect = async () => {
     try {
-        connection = getConnection()
+        connection = getConnection("zbor")
     } catch(err) {
-        connection = await createConnection();
+        connection = await createConnection("zbor");
     }
 
     return connection;
@@ -109,11 +110,29 @@ export const query = async (req, res) => {
             break;
         }
         case "flag-word": {
-            res.send({ status: "error" });
-            // ID
-            // Flag
+            let data = req.body.data;
 
-            
+            if (data.Mistake) {
+                let contribution = new WordContribution();
+                contribution.Word = data.ID;
+                contribution.Type = -1;
+                contribution.Mistake = true;
+                contribution.Student_ID = 0;
+                contribution.Student_IP = req.clientIp;
+
+                let response = await connection
+                    .getRepository(WordContribution)
+                    .insert(contribution);
+
+                if (response.raw.affectedRows == 1) {
+                    res.send({ status: "success" });
+                } else {
+                    res.send({ status: "error" });
+                }
+            } else {
+                res.send({ status: "error" });
+            }
+            break;
         }
         default: {
             res.send({ status: "error" });

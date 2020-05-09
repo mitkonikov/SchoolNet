@@ -1,6 +1,6 @@
 let TATKIN_WORD_COUNT = process.env.TATKIN_WORD_COUNT;
 
-WORD_TYPES = ['imenka', 'pridavka', 'glagol', 'zamenka', 'broj', 'other'];
+let WORD_TYPES = ['imenka', 'pridavka', 'glagol', 'zamenka', 'broj', 'other'];
 
 /** From String Type to Int Type */
 function encodeWord(type) {
