@@ -27,6 +27,10 @@ function AuthMessage() {
 }
 
 class Authentication extends Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -60,6 +64,10 @@ class Authentication extends Component {
                                 <div class="auth-icon">
                                     <IconButton
                                         onClick={() => {
+                                            this.props.GA.event({
+                                                category: "Sign In",
+                                                action: "Facebook Enter"
+                                            });
                                             window.location.href += "auth/facebook";
                                         }}
                                     >
@@ -69,6 +77,10 @@ class Authentication extends Component {
                                 <div class="auth-icon">
                                     <IconButton
                                         onClick={() => {
+                                            this.props.GA.event({
+                                                category: "Sign In",
+                                                action: "Google Enter"
+                                            });
                                             window.location.href += "auth/google";
                                         }}
                                     >

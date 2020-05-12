@@ -14,6 +14,8 @@ import { createBrowserHistory } from "history";
 
 import swal from "sweetalert";
 
+import ReactGA from 'react-ga';
+
 import theme from "./theme";
 import { queryFetch, ReactLazyPreload } from "./js/common";
 import EndScreen from "./components/endScreen";
@@ -28,6 +30,8 @@ const Contribute = ReactLazyPreload(() => import("./components/contribute"));
 const Profile = ReactLazyPreload(() => import("./components/profile"));
 const Question = ReactLazyPreload(() => import("./components/question"));
 const Contact = React.lazy(() => import("./components/contact"));
+
+const trackingId = "UA-70623448-2";
 
 class Loading extends Component {
     render() {
@@ -109,6 +113,9 @@ class App extends Component {
                 this.setState({ provider: data.provider });
             }
         });
+
+        ReactGA.initialize(trackingId);
+        ReactGA.pageview("/znam");
 /*
         setTimeout(() => {
             this.questionUI.current.setQuestion(this.state.question);
@@ -280,7 +287,7 @@ class App extends Component {
                 }
             }
         } else if (this.state.isAuth === 0) {
-            return <Authentication />;
+            return <Authentication GA={ReactGA}/>;
         }
     }
 

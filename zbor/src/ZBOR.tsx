@@ -13,6 +13,8 @@ import SchoolIcon from "@material-ui/icons/School";
 
 import { lightFetch } from "./js/common";
 
+import ReactGA from "react-ga";
+
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme";
 
@@ -20,6 +22,8 @@ import Search from "./components/search";
 import Connect from "./components/connect";
 import Artificial from "./components/artificial";
 import Contact from "./components/contact.jsx";
+
+const trackingId = "UA-70623448-2";
 
 type State = {
     currentPage: number;
@@ -67,6 +71,9 @@ class ZBOR extends Component {
                 this.setState({ wordDay: wordOfTheDay });
             }
         });
+
+        ReactGA.initialize(trackingId);
+        ReactGA.pageview("/zbor");
     }
 
     render() {
