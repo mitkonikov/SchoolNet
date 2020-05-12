@@ -120,6 +120,8 @@ export default class Connect extends Component {
     }
 
     render() {
+        if (this.state.wordFrom.Word === "") return null;
+
         return (
             <div className="card-container connect-word">
                 <Card>

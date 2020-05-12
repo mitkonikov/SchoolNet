@@ -43,6 +43,8 @@ export default class Artificial extends Component {
     }
 
     render() {
+        if (this.state.word === "") return null;
+
         return (
             <div className="card-container ai-word">
                 <Card>

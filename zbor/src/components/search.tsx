@@ -80,7 +80,7 @@ export default class Connect extends Component {
     }
 
     renderList() {
-        if (typeof this.state.word != "object") return null;
+        if (typeof this.state.word !== "object") return null;
 
         let wordDOM = [];
 
