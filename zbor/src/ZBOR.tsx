@@ -84,19 +84,7 @@ class ZBOR extends Component {
                                                     <div id="platform-title">
                                                         ЗБОР
                                                         <span
-                                                            style={{
-                                                                fontSize:
-                                                                    "0.4em",
-                                                                color:
-                                                                    "rgb(255, 224, 0)",
-                                                                top: 0,
-                                                                position:
-                                                                    "absolute",
-                                                                marginLeft:
-                                                                    "0.3em",
-                                                                marginTop:
-                                                                    "0.4em"
-                                                            }}
+                                                            className="beta"
                                                         >
                                                             BETA
                                                         </span>

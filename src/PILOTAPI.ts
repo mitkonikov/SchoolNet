@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { createConnection, Connection, getConnection } from "typeorm";
 
-import { light as Light } from "./lightquery-orm";
+import { light as Light } from "lightquery-orm";
 import { Question } from "./entity/ZNAM/Question";
 
 let connection: Connection;

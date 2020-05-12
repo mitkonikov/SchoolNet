@@ -5,7 +5,7 @@ import { WordGenerated } from "./entity/ZBOR/WordGenerated";
 import { WordDay } from "./entity/ZBOR/WordDay";
 import { WordConnection } from "./entity/ZBOR/WordConnection";
 
-import { light as Light } from "./lightquery-orm";
+import { light as Light } from "lightquery-orm";
 import { ContactEntry } from "./entity/ZBOR/ContactEntry";
 import { WordContribution } from "./entity/ZBOR/WordContribution";
 
