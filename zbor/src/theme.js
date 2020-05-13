@@ -47,9 +47,7 @@ const theme = createMuiTheme({
                 height: "100%",
                 borderRadius: "0",
                 borderWidth: "0",
-                text: {
-                    color: "#fff"
-                },
+                color: "#fff",
                 backgroundColor: palette.primary.dark
             }
         },
@@ -61,9 +59,11 @@ const theme = createMuiTheme({
                 backgroundColor: palette.primary.dark,
                 color: "white",
                 cursor: "pointer",
-                position: "absolute",
                 "&&:hover": {
                     backgroundColor: palette.primary.hover
+                },
+                "&:last-child": {
+                    paddingBottom: "0.7em"
                 }
             }
         },

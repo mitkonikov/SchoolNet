@@ -1,0 +1,16 @@
+.ip-container {
+    font-size: 0.8em;
+}
+
+.statistics-card {
+    max-width: 7em;
+    height: -moz-available;
+    height: -webkit-fill-available;
+    height: stretch;
+}
+
+@media only screen and (max-width: 325px) {
+    .statistics-card {
+        display: none;
+    }
+}

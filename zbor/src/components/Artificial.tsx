@@ -49,8 +49,6 @@ export default class Artificial extends Component {
             <div className="card-container ai-word">
                 <Card>
                     <CardContent style={{
-                        position: "relative",
-                        height: "fit-content",
                         paddingBottom: "0.5em"
                     }}>
                         <div style={{ marginBottom: "0.2em"}}>Збор создаден од вештачка интелигенција</div>

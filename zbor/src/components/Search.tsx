@@ -117,12 +117,7 @@ export default class Search extends Component {
             <Collapse in={this.state.searching} collapsedHeight={"6em"}>
                 <div className="card-container search-card">
                     <Card>
-                        <CardContent
-                            style={{
-                                position: "relative",
-                                paddingBottom: "0.6em",
-                            }}
-                        >
+                        <CardContent>
                             <div className="search-card-padding card-flex">
                                 <div id="search-bar-container">
                                     <TextField

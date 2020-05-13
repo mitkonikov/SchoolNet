@@ -43,12 +43,7 @@ class WordDay extends Component {
         return (
             <div className="card-container word-day">
                 <Card>
-                    <CardContent
-                        style={{
-                            position: "relative",
-                            paddingBottom: "0.6em",
-                        }}
-                    >
+                    <CardContent>
                         <div style={{ marginBottom: "0.2em" }}>
                             Збор на денот
                         </div>

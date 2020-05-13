@@ -125,10 +125,7 @@ export default class Connect extends Component {
         return (
             <div className="card-container connect-word">
                 <Card>
-                    <CardContent style={{
-                        position: "relative",
-                        paddingBottom: "0px"
-                    }}>
+                    <CardContent>
                         <div
                             className="medium-word"
                             style={{ display: "inline-block" }}

@@ -8,8 +8,11 @@ import { WordConnection } from "./entity/ZBOR/WordConnection";
 import { light as Light } from "lightquery-orm";
 import { ContactEntry } from "./entity/ZBOR/ContactEntry";
 import { WordContribution } from "./entity/ZBOR/WordContribution";
+import { StatisticsIP } from "./entity/network/StatisticsIP";
+import { findOrCreate } from "./common";
 
 let connection: Connection;
+let network: Connection;
 
 let switchCallback = (key) => {
     let repository: any;
@@ -38,9 +41,15 @@ let switchCallback = (key) => {
 
 export const connect = async () => {
     try {
-        connection = getConnection("zbor")
+        connection = getConnection("zbor");
     } catch(err) {
         connection = await createConnection("zbor");
+    }
+
+    try {
+        network = getConnection("network");
+    } catch(err) {
+        network = await createConnection("network");
     }
 
     return connection;
@@ -143,6 +152,20 @@ export const query = async (req, res) => {
                 res.send({ status: "error"});
             }
             
+            break;
+        }
+        case "get-ip-stats": {
+            let result = { };
+
+            let object = new StatisticsIP();
+            object.Student_IP = req.clientIp;
+
+            let newObject: StatisticsIP;
+            newObject = await findOrCreate(network, StatisticsIP, object);
+            
+            result["clientIp"] = newObject.Student_IP;
+
+            res.send(result);
             break;
         }
         default: {

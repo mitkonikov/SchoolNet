@@ -16,6 +16,7 @@ import Connect from "./components/Connect";
 import Artificial from "./components/Artificial";
 import Contact from "./components/Contact.jsx";
 import NavBar from "./components/NavBar";
+import Statistics from "./components/Statistics";
 
 const trackingId = "UA-70623448-2";
 
@@ -80,7 +81,15 @@ class ZBOR extends Component {
                                                         </span>
                                                     </div>
 
-                                                    <WordDay />
+                                                    <div className="row-flex">
+                                                        <div className="card-flex" id="small-word-day-container">
+                                                            <WordDay />
+                                                        </div>
+
+                                                        <div className="card-flex" id="small-stats-container">
+                                                            <Statistics />
+                                                        </div>
+                                                    </div>
 
                                                     <Search />
 
