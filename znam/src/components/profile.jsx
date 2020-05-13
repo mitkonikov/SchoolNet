@@ -124,7 +124,7 @@ class Profile extends Component {
 
     render() {
         return (
-            <div class="full">
+            <div class="full" id="profile-container">
                 <div id="profile-header">
                     <Card variant="outlined" elevation={0}>
                         <ButtonBase disableRipple component="div" style={{ fontSize: "0.9em" }}>
