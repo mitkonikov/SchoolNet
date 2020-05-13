@@ -9,7 +9,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 
 import swal from "sweetalert";
 
-import { lightFetch, queryFetch } from "./../js/common";
+import { lightFetch, queryFetch } from "../js/common";
 
 type State = {
     word: Array<any>;
@@ -17,7 +17,7 @@ type State = {
     searching: boolean;
 };
 
-export default class Connect extends Component {
+export default class Search extends Component {
     state: State;
 
     constructor(props: any) {

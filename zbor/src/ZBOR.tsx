@@ -10,12 +10,12 @@ import ReactGA from "react-ga";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme";
 
-import WordDay from "./components/wordDay";
-import Search from "./components/search";
-import Connect from "./components/connect";
-import Artificial from "./components/artificial";
-import Contact from "./components/contact.jsx";
-import NavBar from "./components/navBar";
+import WordDay from "./components/WordDay";
+import Search from "./components/Search";
+import Connect from "./components/Connect";
+import Artificial from "./components/Artificial";
+import Contact from "./components/Contact.jsx";
+import NavBar from "./components/NavBar";
 
 const trackingId = "UA-70623448-2";
 

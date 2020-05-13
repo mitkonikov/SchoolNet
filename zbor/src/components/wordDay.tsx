@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import { Card, CardContent } from "@material-ui/core";
 
-import { lightFetch } from "./../js/common";
+import { lightFetch } from "../js/common";
 
 type State = {
     wordDay: any;
