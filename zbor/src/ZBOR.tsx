@@ -2,6 +2,8 @@ import React, { Component, Suspense } from "react";
 import "./common.css";
 import "./ZBOR.css";
 
+import { Loading, CenterMobile, PlatformTitle } from "./common";
+
 import { Switch, Route, Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 
@@ -23,16 +25,6 @@ const trackingId = "UA-70623448-2";
 type State = {
     currentPage: number;
 };
-
-class Loading extends Component {
-    render() {
-        return (
-            <div id="loading-container">
-                <div id="logo"></div>
-            </div>
-        );
-    }
-}
 
 class ZBOR extends Component {
     state: State;
@@ -68,51 +60,46 @@ class ZBOR extends Component {
                         <Route path="/">
                             <Switch>
                                 <Suspense fallback={<Loading />}>
-                                    <Route exact path="/">
-                                        <div className="form-center-container">
-                                            <div className="form-center">
-                                                <div className="form-center-v">
-                                                    <div id="platform-title">
-                                                        ЗБОР
-                                                        <span
-                                                            className="beta"
-                                                        >
-                                                            BETA
-                                                        </span>
-                                                    </div>
+                                    <CenterMobile>
+                                        <Route exact path="/">
+                                            <PlatformTitle
+                                                title="ЗБОР"
+                                                isBeta={true}
+                                            />
 
-                                                    <div className="row-flex">
-                                                        <div className="card-flex" id="small-word-day-container">
-                                                            <WordDay />
-                                                        </div>
+                                            <div className="row-flex">
+                                                <div
+                                                    className="card-flex"
+                                                    id="small-word-day-container"
+                                                >
+                                                    <WordDay />
+                                                </div>
 
-                                                        <div className="card-flex" id="small-stats-container">
-                                                            <Statistics />
-                                                        </div>
-                                                    </div>
-
-                                                    <Search />
-
-                                                    <Connect />
-
-                                                    <Artificial />
+                                                <div
+                                                    className="card-flex"
+                                                    id="small-stats-container"
+                                                >
+                                                    <Statistics />
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Route>
-                                    <Route path="/contact">
-                                        <div className="form-center-container">
-                                            <div className="form-center">
-                                                <div className="form-center-v">
-                                                    <Contact />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Route>
+
+                                            <Search />
+
+                                            <Connect />
+
+                                            <Artificial />
+                                        </Route>
+                                        <Route path="/contact">
+                                            <Contact />
+                                        </Route>
+                                    </CenterMobile>
                                 </Suspense>
                             </Switch>
 
-                            <NavBar setPage={this.setPage} page={this.state.currentPage}/>
+                            <NavBar
+                                setPage={this.setPage}
+                                page={this.state.currentPage}
+                            />
                         </Route>
                     </Switch>
                 </ThemeProvider>
