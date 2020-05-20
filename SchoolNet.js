@@ -3,6 +3,9 @@ let app = new express();
 
 let server = require('http').createServer(app);
 
+const dotenv            = require('dotenv');
+dotenv.config();
+
 const pm2 = require('pm2');
 
 pm2.connect((err) => {
@@ -10,18 +13,23 @@ pm2.connect((err) => {
         console.log("Error connecting to pm2");
         return;
     }
+    
+    pm2.list((err, list) => {
+        if (err) {
+            console.log("Internal PM2 Error: ", err);
+            return;
+        }
 
-    setTimeout(() => {
-        pm2.describe(parseInt(process.pid), (err, description) => {
-            if (err) {
-                console.log("Internal PM2 Error: ", err);
-                return;
+        let pid = parseInt(process.pid);
+
+        for (let p of list) {
+            if (p.pid == pid) {
+                process.env.PM2_ID = p.pm_id;
+                console.log(`Process [${p.name}] with ${process.pid} PID has PM2 ID of ${p.pm_id}`);
+                break;
             }
-
-            console.log(description);
-            console.log(`Process ${description.name} with ${process.pid} PID has PM2 ID of ${description.pm_id}`);
-        });
-    }, 1000);
+        }
+    });
 });
 
 // EXPRESS THINGS
@@ -30,9 +38,6 @@ app.use(requestIp.mw())
 
 const expressSanitizer = require('express-sanitizer');
 app.use(expressSanitizer());
-
-const dotenv            = require('dotenv');
-dotenv.config();
 
 let ErrorHandler        = require("./server/ErrorHandler");
 
