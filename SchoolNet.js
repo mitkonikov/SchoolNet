@@ -1,27 +1,5 @@
-// SETUP THE HTTP AND HTTPS SERVERS
-const fs = require('fs');
-// const keywords = require('./keywords');
-
-/* UNCOMMENT THIS IF YOU DONT HAVE NGINX SETUP
- * Also, change the ports:
- *   - HTTPS on 443
- *   - HTTP  on 80
-const SSLSettings = {
-    pfx: fs.readFileSync('C://cert//certificate.pfx'),
-    passphrase: keywords.SSLPass()
-};*/
-
 let express = require('express');
-// let HTTPApp = new express();
 let app = new express();
-/*
-let http = require('http').createServer(HTTPApp);
-
-HTTPApp.get('*', function(req, res) {  
-    res.redirect('https://schoolnet.mk');
-})
-
-http.listen(80);*/
 
 let server = require('http').createServer(app);
 
@@ -33,15 +11,17 @@ pm2.connect((err) => {
         return;
     }
 
-    pm2.describe(process.pid, (err, description) => {
-        if (err) {
-            console.log("You are running only one instance of Node.js");
-            return;
-        }
+    setTimeout(() => {
+        pm2.describe(parseInt(process.pid), (err, description) => {
+            if (err) {
+                console.log("Internal PM2 Error: ", err);
+                return;
+            }
 
-        console.log(description);
-        console.log(`Process ${description.name} with ${process.pid} PID has PM2 ID of ${description.pm_id}`);
-    });
+            console.log(description);
+            console.log(`Process ${description.name} with ${process.pid} PID has PM2 ID of ${description.pm_id}`);
+        });
+    }, 1000);
 });
 
 // EXPRESS THINGS
