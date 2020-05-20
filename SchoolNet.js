@@ -39,7 +39,7 @@ pm2.connect((err) => {
             return;
         }
 
-        console.log("Process with " + process.pid + " has pm2 id of " + description.pm_id);
+        console.log(`Process ${description[0].name} with ${process.pid} PID has PM2 ID of ${description[0].pm_id}`);
     });
 });
 
