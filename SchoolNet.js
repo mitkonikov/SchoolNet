@@ -33,15 +33,13 @@ pm2.connect((err) => {
         return;
     }
 
-    pm2.list((err, list) => {
+    pm2.describe(process.pid, (err, description) => {
         if (err) {
             console.log("You are running only one instance of Node.js");
             return;
         }
 
-        for (let i = 0; i < list.length; ++i) {
-            console.log(list[i]);
-        }
+        console.log("Process with " + process.pid + " has pm2 id of " + description.pm_id);
     });
 });
 
