@@ -25,6 +25,26 @@ http.listen(80);*/
 
 let server = require('http').createServer(app);
 
+const pm2 = require('pm2');
+
+pm2.connect((err) => {
+    if (err) {
+        console.log("Error connecting to pm2");
+        return;
+    }
+
+    pm2.list((err, list) => {
+        if (err) {
+            console.log("You are running only one instance of Node.js");
+            return;
+        }
+
+        for (let i = 0; i < list.length; ++i) {
+            console.log(list[i]);
+        }
+    });
+});
+
 // EXPRESS THINGS
 const requestIp = require('request-ip');
 app.use(requestIp.mw())
@@ -62,7 +82,15 @@ let authenticationModule = require('./server/authentication');
 let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });
 
 // Requires the Main Game Logic Module
-let gameLogic = require('./server/play/main.play').Initialize(server, auth.passportPass, databaseController, network);
+let gameLogic = require('./server/play/main.play')
+    .Initialize(
+        server,
+        auth.passportPass,
+        databaseController,
+        network,
+        app,
+        express
+    );
 
 let indexRequestsCount = 0;
 let prev_ip = false;
