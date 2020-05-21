@@ -36,9 +36,10 @@ let gameSocket = function(server, passportPass, databaseController) {
             });
         }
 
-        socket.on("pinging", () => {
+        socket.on("pinging", (data) => {
             socket.emit("pong", {
-                time: (new Date().getTime())
+                time: data.time,
+                s_time: (new Date().getTime())
             });
         });
 

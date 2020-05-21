@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import "./App.css";
 import "./common.css";
-import { CenterMobile } from "./common.js";
+import { CenterMobile, domain } from "./common.js";
 
 import io from "socket.io-client";
 
-const socket = io('http://localhost:3000');
+const socket = io(domain());
 socket.nsp = "/game";
 
 class App extends Component {
@@ -15,25 +15,35 @@ class App extends Component {
         this.state = {
             users: [],
             ping: 0,
-            serverID: -1
+            serverID: "",
+            prevTime: 0
         }
     }
     
     componentDidMount() {
         socket.on("pong", data => {
-            let diff = ((new Date().getTime()) - data.time);
+            if (this.state.prevTime == 0) return;
+            
+            let diff = (data.time - this.state.prevTime);
 
             if (!isNaN(diff)) {
                 this.setState({
-                    ping: parseInt(diff),
-                    serverID: data.id
+                    ping: diff
                 });
             }
         });
 
+        socket.on("server info", data => {
+            this.setState({
+                serverID: data.id
+            });
+        })
+
         setInterval(() => {
-            socket.emit("pinging");
-        }, 100);
+            let currentTime = new Date().getTime();
+            socket.emit("pinging", { time: currentTime });
+            this.setState({ prevTime: currentTime });
+        }, 500);
     }
 
     renderUsers() {
@@ -63,7 +73,7 @@ class App extends Component {
 
                 <div class="ping-container">
                     Ping: {this.state.ping} ms <br></br>
-                    {(this.state.serverID !== -1) && (
+                    {(this.state.serverID !== "") && (
                         <span>Server ID: {this.state.serverID}</span>
                     )}
                 </div>
