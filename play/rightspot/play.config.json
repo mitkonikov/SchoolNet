@@ -1,0 +1,9 @@
+{
+    "name": "RightSpot",
+    "short_name": "rightspot",
+    "color": "#45b553",
+    "description": "It's the right spot to start developing your own app!",
+    "frontend": "./build",
+    "backend": "./server",
+    "author": "Mitko Nikov"
+}

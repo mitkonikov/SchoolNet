@@ -5,14 +5,14 @@ let Server = function(node_app) {
 };
 
 let Initialize = function(network, crypto) {
-    let flash = require("connect-flash");
+    // let flash = require("connect-flash");
     let passport = require("passport");
     let LocalStrategy = require("passport-local").Strategy;
     let FacebookStrategy = require("passport-facebook").Strategy;
     let GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
     // PASSPORT
-    app.use(flash());
+    // app.use(flash());
     app.use(passport.initialize());
     app.use(passport.session());
 

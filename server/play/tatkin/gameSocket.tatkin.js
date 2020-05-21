@@ -27,7 +27,7 @@ let tatkinSocket = function(API) {
     let HEARTBEAT_INTERVAL;
 
     let pythonProcess;
-    if (process.env.PYTHON) {
+    if (process.env.PYTHON == 1) {
         console.log("Starting AI...");
         const spawn = require("child_process").spawn;
         pythonProcess = pythonSetup(spawn, wordsDB);

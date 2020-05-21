@@ -1,0 +1,9 @@
+{
+    "name": "{{name}}",
+    "short_name": "{{short_name}}",
+    "color": "{{color}}",
+    "description": "{{description}}",
+    "frontend": "./build",
+    "backend": "./server",
+    "author": "{{author}}"
+}
