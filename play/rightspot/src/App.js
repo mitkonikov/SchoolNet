@@ -5,6 +5,8 @@ import { CenterMobile, domain } from "./common.js";
 
 import io from "socket.io-client";
 
+let prevTime = 0;
+
 const socket = io(domain());
 socket.nsp = "/game";
 
@@ -14,36 +16,33 @@ class App extends Component {
 
         this.state = {
             users: [],
-            ping: 0,
             serverID: "",
-            prevTime: 0
-        }
+        };
     }
-    
+
     componentDidMount() {
-        socket.on("pong", data => {
-            if (this.state.prevTime == 0) return;
-            
-            let diff = (data.time - this.state.prevTime);
+        socket.on("pong", (data) => {
+            if (typeof data.time == "undefined") return;
+            if (prevTime == 0) return;
+
+            let diff = new Date().getTime() - prevTime;
 
             if (!isNaN(diff)) {
-                this.setState({
-                    ping: diff
-                });
+                document.getElementById("ping").innerHTML = diff;
             }
         });
 
-        socket.on("server info", data => {
+        socket.on("server info", (data) => {
             this.setState({
-                serverID: data.id
+                serverID: data.id,
             });
-        })
+        });
 
         setInterval(() => {
             let currentTime = new Date().getTime();
             socket.emit("pinging", { time: currentTime });
-            this.setState({ prevTime: currentTime });
-        }, 500);
+            prevTime = currentTime;
+        }, 200);
     }
 
     renderUsers() {
@@ -52,9 +51,7 @@ class App extends Component {
         let users = this.state.users;
         let usersDOM = [];
         for (let i = 0; i < users.length; ++i) {
-            usersDOM.push(<div>
-                {users[i]}
-            </div>);
+            usersDOM.push(<div>{users[i]}</div>);
         }
 
         return usersDOM;
@@ -63,20 +60,16 @@ class App extends Component {
     render() {
         return (
             <CenterMobile>
-                <div>
-                    Welcome!
-                </div>
+                <div>Welcome!</div>
 
-                <div class="users-container">
-                    {this.renderUsers()}
-                </div>
+                <div class="users-container">{this.renderUsers()}</div>
 
-                <div class="ping-container">
-                    Ping: {this.state.ping} ms <br></br>
-                    {(this.state.serverID !== "") && (
+                {this.state.serverID !== "" && (
+                    <div class="ping-container">
+                        Ping: <span id="ping"></span> ms <br></br>
                         <span>Server ID: {this.state.serverID}</span>
-                    )}
-                </div>
+                    </div>
+                )}
             </CenterMobile>
         );
     }
