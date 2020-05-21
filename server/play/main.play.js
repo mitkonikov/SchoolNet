@@ -45,6 +45,8 @@ let findJSON = (source, dir) => {
         read.frontend
     );
 
+    console.log(`Game ${url} is in ${gameDir}`);
+
     app.use(url, express.static(gameDir));
 
     requireGame(mainModule);
