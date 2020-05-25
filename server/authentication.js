@@ -24,8 +24,17 @@ let Initialize = (app, network, req) => {
     let protectionChecks  = require('./protectionChecks');
     protectionChecks.Error(req.ErrorHandler);
 
-    // COOKIE
+    // COOKIE STORES
     let store = new MySQLStore(MySQLOptions);
+    let guestStore = new MySQLStore({
+        config: {
+            schema: {
+                tableName: 'guest_sessions'
+            }
+        },
+        ...MySQLOptions
+    });
+
     let cookieSettings = {
         maxAge: 1000 * 60 * 60 * 24 * 3,
         expires: 1000 * 60 * 60 * 24 * 3
@@ -33,6 +42,7 @@ let Initialize = (app, network, req) => {
 
     if (process.env.NODE_ENV === "production") {
         cookieSettings.domain = '.schoolnet.mk';
+        cookieSettings.secure = true;
     }
 
     app.use(sess({
@@ -41,7 +51,7 @@ let Initialize = (app, network, req) => {
         cookie: cookieSettings,
         store:  store,
         resave: true,
-        saveUninitialized: true
+        saveUninitialized: true,
     }));
 
     let guestCookieSettings = {
@@ -51,13 +61,14 @@ let Initialize = (app, network, req) => {
 
     if (process.env.NODE_ENV === "production") {
         guestCookieSettings.domain = '.schoolnet.mk';
+        guestCookieSettings.secure = true;
     }
 
     app.use(sess({
         name: process.env.GUEST_SESSION_NAME,
         secret: process.env.GUEST_SESSION_SECRET,
         cookie: guestCookieSettings,
-        store:  store,
+        store:  guestStore,
         resave: false,
         saveUninitialized: false
     }));
