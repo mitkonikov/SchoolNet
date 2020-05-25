@@ -161,6 +161,8 @@ DATABASE_USER = <here the database username>
 DATABASE_PASS = <here the database password>
 SESSION_NAME = <session name>
 SESSION_SECRET = <!session secret!>
+GUEST_SESSION_NAME = <guest session name>
+GUEST_SESSION_SECRET = <!guest session secret!>
 PASSPORT_SALT = <salt>
 TATKIN_WORD_COUNT = 3000
 ```
@@ -221,6 +223,9 @@ For now, we have our Python AI in this repo, thus it requires you to download Py
 * The *StartCluster.js* module is used only in production, don't use it. Start the server by running directly `node [server]`.
 * We are using SCSS for the main SchoolNet project, but yet there's no implementation for it in the React frontends (including ZNAM)
 * In production we implemented the *SSL* protocol and use HTTPS server, however in development we left the HTTP server, so you can easily try it at home.
+* We have two types of sessions (this is because of the different cookie expiration dates and the fact that we don't use passport.js authentication for guests):
+  - Passport.js' cookie session for authenticated users
+  - Our own cookie session for guests
 
 ### Sources, useful links:
 

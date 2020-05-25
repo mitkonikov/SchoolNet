@@ -44,6 +44,24 @@ let Initialize = (app, network, req) => {
         saveUninitialized: true
     }));
 
+    let guestCookieSettings = {
+        maxAge: 1000 * 60 * 60 * 24 * 1095,
+        expires: 1000 * 60 * 60 * 24 * 1095
+    }
+
+    if (process.env.NODE_ENV === "production") {
+        guestCookieSettings.domain = '.schoolnet.mk';
+    }
+
+    app.use(sess({
+        name: process.env.GUEST_SESSION_NAME,
+        secret: process.env.GUEST_SESSION_SECRET,
+        cookie: guestCookieSettings,
+        store:  store,
+        resave: true,
+        saveUninitialized: true
+    }));
+
     // Initializes the passport module
     passport_module = passport_module.Initialize(network, crypto);
 
