@@ -4,8 +4,9 @@ const fs = require("fs");
 const path = require("path");
 
 let app, express;
+let gameSocketModule;
 
-let requireGame = (path) => {
+let requireGame = (name, path, read) => {
     let Game = require(path);
     let requirements = Game.requirements();
 
@@ -14,12 +15,32 @@ let requireGame = (path) => {
     for (let req of requirements) {
         switch (req) {
             case "socketio": {
-                 
+                API.socketio = gameSocketModule;
             }
         }
     }
 
-    console.log(Game.requirements());
+    console.log(name + " requires " + Game.requirements());
+
+    // call the init function of the game
+    Game.initialize(API);
+
+    // this is for letting other types of post request to the backend of the app
+    let url = '/' + read.short_name + '/query';
+    app.post(url, (req, res) => {
+        // TODO...
+        if (req.isAuthenticated()) {
+            res.send(Game.main({
+                Guest: false,
+                ID: req.user.ID
+            }, null, req.body));
+        } else {
+            res.send(Game.main({
+                Guest: true,
+                ID: "TODO"
+            }, null, req.body));
+        }
+    });
 }
 
 let findJSON = (source, dir) => {
@@ -49,7 +70,7 @@ let findJSON = (source, dir) => {
 
     app.use(url, express.static(gameDir));
 
-    requireGame(mainModule);
+    requireGame(read.short_name, mainModule, read);
 }
 
 const recursiveSync = (source, level) => {
@@ -73,7 +94,7 @@ let Initialize = function(server, passportPass, databaseController, network, nod
     app = node_app;
     express = node_express;
 
-    let gameSocketModule = require("./gameSocket")
+    gameSocketModule = require("./gameSocket")
         .init(server, passportPass, databaseController);
     
     let demoLoggerModule = require("./demoLogger");

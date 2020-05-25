@@ -19,6 +19,7 @@ let Initialize = (app, network, req) => {
     let cookieParser      = require('cookie-parser');
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+    app.use(cookieParser());
 
     let protectionChecks  = require('./protectionChecks');
     protectionChecks.Error(req.ErrorHandler);
