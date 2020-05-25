@@ -58,8 +58,8 @@ let Initialize = (app, network, req) => {
         secret: process.env.GUEST_SESSION_SECRET,
         cookie: guestCookieSettings,
         store:  store,
-        resave: true,
-        saveUninitialized: true
+        resave: false,
+        saveUninitialized: false
     }));
 
     // Initializes the passport module
