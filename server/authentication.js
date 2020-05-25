@@ -27,11 +27,7 @@ let Initialize = (app, network, req) => {
     // COOKIE STORES
     let store = new MySQLStore(MySQLOptions);
     let guestStore = new MySQLStore({
-        config: {
-            schema: {
-                tableName: 'guest_sessions'
-            }
-        },
+        table: 'guest_sessions',
         ...MySQLOptions
     });
 
