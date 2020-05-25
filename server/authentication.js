@@ -26,10 +26,6 @@ let Initialize = (app, network, req) => {
 
     // COOKIE STORES
     let store = new MySQLStore(MySQLOptions);
-    let guestStore = new MySQLStore({
-        table: 'guest_sessions',
-        ...MySQLOptions
-    });
 
     let cookieSettings = {
         maxAge: 1000 * 60 * 60 * 24 * 3,
@@ -48,25 +44,6 @@ let Initialize = (app, network, req) => {
         store:  store,
         resave: true,
         saveUninitialized: true,
-    }));
-
-    let guestCookieSettings = {
-        maxAge: 1000 * 60 * 60 * 24 * 1095,
-        expires: 1000 * 60 * 60 * 24 * 1095
-    }
-
-    if (process.env.NODE_ENV === "production") {
-        guestCookieSettings.domain = '.schoolnet.mk';
-        guestCookieSettings.secure = true;
-    }
-
-    app.use('/play', sess({
-        name: process.env.GUEST_SESSION_NAME,
-        secret: process.env.GUEST_SESSION_SECRET,
-        cookie: guestCookieSettings,
-        store:  guestStore,
-        resave: false,
-        saveUninitialized: false
     }));
 
     // Initializes the passport module
