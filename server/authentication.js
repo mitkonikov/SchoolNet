@@ -60,7 +60,7 @@ let Initialize = (app, network, req) => {
         guestCookieSettings.secure = true;
     }
 
-    app.use(sess({
+    app.use('/play', sess({
         name: process.env.GUEST_SESSION_NAME,
         secret: process.env.GUEST_SESSION_SECRET,
         cookie: guestCookieSettings,

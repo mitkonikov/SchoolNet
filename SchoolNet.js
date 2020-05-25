@@ -287,7 +287,7 @@ app.get('*', function(req, res) {
 
 // STARTING THE SERVER
 server.listen(process.env.PORT);
-console.log('\x1b[32m%s\x1b[0m', "SchoolNet Server Started.");
+console.log('\x1b[32m%s\x1b[0m', "SchoolNet Server Started at Port " + process.env.PORT);
 
 let misc = require('./server/misc');
 misc.Initialize(server, databases);
