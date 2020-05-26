@@ -277,15 +277,14 @@ let Initialize = function(network, crypto) {
         }
     ));
 
-    passport.serializeUser(function(user, done) {
+    passport.serializeUser((user, done) => {
         done(null, user.ID);
     });
 
-    passport.deserializeUser(function(ID, done) {
-        network.query("SELECT * FROM tbl_students WHERE ID = ?", 
-            [ID], 
-            function(err, rows) {
-                done(err, rows[0]);
+    passport.deserializeUser((ID, done) => {
+        network.query("SELECT * FROM tbl_students WHERE ID = ?", [ID], (err, rows) => {
+            rows[0].Password = '';
+            done(err, rows[0]);
         });
     });
 

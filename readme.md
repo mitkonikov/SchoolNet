@@ -156,6 +156,7 @@ Create .env file in the main directory with the following options:
 ```
 PORT = 3000
 PORT_ZNAM = 3001
+DOMAIN = <this is only for production env>
 DATABASE_PORT = 3306
 DATABASE_USER = <here the database username>
 DATABASE_PASS = <here the database password>
