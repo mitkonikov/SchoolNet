@@ -28,6 +28,7 @@ const Initialize = (API) => {
                 req.guest = rows[0];
             });
 
+            next();
             return;
         } else {
             // generate random session id
@@ -66,6 +67,7 @@ const Initialize = (API) => {
                 guest.Display_Name = '';
 
                 req.guest = guest;
+                next();
             });
         }
     });
