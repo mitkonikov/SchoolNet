@@ -65,6 +65,13 @@ let network = databases.network;
 let authenticationModule = require('./server/authentication');
 let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });
 
+const Guest = require("./server/guest");
+Guest.Initialize({
+    app,
+    uuidv4,
+    network
+});
+
 // Requires the Main Game Logic Module
 let gameLogic = require('./server/play/main.play')
     .Initialize(
@@ -149,13 +156,6 @@ app.post('/client/dashboard/query', QueryDashboard.Query);
 
 app.post('/client/dashboard/update', function(req, res) {
     res.send("under construction");
-});
-
-const Guest = require("./server/guest");
-Guest.Initialize({
-    app,
-    uuidv4,
-    network
 });
 
 app.post('/zbor/api/light', ZBORAPI.light);

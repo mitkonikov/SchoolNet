@@ -24,15 +24,10 @@ const Initialize = (API) => {
                     console.trace(err);
                 }
 
-                console.log(rows);
-
                 // deserialize database rows and insert it into the guest object
                 req.guest = rows[0];
+                next();
             });
-
-            console.log(cookie);
-            next();
-            return;
         } else {
             // generate random session id
             let sessionID = API.uuidv4();
