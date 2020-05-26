@@ -74,9 +74,7 @@ const Initialize = (API) => {
     
     // Testing endpoint for guest sessions
     API.app.get('/play/guest', (req, res) => {
-        if (req.guest) {
-            res.send(req.guest);
-        }
+        res.send(req.guest);
     });
 }
 
