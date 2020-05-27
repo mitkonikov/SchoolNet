@@ -80,7 +80,8 @@ let gameLogic = require('./server/play/main.play')
         databaseController,
         network,
         app,
-        express
+        express,
+        { uuidv4 }
     );
 
 let indexRequestsCount = 0;

@@ -3,8 +3,25 @@ const tatkin_module = require("./tatkin/main.tatkin");
 const fs = require("fs");
 const path = require("path");
 
-let app, express;
+let app, express, network;
 let gameSocketModule;
+let additional;
+
+let updateGameKey = (name, key, callback) => {
+    network.query("SELECT * FROM tbl_games_keys WHERE Game = ?", name, (err, rows) => {
+        if (err || typeof rows === "undefined" || rows.length == 0) {
+            let gameKey = {
+                Game: name,
+                API_Key: key
+            }
+
+            network.query("INSERT INTO tbl_games_keys SET ?", gameKey);
+            callback(key);
+        } else {
+            callback(rows[0].Key);
+        }
+    });
+}
 
 let requireGame = (name, path, read) => {
     let Game = require(path);
@@ -20,26 +37,36 @@ let requireGame = (name, path, read) => {
         }
     }
 
-    console.log(name + " requires " + Game.requirements());
+    console.log(name + " requires " + requirements);
 
-    // call the init function of the game
-    Game.initialize(API);
+    if (typeof additional.uuidv4 == "undefined") {
+        console.log("UUID module is not present!");
+        return;
+    }
 
-    // this is for letting other types of post request to the backend of the app
-    let url = '/' + read.short_name + '/query';
-    app.post(url, (req, res) => {
-        // TODO...
-        if (req.isAuthenticated()) {
-            res.send(Game.main({
-                Guest: false,
-                ID: req.user.ID
-            }, null, req.body));
-        } else {
-            res.send(Game.main({
-                Guest: true,
-                ID: "TODO"
-            }, null, req.body));
-        }
+    // update the table
+    updateGameKey(name, additional.uuidv4(), (key) => {
+        API.key = key;
+
+        // call the init function of the game
+        Game.initialize(API);
+
+        // this is for letting other types of post request to the backend of the app
+        let url = '/' + read.short_name + '/query';
+        app.post(url, (req, res) => {
+            // TODO...
+            if (req.isAuthenticated()) {
+                res.send(Game.main({
+                    Guest: false,
+                    ID: req.user.ID
+                }, null, req.body));
+            } else {
+                res.send(Game.main({
+                    Guest: true,
+                    ID: req.guest.ID
+                }, null, req.body));
+            }
+        });
     });
 }
 
@@ -90,18 +117,20 @@ const recursiveSync = (source, level) => {
     }
 }
 
-let Initialize = function(server, passportPass, databaseController, network, node_app, node_express) {
+let Initialize = function(server, passportPass, databaseController, node_network, node_app, node_express, node_additional) {
+    network = node_network;
     app = node_app;
     express = node_express;
+    additional = node_additional;
 
     gameSocketModule = require("./gameSocket")
         .init(server, passportPass, databaseController);
     
     let demoLoggerModule = require("./demoLogger");
-    demoLoggerModule.buildDemoLogger(network);
+    demoLoggerModule.buildDemoLogger(node_network);
     let GameEngineModule = require("./GameEngine");
     GameEngineModule.buildGameEngine(
-        network,
+        node_network,
         databaseController,
         demoLoggerModule);
 
