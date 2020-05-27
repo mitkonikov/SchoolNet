@@ -17,7 +17,7 @@ const Initialize = (API) => {
         }
 
         // look at the request cookies
-        if (req.cookies.hasOwnProperty(cookieName)) {
+        if (typeof req.cookies[cookieName] != "undefined") {
             let cookie = req.cookies[cookieName];
             API.network.query("SELECT * FROM tbl_guests WHERE Cookie = ?", cookie, (err, rows) => {
                 if (err) {
