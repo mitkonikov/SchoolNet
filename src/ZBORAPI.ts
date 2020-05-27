@@ -10,6 +10,7 @@ import { ContactEntry } from "./entity/ZBOR/ContactEntry";
 import { WordContribution } from "./entity/ZBOR/WordContribution";
 import { StatisticsIP } from "./entity/network/StatisticsIP";
 import { findOrCreate } from "./common";
+import { WordGuestStats } from "./entity/ZBOR/WordGuestStats";
 
 let connection: Connection;
 let network: Connection;
@@ -39,18 +40,19 @@ let switchCallback = (key) => {
     }
 }
 
-export const connect = async () => {
+let getConnectionOrCreate = async (name: string) => {
+    let c: Connection;
     try {
-        connection = getConnection("zbor");
-    } catch(err) {
-        connection = await createConnection("zbor");
+        c = getConnection(name);
+    } catch (err) {
+        c = await createConnection(name);
     }
+    return c;
+}
 
-    try {
-        network = getConnection("network");
-    } catch(err) {
-        network = await createConnection("network");
-    }
+export const connect = async () => {
+    connection = await getConnectionOrCreate("zbor");
+    network = await getConnectionOrCreate("network");
 
     return connection;
 }
@@ -167,6 +169,29 @@ export const query = async (req, res) => {
 
             res.send(result);
             break;
+        }
+        case "get-guest-user": {
+            res.send({
+                ID: req.guest.ID
+            });
+        }
+        case "get-guest-stats": {
+            let object = new WordGuestStats();
+            object.Guest_ID = req.guest.ID;
+
+            let vars = await connection
+                .getRepository(WordGuestStats)
+                .find(object)
+            
+            let result = { };
+
+            if (vars.length !== 0) {
+                for (let v of vars) {
+                    result[v.Variable] = v.Data;
+                }
+            }
+
+            res.send(result);
         }
         default: {
             res.send({ status: "error" });
