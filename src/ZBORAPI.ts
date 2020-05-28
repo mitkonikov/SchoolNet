@@ -12,8 +12,11 @@ import { StatisticsIP } from "./entity/network/StatisticsIP";
 import { findOrCreate } from "./common";
 import { WordGuestStats } from "./entity/ZBOR/WordGuestStats";
 
+import Dynamo from "./Dynamo";
+
 let connection: Connection;
 let network: Connection;
+let GuestDynamo: Dynamo;
 
 let switchCallback = (key) => {
     let repository: any;
@@ -54,6 +57,8 @@ export const connect = async () => {
     connection = await getConnectionOrCreate("zbor");
     network = await getConnectionOrCreate("network");
 
+    GuestDynamo = new Dynamo(connection, WordGuestStats);
+
     return connection;
 }
 
@@ -90,6 +95,7 @@ export const query = async (req, res) => {
                         console.log(err);
                     });
 
+                await GuestDynamo.incVariableOrCreate(req.guest.ID, "wordConnections");
                 res.send({ status: "success" });
             } else {
                 res.send({ status: "failed" });
@@ -114,6 +120,7 @@ export const query = async (req, res) => {
                         console.log(err);
                     });
 
+                await GuestDynamo.incVariableOrCreate(req.guest.ID, "contacts");
                 res.send({ status: "success" });
             } else {
                 res.send({ status: "error", message: "limit" });
@@ -142,6 +149,7 @@ export const query = async (req, res) => {
                         .insert(contribution);
 
                     if (response.raw.affectedRows == 1) {
+                        await GuestDynamo.incVariableOrCreate(req.guest.ID, "wordContributions");
                         res.send({ status: "success" });
                         success = true;
                     }
@@ -174,10 +182,11 @@ export const query = async (req, res) => {
             res.send({
                 ID: req.guest.ID
             });
+            break;
         }
         case "get-guest-stats": {
             let object = new WordGuestStats();
-            object.Guest_ID = req.guest.ID;
+            object.User_ID = req.guest.ID;
 
             let vars = await connection
                 .getRepository(WordGuestStats)
@@ -192,6 +201,17 @@ export const query = async (req, res) => {
             }
 
             res.send(result);
+            break;
+        }
+        case "test-get-guest-stats": {
+            let result = await GuestDynamo.getVariableOrCreate(req.guest.ID, "testvar", "0");
+            res.send(result);
+            break;
+        }
+        case "test-set-guest-stats": {
+            let result = await GuestDynamo.setVariable(req.guest.ID, "testvar", req.body.testVar);
+            res.send(result);
+            break;
         }
         default: {
             res.send({ status: "error" });

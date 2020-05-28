@@ -1,14 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity } from "typeorm";
 
 @Entity({ name: "tbl_guests_stats" })
-@Index(["Guest_ID", "Variable"])
+@Index(["User_ID", "Variable"])
 export class WordGuestStats extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     ID: number;
 
     @Column()
-    Guest_ID: number;
+    User_ID: number;
 
     @Column()
     Variable: string;
