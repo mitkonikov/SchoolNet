@@ -9,6 +9,11 @@
     height: stretch;
 }
 
+.my-stats-container {
+    margin-top: 0.3em;
+    font-weight: 300;
+}
+
 @media only screen and (max-width: 325px) {
     .statistics-card {
         display: none;

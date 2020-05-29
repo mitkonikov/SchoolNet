@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 
-import { Card, CardContent } from "@material-ui/core";
+import { Card, CardContent, ButtonBase } from "@material-ui/core";
 
 import "./../styles/Statistics.css";
 import { queryFetch } from "../js/common";
 
 type State = {
     clientIp: string;
+    isStats: boolean;
+    stats?: any;
 };
 
 export default class Statistics extends Component {
@@ -17,15 +19,20 @@ export default class Statistics extends Component {
 
         this.state = {
             clientIp: "",
+            isStats: false
         };
     }
 
     componentDidMount() {
         queryFetch({
-            command: "get-ip-stats"
+            command: "get-guest-stats"
         }).then(data => {
             console.log(data);
-            this.setState(data);
+            this.setState({
+                stats: data.stats,
+                clientIp: data.clientIp,
+                isStats: true
+            });
         });
     }
 
@@ -33,20 +40,31 @@ export default class Statistics extends Component {
         return (
             <div className="card-container statistics-card">
                 <Card>
-                    <CardContent>
-                        <div className="flex-center-v">
-                            <div>
-                                <span style={{
-                                    fontWeight: 300
-                                }}>Корисник</span> Гостин ☕
-                                {this.state.clientIp && (
-                                    <div className="ip-container">
-                                        {this.state.clientIp}
-                                    </div>
-                                )}
+                    <ButtonBase onClick={() => {
+                        if (this.state.isStats) {
+                            
+                        }
+                    }}>
+                        <CardContent>
+                            <div className="flex-center-v">
+                                <div>
+                                    {false && (<span style={{
+                                        fontWeight: 300
+                                    }}>Корисник</span>)} Гостин ☕
+                                    {this.state.clientIp && (
+                                        <div className="ip-container">
+                                            {this.state.clientIp}
+                                        </div>
+                                    )}
+                                    {this.state.isStats && (
+                                        <div className="my-stats-container">
+                                            моите статистики
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    </CardContent>
+                        </CardContent>
+                    </ButtonBase>
                 </Card>
             </div>
         );

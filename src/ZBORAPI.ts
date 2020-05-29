@@ -200,6 +200,7 @@ export const query = async (req, res) => {
                 }
             }
 
+            result["clientIp"] = req.clientIp;
             res.send(result);
             break;
         }
