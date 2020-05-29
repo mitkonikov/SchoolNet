@@ -34,7 +34,6 @@ let Initialize = (app, network, req) => {
 
     if (process.env.NODE_ENV === "production") {
         cookieSettings.domain = '.' + process.env.DOMAIN;
-        cookieSettings.secure = true;
     }
 
     app.use(sess({
