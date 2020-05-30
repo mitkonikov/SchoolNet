@@ -200,8 +200,12 @@ export const query = async (req, res) => {
                 }
             }
 
-            result["clientIp"] = req.clientIp;
-            res.send(result);
+            let response = {
+                clientIp: req.clientIp,
+                stats: result
+            }
+
+            res.send(response);
             break;
         }
         case "test-get-guest-stats": {

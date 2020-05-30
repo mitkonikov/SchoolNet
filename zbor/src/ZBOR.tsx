@@ -24,11 +24,13 @@ const trackingId = "UA-70623448-2";
 
 type State = {
     currentPage: number;
+    stats?: any;
 };
 
 class ZBOR extends Component {
     state: State;
     history: any;
+    statsRef: React.RefObject<Statistics>;
 
     constructor(props: any) {
         super(props);
@@ -39,6 +41,9 @@ class ZBOR extends Component {
 
         this.history = createBrowserHistory();
         this.setPage = this.setPage.bind(this);
+        this.reloadStats = this.reloadStats.bind(this);
+        this.getStats = this.getStats.bind(this);
+        this.statsRef = React.createRef();
     }
 
     componentDidMount() {
@@ -46,10 +51,18 @@ class ZBOR extends Component {
         ReactGA.pageview("/zbor");
     }
 
-    setPage(newPage) {
+    setPage(newPage: number) {
         this.setState({
             currentPage: newPage
         });
+    }
+
+    reloadStats() {
+        this.statsRef.current.getGuestStats();
+    }
+
+    getStats() {
+        return this.statsRef.current.getStats();
     }
 
     render() {
@@ -79,13 +92,16 @@ class ZBOR extends Component {
                                                     className="card-flex"
                                                     id="small-stats-container"
                                                 >
-                                                    <Statistics />
+                                                    <Statistics ref={this.statsRef}/>
                                                 </div>
                                             </div>
 
-                                            <Search />
+                                            <Search reloadStats={this.reloadStats}/>
 
-                                            <Connect />
+                                            <Connect 
+                                                reloadStats={this.reloadStats} 
+                                                stats={this.getStats}
+                                            />
 
                                             <Artificial />
                                         </Route>

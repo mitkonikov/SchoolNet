@@ -24,12 +24,19 @@ type State = {
     wordLike: string;
     wordLikeRAW: string;
     fire: number;
+    connections: number;
 };
+
+type Props = {
+    reloadStats: Function;
+    stats: Function;
+}
 
 export default class Connect extends Component {
     state: State;
+    props: Props;
 
-    constructor(props: any) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -44,6 +51,7 @@ export default class Connect extends Component {
             wordLike: "",
             wordLikeRAW: "",
             fire: 0,
+            connections: 0
         };
 
         this.onSearch = this.onSearch.bind(this);
@@ -52,8 +60,17 @@ export default class Connect extends Component {
 
     componentDidMount() {
         this.onSearch();
+        setTimeout(() => {
+            let stats = this.props.stats();
+            if (typeof stats !== "undefined") {
+                this.setState({
+                    connections: parseInt(stats.wordConnections)
+                });
+            }
+        }, 1000);
     }
 
+    /** Gets a random word from the words table */
     onSearch() {
         lightFetch({
             word: {
@@ -71,6 +88,7 @@ export default class Connect extends Component {
         });
     }
 
+    /** Gets a word similar to the users input */
     onSearchLike(wordLike: string) {
         lightFetch({
             word: {
@@ -84,6 +102,7 @@ export default class Connect extends Component {
         });
     }
 
+    /** Connects the two words */
     onConnect() {
         if (this.state.wordTo.ID === 0) {
             this.setState({
@@ -104,7 +123,10 @@ export default class Connect extends Component {
             },
         }).then((res) => {
             if (res.status && res.status === "success") {
-                this.setState({ fire: this.state.fire + 1 });
+                this.setState({ 
+                    fire: this.state.fire + 1, 
+                    connections: this.state.connections + 1
+                });
             }
 
             this.setState({
@@ -116,6 +138,7 @@ export default class Connect extends Component {
                 wordLikeRAW: ""
             });
             this.onSearch();
+            this.props.reloadStats();
         });
     }
 
@@ -188,6 +211,21 @@ export default class Connect extends Component {
                                                 </div>
                                             </span>
                                         );
+                                    } 
+                                    
+                                    if (this.state.connections > 0) {
+                                        return (
+                                            <span
+                                                style={{
+                                                    display: "inline-block",
+                                                    marginRight: "0.5em",
+                                                }}>
+                                                ✔️{" "}
+                                                <div className="connect-number">
+                                                    {this.state.connections}
+                                                </div>
+                                            </span>
+                                        )
                                     } else {
                                         return (
                                             <div

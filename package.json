@@ -5,6 +5,7 @@
   "main": "SchoolNet.js",
   "dependencies": {
     "@material/ripple": "^4.0.0",
+    "@sweetalert/with-react": "^0.1.1",
     "blocked-at": "^1.2.0",
     "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",

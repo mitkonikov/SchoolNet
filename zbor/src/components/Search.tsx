@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Card, CardContent } from "@material-ui/core";
+import { Card, CardContent, ComponentsPropsList } from "@material-ui/core";
 import { TextField, IconButton } from "@material-ui/core";
 import { Grow, ListItem, ListItemText, Collapse } from "@material-ui/core";
 
@@ -17,8 +17,13 @@ type State = {
     searching: boolean;
 };
 
+type Props = {
+    reloadStats: Function;
+}
+
 export default class Search extends Component {
     state: State;
+    props: Props;
 
     constructor(props: any) {
         super(props);
@@ -69,6 +74,8 @@ export default class Search extends Component {
                             text: "Благодариме на придонесот!",
                             icon: "success"
                         });
+                        
+                        this.props.reloadStats();
                     } else {
                         swal.close();
                     }
