@@ -10,6 +10,7 @@ import HelpIcon from "@material-ui/icons/Help";
 import swal from "sweetalert";
 
 import { lightFetch, getRandomInt, queryFetch } from "../js/common";
+import { cyrillic, isLatin } from "../js/latin-to-cyrillic";
 
 import "./../styles/Connect.css";
 
@@ -90,10 +91,17 @@ export default class Connect extends Component {
 
     /** Gets a word similar to the users input */
     onSearchLike(wordLike: string) {
+        let converted = "";
+        if (isLatin(wordLike)) {
+            converted = cyrillic(wordLike);
+        } else {
+            converted = wordLike;
+        }
+
         lightFetch({
             word: {
                 select: ["ID", "Word"],
-                where: { Word: wordLike + "%", limit: 1 },
+                where: { Word: converted + "%", limit: 1 },
             },
         }).then((res) => {
             let wordToAPI = res.word[0];
@@ -199,12 +207,7 @@ export default class Connect extends Component {
                                 {(() => {
                                     if (this.state.fire > 0) {
                                         return (
-                                            <span
-                                                style={{
-                                                    display: "inline-block",
-                                                    marginRight: "0.5em",
-                                                }}
-                                            >
+                                            <span className="small-info-spans">
                                                 🔥{" "}
                                                 <div className="fire-number">
                                                     {this.state.fire}
@@ -215,14 +218,10 @@ export default class Connect extends Component {
                                     
                                     if (this.state.connections > 0) {
                                         return (
-                                            <span
-                                                style={{
-                                                    display: "inline-block",
-                                                    marginRight: "0.5em",
-                                                }}>
-                                                ✔️{" "}
+                                            <span className="small-info-spans">
                                                 <div className="connect-number">
-                                                    {this.state.connections}
+                                                    <CheckIcon/>
+                                                    {" " + this.state.connections}
                                                 </div>
                                             </span>
                                         )

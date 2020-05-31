@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Card, CardContent, ComponentsPropsList } from "@material-ui/core";
+import { Card, CardContent } from "@material-ui/core";
 import { TextField, IconButton } from "@material-ui/core";
 import { Grow, ListItem, ListItemText, Collapse } from "@material-ui/core";
 
@@ -10,6 +10,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import swal from "sweetalert";
 
 import { lightFetch, queryFetch } from "../js/common";
+import { cyrillic, isLatin } from "../js/latin-to-cyrillic";
 
 type State = {
     word: Array<any>;
@@ -39,10 +40,17 @@ export default class Search extends Component {
     }
 
     onSearch(value: string) {
+        let converted = "";
+        if (isLatin(value)) {
+            converted = cyrillic(value);
+        } else {
+            converted = value;
+        }
+        
         lightFetch({
             word: {
                 select: ["ID", "Word", "Wiki_Frq"],
-                where: { Word: "%" + value + "%", limit: 5 },
+                where: { Word: "%" + converted + "%", limit: 5 },
             },
         }).then((res) => {
             this.setState({

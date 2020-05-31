@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { Card, CardContent, ButtonBase } from "@material-ui/core";
-import { ListItem, ListItemText } from "@material-ui/core";
+import { ListItem, ListItemText, Typography } from "@material-ui/core";
 
 import swal from "@sweetalert/with-react";
 
@@ -34,6 +34,7 @@ export default class Statistics extends Component {
         this.getGuestStats();
     }
 
+    /** Gets the guest statistics from ZBOR API */
     getGuestStats() {
         queryFetch({
             command: "get-guest-stats",
@@ -55,6 +56,7 @@ export default class Statistics extends Component {
         });
     }
 
+    /** Function used from the parent object to retrieve the statistics */
     getStats() {
         return this.state.stats;
     }
@@ -83,7 +85,9 @@ export default class Statistics extends Component {
 
             list.push(
                 <ListItem button dense>
-                    <ListItemText primary={name} />
+                    <ListItemText primary={
+                        <Typography style={{ color: 'black' }}>{name}</Typography>
+                    } />
                     {this.state.stats[stat]}
                 </ListItem>
             );
