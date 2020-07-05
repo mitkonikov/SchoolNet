@@ -46,20 +46,20 @@
   "devDependencies": {
     "@babel/core": "^7.7.5",
     "@babel/preset-env": "^7.7.6",
+    "@types/node": "^8.0.29",
     "autoprefixer": "^9.7.3",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.1",
     "extract-loader": "^3.1.0",
     "file-loader": "^5.0.2",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^8.0.0",
+    "ts-node": "3.3.0",
+    "typescript": "3.3.3333",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.3",
-    "ts-node": "3.3.0",
-    "@types/node": "^8.0.29",
-    "typescript": "3.3.3333"
+    "webpack-dev-server": "^3.11.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
