@@ -3,6 +3,8 @@ const readline = require('readline');
 const path = require('path');
 const { spawn } = require('child_process');
 
+const UNDER_SCHOOLNET = true;
+
 let dirs = ['src', 'server', 'public'];
 let includeExt = ['js', 'html', 'config', 'ts', 'jsx', 'tsx', 'css', 'json', 'txt', 'md'];
 
@@ -197,20 +199,23 @@ const main = async () => {
     await exe('npx create-react-app .', options);
     deleteFile("./" + short_name + "/src/" + "logo.svg");
     
-    console.log("");
-    console.log('\x1b[36m%s\x1b[0m', "-------------------------------");
-    console.log('\x1b[36m%s\x1b[0m', "Installing Material UI...");
-    console.log('\x1b[36m%s\x1b[0m', "-------------------------------");
-    await exe('npm install @material-ui/core', options);
+    if (!UNDER_SCHOOLNET) {
+        console.log("");
+        console.log('\x1b[36m%s\x1b[0m', "-------------------------------");
+        console.log('\x1b[36m%s\x1b[0m', "Installing Material UI...");
+        console.log('\x1b[36m%s\x1b[0m', "-------------------------------");
+        await exe('npm install @material-ui/core', options);
 
-    console.log('\x1b[36m%s\x1b[0m', "Installing Material UI - Icons...");
-    await exe('npm install @material-ui/icons', options);
-    console.log('\x1b[36m%s\x1b[0m', "Installing Material UI - Lab...");
-    await exe('npm install @material-ui/lab', options);
-    console.log('\x1b[36m%s\x1b[0m', "Installing Sweetalert 2...");
-    await exe('npm install sweetalert', options);
-    
-    console.log('\x1b[36m%s\x1b[0m', "---------------------------------");
+        console.log('\x1b[36m%s\x1b[0m', "Installing Material UI - Icons...");
+        await exe('npm install @material-ui/icons', options);
+        console.log('\x1b[36m%s\x1b[0m', "Installing Material UI - Lab...");
+        await exe('npm install @material-ui/lab', options);
+        console.log('\x1b[36m%s\x1b[0m', "Installing Sweetalert 2...");
+        await exe('npm install sweetalert', options);
+        
+        console.log('\x1b[36m%s\x1b[0m', "---------------------------------");
+    }
+
     await question("Press any key to clean the app...");
 
     RecursiveSync(__dirname + '/cleaner', __dirname + '/' + short_name, copyFunctionCallback, obj);

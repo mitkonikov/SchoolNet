@@ -265,6 +265,7 @@ Here are people that contributed to the building of this project. We can't thank
 
 - Switch the SchoolNet Dashboard to React.js
 - Implement Material Design everywhere
+- Dependency Clean up
 - Email server
   - Verification on sign-in
   - Forgot the password
