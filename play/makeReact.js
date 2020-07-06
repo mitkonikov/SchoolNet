@@ -1,12 +1,31 @@
+const LINK_TO_NODE_DEPENDENCIES = `${__dirname}/cleaner-link`;
+
 const fs = require('fs');
 const readline = require('readline');
 const path = require('path');
 const { spawn } = require('child_process');
 
-const UNDER_SCHOOLNET = true;
-
 let dirs = ['src', 'server', 'public'];
 let includeExt = ['js', 'html', 'config', 'ts', 'jsx', 'tsx', 'css', 'json', 'txt', 'md'];
+
+// process all the arguments given when starting this module
+let argsRaw = process.argv;
+let args = {
+    verbose: false,
+    schoolnet: true,
+    skipcheck: false
+};
+
+for (let i = 0; i < argsRaw.length; ++i) {
+    if (argsRaw[i].startsWith('-')) {
+        let value = argsRaw[i+1];
+        if (argsRaw[i+1] == 'true') value = true;
+        else if (argsRaw[i+1] == 'false') value = false;
+
+        args[argsRaw[i].toLowerCase().replace('-', '')] = value;
+        i++;
+    }
+}
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -21,12 +40,17 @@ const question = (question) => {
     });
 }
 
+/**
+ * Execute a command while printing the output of it
+ * @param {String} command The command to execute
+ * @param {Object} args Node JS Spawn object Arguments
+ */
 const exe = (command, args) => {
     return new Promise((resolve, reject) => {
         let process = spawn(command, args);
 
         process.stdout.on("data", data => {
-            console.log(data.toString());
+            if (args.verbose) console.log(data.toString());
         });
 
         process.on("error", (err) => {
@@ -40,6 +64,12 @@ const exe = (command, args) => {
     });
 }
 
+const createEnvFile = (obj) => {
+    if (args.skipcheck) {
+        fs.writeFileSync(`${__dirname}/${obj.short_name}/.env`, 'SKIP_PREFLIGHT_CHECK=true');
+    }
+}
+
 const deleteFile = (path) => {
     try {
         fs.unlinkSync(path);
@@ -49,6 +79,8 @@ const deleteFile = (path) => {
 }
 
 let copyFunctionCallback = (source, target, obj) => {
+    if (obj.createReactApp == 'cra' && source.includes('package.json')) return;
+
     if (fs.existsSync(path.dirname(target))) {
         fs.copyFileSync(source, target);
     } else {
@@ -78,7 +110,9 @@ let inFileReplace = (source, target, obj) => {
             let parsed = JSON.parse(read);
             parsed.homepage = '/' + obj.short_name;
             fs.writeFileSync(source, JSON.stringify(parsed));
-            return;
+            
+            if (obj.createReactApp == 'cra')
+                return;
         }
     }
 
@@ -135,18 +169,57 @@ const getShortName = async () => {
     return short_name;
 }
 
+const installOrLink = async () => {
+    if (!(/^win/.test(process.platform))) {
+        // TODO: Explain this when using verbose
+        // This script doesn't support symbolic linking on platforms other than Windows.
+        return 'cra';
+    }
+
+    console.log("There are two ways to install Clean React.");
+    console.log("");
+    console.log("The first is by using 'create-react-app' which will install all the dependencies in the folder.");
+    console.log("And the second is by using a link to a node_modules folder which already contains all the dependencies.");
+    console.log("The second option is used if there will be multiple react apps which all have the same dependencies.");
+    console.log("This avoids duplication of the same dependencies and cuts down massivly on disk usage.")
+    console.log("");
+    let createReactApp = await question("Do you want to install with create-react-app or Link the dependencies [CRA/LINK]: ");
+    createReactApp = createReactApp.toLowerCase();
+
+    if (createReactApp == 'cra') {
+        console.log('\x1b[36m%s\x1b[0m', "This script installs react using create-react-app, ");
+        console.log('\x1b[36m%s\x1b[0m', "but also cleans it up and installs Material-UI");
+    } else if (createReactApp == 'link') {
+        console.log('\x1b[36m%s\x1b[0m', "It won't install any dependencies, it will just link them. ");
+    } else {
+        return installOrLink();
+    }
+
+    return createReactApp;
+}
+
 const delay = (milliseconds) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => { resolve() }, milliseconds);
     })
 }
 
+/**
+ * Create a symbolic link (NEEDS ADMINISTRATOR PRIVILEGES)
+ * @param {String} location Where would this link be created?
+ * @param {String} target To what does it point?
+ */
+const makeLink = async (location, target) => {
+    await exe(`powershell \"Start-Process powershell -ArgumentList 'New-Item -Path ${location}/node_modules -ItemType SymbolicLink -Value ${target}/node_modules' -Verb RunAs\"`, {
+        shell: true
+    });
+}
+
 const main = async () => {
     let npm = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
     let npx = /^win/.test(process.platform) ? 'npx.cmd' : 'npx';
 
-    console.log('\x1b[36m%s\x1b[0m', "This script installs react using create-react-app, ");
-    console.log('\x1b[36m%s\x1b[0m', "but also cleans it up and installs Material-UI");
+    let createReactApp = await installOrLink();
 
     console.log("");
     console.log("We are building full documentation about it on GitHub.");
@@ -179,27 +252,32 @@ const main = async () => {
         text_color,
         theme_type,
         description,
-        author
+        author,
+        createReactApp
     }
 
-    console.log("Given parameters: ");
-    console.log(obj);
+    if (args.verbose) {
+        console.log("Given parameters: ");
+        console.log(obj);
+    }
     
     console.log('\x1b[36m%s\x1b[0m', "Building your app: " + short_name);
 
     fs.mkdirSync(__dirname + '/' + short_name);
     let options = { cwd: `./${short_name}/`, shell: true };
 
-    await delay(1000);
+    await delay(10);
 
-    console.log("");
-    console.log("-------------------------------");
-    console.log('\x1b[36m%s\x1b[0m', "Creating React app...");
-    console.log("-------------------------------");
-    await exe('npx create-react-app .', options);
-    deleteFile("./" + short_name + "/src/" + "logo.svg");
-    
-    if (!UNDER_SCHOOLNET) {
+    if (createReactApp == 'cra') {
+        console.log("");
+        console.log("-------------------------------");
+        console.log('\x1b[36m%s\x1b[0m', "Creating React app...");
+        console.log("-------------------------------");
+        await exe('npx create-react-app .', options);
+        deleteFile("./" + short_name + "/src/" + "logo.svg");
+    }
+
+    if (!args.schoolnet) {
         console.log("");
         console.log('\x1b[36m%s\x1b[0m', "-------------------------------");
         console.log('\x1b[36m%s\x1b[0m', "Installing Material UI...");
@@ -226,10 +304,32 @@ const main = async () => {
                     inFileReplace, obj
                 );
 
+    if (createReactApp == 'link') {
+        // Install the main dependencies if they are not installed
+
+        if (!fs.existsSync(`${__dirname}/cleaner-link/node_modules`)) {
+            await exe('npm install .', {
+                cwd: './cleaner-link/',
+                shell: true
+            });
+        }
+
+        await question("It may require administrative privileges to make the symbolic link. Press any key to continue.");
+        let location = `${__dirname}/${short_name}`;
+        let target = LINK_TO_NODE_DEPENDENCIES;
+
+        await makeLink(location, target);
+        createEnvFile(obj);
+    }
+
     console.log("");
     console.log("");
     console.log("");
-    console.log('\x1b[36m%s\x1b[0m', "cd " + short_name + " and start developing!");
+    console.log('\x1b[36m%s\x1b[0m', " > cd " + short_name + " and start developing!");
+    console.log("");
+    console.log("");
+
+    process.exit();
 }
 
 main();

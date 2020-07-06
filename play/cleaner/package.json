@@ -1,11 +1,11 @@
 {
-  "name": "rightspot",
+  "name": "{{short_name}}",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     
   },
-  "homepage": "/rightspot",
+  "homepage": "/{{short_name}}",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

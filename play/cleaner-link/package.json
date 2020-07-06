@@ -1,0 +1,14 @@
+{
+  "name": "cleaner-link",
+  "version": "1.0.0",
+  "description": "This project contains only react-scripts to avoid duplication in other react apps",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react-scripts": "^3.4.1"
+  }
+}
