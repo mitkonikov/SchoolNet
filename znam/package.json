@@ -5,8 +5,7 @@
   "dependencies": {
     "react-bodymovin": "^2.0.0",
     "react-ga": "^2.7.0",
-    "react-latex": "^1.6.0",
-    "react-scripts": "3.4.0"
+    "react-latex": "^1.6.0"
   },
   "scripts": {
     "start": "react-scripts start",

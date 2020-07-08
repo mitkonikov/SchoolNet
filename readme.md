@@ -123,6 +123,9 @@ $ node SchoolNet.js
 
 You would also need the missing libraries from the `/client/static/js` and the `/client/static/css` folder. Because we don't have the rights to distribute these dependencies in our repository, you would need to download them yourself.
 
+We are currently implementing symbolic links to avoid dependency duplications. This is going to be in the next commit.
+We deleted the `react-scripts` dependency from the React Apps. We are only going to have it in the `reactframe` app.
+
 ```
 /client/static/css/jquery.fullPage.css
 
