@@ -79,30 +79,7 @@ If you already have the GitHub setup for Desktop and Visual Studio Code, just cl
 
 and have a GUI where you can clone the repository and watch it for further changes. With a press of a button, GitHub Desktop can connect it to Visual Studio Code.
 
-**On 32bit machine**, you can't download GitHub Desktop thus requiring you to clone the repository from the Git Bash. Just bear with us, it takes couple of minutes.
-
-  - Step 1: Login into Github and fork SchoolNet
-  - Step 2: Run Git Bash
-
-The steps we are going to describe next are taken from [this GitHub help page](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh).
-
-  - Step 3: Generate a SSH Key pair with this command in your Git Bash: 
-  `ssh-keygen -t rsa -b 4096 -C "your@email.com"`
-    - `Enter file in which to save the key: ` - Here just press ENTER
-    - Enter a specific keyphrase, remember it, this will be your password
-    - You have the key
-  - Step 4: Run this command: `clip < ~/.ssh/id_rsa.pub` - This will copy the key to keyboard
-  - Step 5: Go in your GitHub settings
-  - Step 6: Go in the SSH and GPG Keys
-  - Step 7: Create a new SSH Key, name it whatever, and paste the key we just copied
-
-That's it! Now you are authenticated and ready to clone the repository!
-> We recommend cloning the repository directly on the C drive, hence our first command:
-
-```sh
-$ cd "C:/"
-$ git clone git@github.com:mitkonikov/SchoolNet.git
-```
+**On 32bit machine**, READ [HERE](#installing-git-bash-on-32-bit-machine)
 
 ##### IN WORSE CASE SCENARIO: <br>
 If you really don't want to be directly connected to GitHub and lose the ability to pull request any changes, you can download the repository as a .ZIP file.
@@ -114,17 +91,20 @@ If you really don't want to be directly connected to GitHub and lose the ability
 SchoolNet requires [Node.js](https://nodejs.org/) v10.15.0 to run.
 
 Install the dependencies from the package file and start the server.
+`config.js` will require administrator privileges in order to create the symbolic links.
 
 ```sh
 $ cd schoolnet
-$ npm install .
+$ node config.js
 $ node SchoolNet.js
 ```
 
-You would also need the missing libraries from the `/client/static/js` and the `/client/static/css` folder. Because we don't have the rights to distribute these dependencies in our repository, you would need to download them yourself.
+We are implemented symbolic links to avoid dependency duplications. This is done by the `config.js`.
+Now only works for Windows, but in the future we are planning a Linux support.
+If you are using Linux, you need to download the `react-scripts` dependency in each React app or create a link to it.
+Read more in the `config.js` file.
 
-We are currently implementing symbolic links to avoid dependency duplications. This is going to be in the next commit.
-We deleted the `react-scripts` dependency from the React Apps. We are only going to have it in the `reactframe` app.
+You would also need the missing libraries from the `/client/static/js` and the `/client/static/css` folder. Because we don't have the rights to distribute these dependencies in our repository, you would need to download them yourself.
 
 ```
 /client/static/css/jquery.fullPage.css
@@ -289,6 +269,37 @@ Here are people that contributed to the building of this project. We can't thank
     even if the block contains only one instruction
 - Implement the Google 6.2.5 syntex rule:
   - Constant names are CONSTANT_CASED
+
+### Complications
+
+#### Installing Git Bash on 32 bit machine
+
+On 32 bit machine, you can't download GitHub Desktop thus requiring you to clone the repository from the Git Bash. Just bear with us, it takes couple of minutes.
+
+  - Step 1: Login into Github and fork SchoolNet
+  - Step 2: Run Git Bash
+
+The steps we are going to describe next are taken from [this GitHub help page](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh).
+
+  - Step 3: Generate a SSH Key pair with this command in your Git Bash: 
+  `ssh-keygen -t rsa -b 4096 -C "your@email.com"`
+    - `Enter file in which to save the key: ` - Here just press ENTER
+    - Enter a specific keyphrase, remember it, this will be your password
+    - You have the key
+  - Step 4: Run this command: `clip < ~/.ssh/id_rsa.pub` - This will copy the key to keyboard
+  - Step 5: Go in your GitHub settings
+  - Step 6: Go in the SSH and GPG Keys
+  - Step 7: Create a new SSH Key, name it whatever, and paste the key we just copied
+
+That's it! Now you are authenticated and ready to clone the repository!
+> We recommend cloning the repository directly on the C drive, hence our first command:
+
+```sh
+$ cd "C:/"
+$ git clone git@github.com:mitkonikov/SchoolNet.git
+```
+
+
 
 License
 ----
