@@ -5,6 +5,10 @@
 // Command: key of value in the object
 // Data: value of the object
 
+let buildGlobalStats = (key, tableName) => {
+
+}
+
 let getRecord = () => {
 
 }

@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 let express = require('express');
 let app = new express();
 
@@ -6,31 +8,14 @@ let server = require('http').createServer(app);
 const dotenv            = require('dotenv');
 dotenv.config();
 
-const pm2 = require('pm2');
+process.config = {
+    ...process.config,
+    ...JSON.parse(fs.readFileSync(__dirname + '/config.json'))
+}
 
-pm2.connect((err) => {
-    if (err) {
-        console.log("Error connecting to pm2");
-        return;
-    }
-    
-    pm2.list((err, list) => {
-        if (err) {
-            console.log("Internal PM2 Error: ", err);
-            return;
-        }
-
-        let pid = parseInt(process.pid);
-
-        for (let p of list) {
-            if (p.pid == pid) {
-                process.env.PM2_ID = p.pm_id;
-                console.log(`Process [${p.name}] with ${process.pid} PID has PM2 ID of ${p.pm_id}`);
-                break;
-            }
-        }
-    });
-});
+if (process.config.usePM2) {
+    const pm2setup = require('./server/pm2setup');
+}
 
 // EXPRESS THINGS
 const requestIp = require('request-ip');
@@ -42,11 +27,6 @@ app.use(expressSanitizer());
 let ErrorHandler        = require("./server/ErrorHandler");
 
 let databases           = require('./server/dbConnection');
-
-let ZBORAPI             = require('./build/ZBORAPI.js');
-let PILOTAPI            = require('./build/PILOTAPI.js');
-ZBORAPI.connect();
-PILOTAPI.connect();
 
 const uuidv4 = require('uuid/v4');
 
@@ -128,18 +108,7 @@ if (parseInt(process.env.READY) == 1) {
     });
 }
 
-// REDIRECTING
-app.get('/favicon.ico', function(req, res) {
-    res.sendFile(__dirname + '/favicon.ico');
-});
-
-app.get('/robots.txt', function(req, res) {
-    res.sendFile(__dirname + '/robots.txt');
-});
-
-app.get('/client/manifest.json', function(req, res) {
-    res.sendFile(__dirname + '/client/manifest.json');
-});
+const redirects = require("./server/redirects")(app);
 
 let QueryModule = require("./server/query");
 QueryModule.Initialize(databaseController, gameLogic);
@@ -155,38 +124,7 @@ DashboardModule = DashboardModule.Initialize(databaseController, gameLogic)
 let QueryDashboard = DashboardModule.Query;
 app.post('/client/dashboard/query', QueryDashboard.Query);
 
-app.post('/client/dashboard/update', function(req, res) {
-    res.send("under construction");
-});
-
-app.post('/zbor/api/light', ZBORAPI.light);
-app.post('/zbor/api/query', ZBORAPI.query);
-app.post('/zbor/api/update', ZBORAPI.update);
-app.use('/zbor', express.static(__dirname + '/zbor/build'));
-
-app.post('/pilot/api/light', (req, res) => {
-    if (req.isAuthenticated() && req.user.Role === 4) {
-        PILOTAPI.light(req, res);
-    } else {
-        res.send({ status: "unauth" });
-    }
-});
-
-app.post('/pilot/api/query', (req, res) => {
-    if (req.isAuthenticated() && req.user.Role === 4) {
-        PILOTAPI.query(req, res);
-    } else {
-        res.send({ status: "unauth" });
-    }
-});
-
-app.use('/pilot', (req, res, next) => {
-    if (req.isAuthenticated() && req.user.Role === 4) {
-        express.static(__dirname + '/pilot/build')(req, res, next);
-    } else {
-        res.redirect("/");
-    }
-});
+const apps = require('./server/apps.main')(app);
 
 // this is for another project
 //app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));
