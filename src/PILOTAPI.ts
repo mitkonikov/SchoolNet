@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { createConnection, Connection, getConnection } from "typeorm";
+import { Connection } from "typeorm";
+import { getConnectionOrCreate } from "./database/connection";
 
 import { light as Light } from "lightquery-orm";
 import { Question } from "./entity/ZNAM/Question";
@@ -23,11 +24,7 @@ let switchCallback = (key) => {
 }
 
 export const connect = async () => {
-    try {
-        connection = getConnection("znam")
-    } catch(err) {
-        connection = await createConnection("znam");
-    }
+    connection = await getConnectionOrCreate("znam");
 
     return connection;
 }

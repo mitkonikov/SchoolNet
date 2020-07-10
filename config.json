@@ -1,3 +1,7 @@
 {
-    "usePM2": false
+    "usePM2": false,
+    "guest": false,
+    "gameLogic": false,
+    "databaseController": false,
+    "subApps": false
 }

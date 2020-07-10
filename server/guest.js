@@ -1,4 +1,10 @@
 const Initialize = (API) => {
+    if (typeof API.network == "undefined") {
+        console.log("Database Module not defined. Can't connect to network.");
+        process.exit();
+        return;
+    }
+
     const cookieName = process.env.GUEST_SESSION_NAME;
     const cookieSecret = process.env.GUEST_SESSION_SECRET;
 

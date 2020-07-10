@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { createConnection, Connection, getConnection } from "typeorm";
+import { Connection } from "typeorm";
+import { getConnectionOrCreate } from "./database/connection";
 import { Words } from "./entity/ZBOR/Words";
 import { WordGenerated } from "./entity/ZBOR/WordGenerated";
 import { WordDay } from "./entity/ZBOR/WordDay";
@@ -9,7 +10,7 @@ import { light as Light } from "lightquery-orm";
 import { ContactEntry } from "./entity/ZBOR/ContactEntry";
 import { WordContribution } from "./entity/ZBOR/WordContribution";
 import { StatisticsIP } from "./entity/network/StatisticsIP";
-import { findOrCreate } from "./common";
+import { findOrCreate } from "./database/common";
 import { WordGuestStats } from "./entity/ZBOR/WordGuestStats";
 
 import Dynamo from "./Dynamo";
@@ -41,16 +42,6 @@ let switchCallback = (key) => {
         repository,
         failed
     }
-}
-
-let getConnectionOrCreate = async (name: string) => {
-    let c: Connection;
-    try {
-        c = getConnection(name);
-    } catch (err) {
-        c = await createConnection(name);
-    }
-    return c;
 }
 
 export const connect = async () => {

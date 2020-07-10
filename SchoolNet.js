@@ -30,9 +30,12 @@ let databases           = require('./server/dbConnection');
 
 const uuidv4 = require('uuid/v4');
 
-/** The Main Controller Module for database access */
-let databaseController  = require('./server/databaseController');
-databaseController.Connect(databases, { uuidv4 });
+let databaseController;
+if (process.config.databaseController) {
+    /** The Main Controller Module for database access */
+    databaseController = require('./server/databaseController');
+    databaseController.Connect(databases, { uuidv4 });
+}
 
 let BLOCKED           = require('blocked-at');
 
@@ -45,24 +48,29 @@ let network = databases.network;
 let authenticationModule = require('./server/authentication');
 let auth = authenticationModule.Initialize(app, network, { ErrorHandler: ErrorHandler });
 
-const Guest = require("./server/guest");
-Guest.Initialize({
-    app,
-    uuidv4,
-    network
-});
-
-// Requires the Main Game Logic Module
-let gameLogic = require('./server/play/main.play')
-    .Initialize(
-        server,
-        auth.passportPass,
-        databaseController,
-        network,
+if (process.config.guest) {
+    const Guest = require("./server/guest");
+    Guest.Initialize({
         app,
-        express,
-        { uuidv4 }
-    );
+        uuidv4,
+        network
+    });
+}
+
+let gameLogic;
+if (process.config.gameLogic) {
+    // Requires the Main Game Logic Module
+    gameLogic = require('./server/play/main.play')
+        .Initialize(
+            server,
+            auth.passportPass,
+            databaseController,
+            network,
+            app,
+            express,
+            { uuidv4 }
+        );
+}
 
 let indexRequestsCount = 0;
 let prev_ip = false;
@@ -110,21 +118,25 @@ if (parseInt(process.env.READY) == 1) {
 
 const redirects = require("./server/redirects")(app);
 
-let QueryModule = require("./server/query");
-QueryModule.Initialize(databaseController, gameLogic);
-app.post('/client/query', QueryModule.Query);
+if (gameLogic) {
+    let QueryModule = require("./server/query");
+    QueryModule.Initialize(databaseController, gameLogic);
+    app.post('/client/query', QueryModule.Query);
 
-let UpdateModule = require("./server/update");
-UpdateModule.Initialize(databaseController, gameLogic);
-app.post('/client/update', UpdateModule.Update);
+    let UpdateModule = require("./server/update");
+    UpdateModule.Initialize(databaseController, gameLogic);
+    app.post('/client/update', UpdateModule.Update);
 
-let DashboardModule = require('./server/dashboard.js');
-DashboardModule = DashboardModule.Initialize(databaseController, gameLogic)
+    let DashboardModule = require('./server/dashboard.js');
+    DashboardModule = DashboardModule.Initialize(databaseController, gameLogic);
 
-let QueryDashboard = DashboardModule.Query;
-app.post('/client/dashboard/query', QueryDashboard.Query);
+    let QueryDashboard = DashboardModule.Query;
+    app.post('/client/dashboard/query', QueryDashboard.Query);
+}
 
-const apps = require('./server/apps.main')(app);
+if (process.config.subApps) {
+    const apps = require('./server/apps.main')(app);
+}
 
 // this is for another project
 //app.use('/client/portfolio', express.static(__dirname + '/client/portfolio'));
