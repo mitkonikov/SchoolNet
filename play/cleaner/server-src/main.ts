@@ -1,4 +1,8 @@
-let API = { };
+import { APIType, Collections } from './types';
+
+// GLOBAL Variables
+let API: APIType;
+let db: Collections;
 
 const requirements = {
     modules: [
@@ -10,8 +14,9 @@ const requirements = {
     ]
 }
 
-const initialize = (modules) => {
+const initialize = (modules: APIType) => {
     API = modules;
+    db = API.collections;
 }
 
 const main = (user, info, body) => {

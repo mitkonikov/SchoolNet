@@ -79,6 +79,7 @@ const makeLinksReact = () => {
         let fileInDirectory = path.join(play, file);
         if (fs.lstatSync(fileInDirectory).isDirectory()) {
             makeLink(fileInDirectory, REACT_FRAME);
+            buildApp(fileInDirectory, file);
         }
     }
 
@@ -114,6 +115,14 @@ const runLinkCommands = async () => {
     });
 }
 
+const buildApp = (location, appName) => {
+    console.log("Compiling typescript for " + appName);
+    await exe('tsc', {
+        cwd: location,
+        shell: true
+    });
+}
+
 const main = async () => {
     const options = {
         shell: true
@@ -125,6 +134,7 @@ const main = async () => {
     if (!args.npmskip) {
         await exe("npm install .", options);
         await exe("npm install .", { ...options, cwd: './reactframe'});
+        await exe("npm install typescript -g");
     }
 
     fs.writeFileSync(path.join(__dirname, './reactframe/.env'), "SKIP_PREFLIGHT_CHECK=true");

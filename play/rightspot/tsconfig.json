@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+     "lib": [
+        "es5",
+        "es6",
+        "esnext"
+     ],
+     "target": "es6",
+     "module": "commonjs",
+     "moduleResolution": "node",
+     "rootDir": "./server-src",
+     "outDir": "./server-build",
+     "baseUrl": "./server-build",
+     "removeComments": true,
+     "esModuleInterop": true,
+     "emitDecoratorMetadata": true,
+     "experimentalDecorators": true,
+     "sourceMap": true,
+     "strictPropertyInitialization": false
+  },
+  "include": [
+     "server-src/**/*"
+  ],
+  "exclude": [
+     "./node_modules",
+     "**/*.spec.ts",
+     "./src",
+     "./build",
+     "./server-build"
+ ]
+}

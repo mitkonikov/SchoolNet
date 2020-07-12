@@ -88,6 +88,12 @@ let findJSON = (source, dir) => {
 
     let read = JSON.parse(fs.readFileSync(source));
     let mainModule = path.join(dir, read.backend, "main.js");
+
+    if (!fs.existsSync(mainModule)) {
+        console.log(`The application ${read.short_name} is not built!`);
+        return;
+    }
+
     let url = '/' + read.short_name;
     let gameDir = path.join(
         process.cwd(),

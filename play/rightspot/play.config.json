@@ -4,6 +4,6 @@
     "color": "#45b553",
     "description": "It's the right spot to start developing your own app!",
     "frontend": "./build",
-    "backend": "./server",
+    "backend": "./server-build",
     "author": "Mitko Nikov"
 }

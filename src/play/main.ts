@@ -65,18 +65,10 @@ let requireGame = (name: string, path: string, read: any) => {
     // this is for letting other types of post request to the backend of the app
     let url = '/' + read.short_name + '/query';
     (app as IRouter).post(url, (req, res) => {
-        // TODO...
-        // if (req.isAuthenticated()) {
-        //     res.send(Game.main({
-        //         Guest: false,
-        //         ID: req.user.ID
-        //     }, null, req.body));
-        // } else {
-        //     res.send(Game.main({
-        //         Guest: true,
-        //         ID: req.guest.ID
-        //     }, null, req.body));
-        // }
+        res.send(Game.main({
+            // Guest: false,
+            // ID: req.user.ID
+        }, null, req.body));
     });
 }
 
@@ -97,6 +89,12 @@ let findJSON = (source: string, dir: string) => {
 
     let read = JSON.parse(fs.readFileSync(source).toString());
     let mainModule = path.join(dir, read.backend, "main.js");
+
+    if (!fs.existsSync(mainModule)) {
+        console.log(`The application ${read.short_name} is not built!`);
+        return;
+    }
+
     let url = '/' + read.short_name;
     let gameDir = path.join(
         __dirname,

@@ -4,6 +4,6 @@
     "color": "{{color}}",
     "description": "{{description}}",
     "frontend": "./build",
-    "backend": "./server",
+    "backend": "./server-build",
     "author": "{{author}}"
 }
