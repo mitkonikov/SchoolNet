@@ -2,6 +2,7 @@
 const tatkin_module = require("./tatkin/main.tatkin");
 const fs = require("fs");
 const path = require("path");
+const CLEANER_APPS = ["cleaner", "cleaner-link"];
 
 let app, express, network;
 let gameSocketModule;
@@ -25,11 +26,11 @@ let updateGameKey = (name, key, callback) => {
 
 let requireGame = (name, path, read) => {
     let Game = require(path);
-    let requirements = Game.requirements();
+    let requirements = Game.requirements;
 
     let API = { };
 
-    for (let req of requirements) {
+    for (let req of requirements.modules) {
         switch (req) {
             case "socketio": {
                 API.socketio = gameSocketModule;
@@ -74,8 +75,10 @@ let findJSON = (source, dir) => {
     let fileNameTmp = source.split('\\');
     let fileName = fileNameTmp[fileNameTmp.length - 1].toLowerCase();
 
-    if (fileNameTmp[fileNameTmp.length - 2] == "cleaner") {
-        return;
+    for (let cleaner of CLEANER_APPS) {
+        if (fileNameTmp[fileNameTmp.length - 2] == cleaner) {
+            return;
+        }
     }
 
     // find the play.config.json

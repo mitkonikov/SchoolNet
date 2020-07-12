@@ -1,9 +1,13 @@
 let API = { };
 
-const requirements = () => {
-    return [
+const requirements = {
+    modules: [
         "socketio"
-    ];
+    ],
+    collections: [
+        "active",
+        "archive"
+    ]
 }
 
 const initialize = (modules) => {
