@@ -1,19 +1,19 @@
 import path from 'path';
 import fs from 'fs';
 import { Db } from 'typeorm';
-import { IRouter } from 'express';
+import express, { IRouter } from 'express';
 
 const CLEANER_APPS = ["cleaner", "cleaner-link"];
 let allCollections = [];
 let app, play: Db;
 
 let requireGame = (name: string, path: string, read: any) => {
-    type Requirements = {
+    interface Requirements {
         modules: [string],
         collections: [string]
     }
     
-    type APIType = {
+    interface IAPI {
         modules: any,
         collections: any,
         error: any
@@ -26,7 +26,7 @@ let requireGame = (name: string, path: string, read: any) => {
         modules: {},
         collections: {},
         error: ""
-    } as APIType;
+    } as IAPI;
 
     for (let req of requirements.modules) {
         switch (req) {
@@ -105,7 +105,8 @@ let findJSON = (source: string, dir: string) => {
 
     console.log(`Game ${url} is in ${gameDir}`);
 
-    // app.use(url, express.static(gameDir));
+    // Serve the warm dish
+    app.use(url, express.static(gameDir));
 
     requireGame(read.short_name, mainModule, read);
 }

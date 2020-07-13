@@ -1,7 +1,7 @@
-import { APIType, Collections } from './types';
+import { IAPI, Collections } from './types';
 
 // GLOBAL Variables
-let API: APIType;
+let API: IAPI;
 let db: Collections;
 
 const requirements = {
@@ -14,7 +14,7 @@ const requirements = {
     ]
 }
 
-const initialize = (modules: APIType) => {
+const initialize = (modules: IAPI) => {
     API = modules;
     db = API.collections;
 }
