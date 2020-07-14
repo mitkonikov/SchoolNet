@@ -8,7 +8,7 @@ import path from 'path';
 import fs from 'fs';
 
 import dotenv from 'dotenv';
-import { MongoClient, Any } from "typeorm";
+import { MongoClient } from "typeorm";
 import { initPlay } from "./play/main";
 import { Initialize as Authentication } from './auth/authentication';
 import { Connect as DBController, DB } from './database/controller';
@@ -36,6 +36,11 @@ async function main() {
     process.config = {
         ...process.config,
         ...JSON.parse(fs.readFileSync(path.join(__dirname, '../config.json')).toString())
+    }
+
+    // PM2 Connection  
+    if ((process.config as any).usePM2) {
+        require('./deploy/pm2setup');
     }
 
     // Create the Express and Apollo apps
@@ -70,6 +75,7 @@ async function main() {
     let playDir = path.join(__dirname, '../play');
     initPlay(playDir, app, play);
 
+    // Main page
     app.get('/', (req: IRequest, res) => {
         if (req.isAuthenticated()) {
             databases.db_net.query("SELECT Redirect FROM tbl_students WHERE ID = ?", req.user.ID, (err, rows) => {

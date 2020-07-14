@@ -7,4 +7,16 @@ export let main = (app: express.Express) => {
     app.use('/client/home', express.static(path.join(__dirname, './../../client/home')));
 
     app.use('/client/common', express.static(path.join(__dirname, './../../client/common')));
+
+    app.get('/favicon.ico', function(req, res) {
+        res.sendFile(__dirname + '/favicon.ico');
+    });
+
+    app.get('/robots.txt', function(req, res) {
+        res.sendFile(__dirname + '/robots.txt');
+    });
+
+    app.get('/client/manifest.json', function(req, res) {
+        res.sendFile(__dirname + '/client/manifest.json');
+    });
 }
