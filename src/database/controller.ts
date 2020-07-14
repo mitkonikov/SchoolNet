@@ -12,14 +12,14 @@ import { IDatabases } from '../types';
  */
 let databases: IDatabases;
 
-let Connect = function(databases_connect, API_connect) {
+export const Connect = function(databases_connect: IDatabases) {
     databases = databases_connect;
 }
 
 /**
  * Select a database 
  */
-let DB = function(database) {
+export const DB = function(database: string) {
     let currentDB = databases[database];
 
     let network_table = function(table) {
@@ -492,6 +492,3 @@ let DB = function(database) {
 
     return DBSelector[database];
 }
-
-module.exports.Connect = Connect;
-module.exports.DB = DB;

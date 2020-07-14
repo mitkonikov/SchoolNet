@@ -8,9 +8,13 @@ import path from 'path';
 import fs from 'fs';
 
 import dotenv from 'dotenv';
-import { MongoClient } from "typeorm";
+import { MongoClient, Any } from "typeorm";
 import { initPlay } from "./play/main";
 import { Initialize as Authentication } from './auth/authentication';
+import { Connect as DBController, DB } from './database/controller';
+import { main as SubApps } from './apps/main';
+import { main as StaticExpress } from './apps/static';
+import { IRequest } from "./types";
 
 async function apolloLaunch() {
     // Set up the connection to MySQL
@@ -47,12 +51,39 @@ async function main() {
     // Set up the connection to MySQL
     let databases = await connectMySQL();
 
+    // The Main Controller Module for database access
+    if ((process.config as any).databaseController) {
+        DBController(databases);
+    }
+
     // Passport Authentication
     let auth = Authentication(app, databases.db_net);
+
+    // Applications such as ZNAM and ZBOR
+    if ((process.config as any).subApps) {
+        SubApps(app);
+    }
+
+    StaticExpress(app);
 
     // Require all the games
     let playDir = path.join(__dirname, '../play');
     initPlay(playDir, app, play);
+
+    app.get('/', (req: IRequest, res) => {
+        if (req.isAuthenticated()) {
+            databases.db_net.query("SELECT Redirect FROM tbl_students WHERE ID = ?", req.user.ID, (err, rows) => {
+                if (rows[0].Redirect == "ZNAM") {
+                    res.redirect("https:\/\/znam.schoolnet.mk/");
+                } else {
+                    // res.sendFile(__dirname + '/client/lobby/index.html');
+                    res.redirect("https:\/\/znam.schoolnet.mk/");
+                }
+            });
+        } else {
+            res.sendFile(path.join(__dirname, '../client/index.html'));
+        }
+    });
 
     app.listen(process.env.PORT);
     console.log(`GraphQL server started at port ${process.env.PORT}.`);

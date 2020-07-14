@@ -69,3 +69,10 @@ export const query = async (req, res) => {
 export const update = async (req, res) => {
     res.send({ status: "error" });
 }
+
+export default {
+    connect,
+    light,
+    query,
+    update
+}
