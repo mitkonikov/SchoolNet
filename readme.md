@@ -46,6 +46,7 @@ SchoolNet uses a number of open source projects to work properly:
 * [jQuery](http://jquery.com) - duh
 * [Fullpage.js](https://alvarotrigo.com/fullPage/) - An older open source version used just for the home screen
 * [MySQL](https://www.mysql.com/) - The world's most popular open source database
+* [MongoDB](https://www.mongodb.com/) - The world's most popular NoSQL database
 * [TypeORM](https://typeorm.io/#/) - Object-relational mapping library
 * [XAMPP](https://www.apachefriends.org/download.html) - An Apache friend
 * [Python](http://python.org) - The language in the back-end for our AI
@@ -81,7 +82,7 @@ and have a GUI where you can clone the repository and watch it for further chang
 
 **On 32bit machine**, READ [HERE](#installing-git-bash-on-32-bit-machine)
 
-##### IN WORSE CASE SCENARIO: <br>
+##### IN WORSE CASE SCENARIO:
 If you really don't want to be directly connected to GitHub and lose the ability to pull request any changes, you can download the repository as a .ZIP file.
 
 <br>
@@ -109,17 +110,11 @@ You would also need the missing libraries from the `/client/static/js` and the `
 ```
 /client/static/css/jquery.fullPage.css
 
-/client/static/js/jquery-3.3.1.js
 /client/static/js/jquery.fullpage.js
-/client/static/js/p5.min.js
-/client/static/js/socket.io.js
 /client/static/js/swal.js
 ```
 
 Here are some download links for the libraries:
- - [jquery-3.3.1.js](https://code.jquery.com/jquery-3.3.1.min.js) - Even though it's minified version, just copy the code to a normal `jquery-3.3.1.js` file
- - [p5.min.js](https://p5js.org/download/)
- - [socket.io](https://cdnjs.com/libraries/socket.io)
  - [swal.js](https://cdn.jsdelivr.net/npm/sweetalert2@9)
 
 We are going to modify the way of serving of these files as we implement the Reactframe. But, for now, this remains a pain. *(TODO)*
@@ -129,6 +124,7 @@ We are going to modify the way of serving of these files as we implement the Rea
 You should only see errors about the connection to the databases. Now it's the time to install XAMPP!
 
 * Download XAMPP and install the Apache server and the MySQL database.
+* Download MongoDB with Compass
 
 <br>
 

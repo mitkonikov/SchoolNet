@@ -24,7 +24,14 @@ async function apolloLaunch() {
     });
 
     // APOLLO SERVER and EXPRESS
-    const apolloServer = new ApolloServer({ schema });
+    const apolloServer = new ApolloServer({
+        schema,
+        context: ({ req }) => {
+            // GraphQL Authentication
+            let reqExpress = req as IRequest;
+            return { user: reqExpress.user };
+        }
+    });
 
     return apolloServer;
 }
@@ -92,7 +99,7 @@ async function main() {
     });
 
     app.listen(process.env.PORT);
-    console.log(`GraphQL server started at port ${process.env.PORT}.`);
+    console.log(`[SchoolNet] Server started at port ${process.env.PORT}.`);
 }
 
 (String as any).prototype.multiReplace = (array) => {

@@ -17,6 +17,6 @@ export let main = (app: express.Express) => {
     });
 
     app.get('/client/manifest.json', function(req, res) {
-        res.sendFile(__dirname + '/client/manifest.json');
+        res.sendFile(__dirname + '/manifest.json');
     });
 }
