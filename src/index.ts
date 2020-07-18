@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { getConnectionOrCreate, connectMongo, connectMySQL } from "./database/connection";
 import express from "express";
+import requestIp from 'request-ip';
 import { buildSchema } from 'type-graphql';
 import { UserResolver } from "./resolvers/UserResolver";
 import { ApolloServer } from "apollo-server-express";
@@ -11,6 +12,7 @@ import dotenv from 'dotenv';
 import { MongoClient } from "typeorm";
 import { initPlay } from "./play/main";
 import { Initialize as Authentication } from './auth/authentication';
+import { Guest } from './auth/guest';
 import { Connect as DBController, DB } from './database/controller';
 import { main as SubApps } from './apps/main';
 import { main as StaticExpress } from './apps/static';
@@ -53,6 +55,9 @@ async function main() {
     // Create the Express and Apollo apps
     const app = express();
 
+    // Request Comes with Client's IP
+    app.use(requestIp.mw())
+
     // const apolloServer = await apolloLaunch();
     // apolloServer.applyMiddleware({ app, path: '/graphql' });
     
@@ -70,6 +75,14 @@ async function main() {
 
     // Passport Authentication
     let auth = Authentication(app, databases.db_net);
+
+    // Guest Authentication
+    if ((process.config as any).guest) {
+        Guest({
+            app,
+            network: databases.db_net
+        });
+    }
 
     // Applications such as ZNAM and ZBOR
     if ((process.config as any).subApps) {
@@ -96,6 +109,10 @@ async function main() {
         } else {
             res.sendFile(path.join(__dirname, '../client/index.html'));
         }
+    });
+
+    app.get('*', (req, res) => {
+        res.redirect('/');
     });
 
     app.listen(process.env.PORT);

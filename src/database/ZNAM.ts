@@ -1,23 +1,24 @@
 import { IDatabases } from "../types";
+import { RateLimiterMySQL } from 'rate-limiter-flexible';
 
 let databases;
 let ZNAMDB;
 let rateLimiter, rateLimiterContact;
 
-export const Connect = function(databases_connect: IDatabases) {
+export const Connect = function(databases_connect: IDatabases, limiter) {
     databases = databases_connect;
     ZNAMDB = databases.db_znam;
 
-    let options = databases.limiter.opts;
+    let options = limiter.opts;
     options.points = 10;
     options.duration = 3600;
     
-    rateLimiter = new databases.limiter.RateLimiterMySQL(options, databases.limiter.ready);
+    rateLimiter = new RateLimiterMySQL(options, limiter.ready);
 
     options.points = 3;
     options.duration = 3600;
 
-    rateLimiterContact = new databases.limiter.RateLimiterMySQL(options, databases.limiter.ready);
+    rateLimiterContact = new RateLimiterMySQL(options, limiter.ready);
 }
 
 export const contact = (user, ip, data, callback) => {

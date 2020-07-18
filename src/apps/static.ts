@@ -9,14 +9,14 @@ export let main = (app: express.Express) => {
     app.use('/client/common', express.static(path.join(__dirname, './../../client/common')));
 
     app.get('/favicon.ico', function(req, res) {
-        res.sendFile(__dirname + '/favicon.ico');
+        res.sendFile(path.join(__dirname, './../../client/favicon.ico'));
     });
 
     app.get('/robots.txt', function(req, res) {
-        res.sendFile(__dirname + '/robots.txt');
+        res.sendFile(path.join(__dirname, './../../client/robots.txt'));
     });
 
     app.get('/client/manifest.json', function(req, res) {
-        res.sendFile(__dirname + '/manifest.json');
+        res.sendFile(path.join(__dirname, './../../client/manifest.json'));
     });
 }

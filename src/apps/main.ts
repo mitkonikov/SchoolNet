@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import { IRequest } from '../types';
 
 import ZBORAPI from './../ZBORAPI';
@@ -11,7 +12,7 @@ export const main = (app: express.Express) => {
     app.post('/zbor/api/light', ZBORAPI.light);
     app.post('/zbor/api/query', ZBORAPI.query);
     app.post('/zbor/api/update', ZBORAPI.update);
-    app.use('/zbor', express.static(__dirname + '/zbor/build'));
+    app.use('/zbor', express.static(path.join(__dirname, './../../zbor/build')));
 
     app.post('/pilot/api/light', (req: IRequest, res) => {
         if (req.isAuthenticated() && req.user.Role === 4) {
