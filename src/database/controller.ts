@@ -492,3 +492,8 @@ export const DB = function(database: string) {
 
     return DBSelector[database];
 }
+
+export default {
+    Connect,
+    DB
+}

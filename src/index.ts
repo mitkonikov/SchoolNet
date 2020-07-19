@@ -19,8 +19,6 @@ import { main as StaticExpress } from './apps/static';
 import { IRequest } from "./types";
 
 async function apolloLaunch() {
-    // Set up the connection to MySQL
-    await getConnectionOrCreate("default");
     const schema = await buildSchema({
         resolvers: [UserResolver]
     });
@@ -58,6 +56,9 @@ async function main() {
     // Request Comes with Client's IP
     app.use(requestIp.mw())
 
+    // Set up the connection to MySQL
+    let network = await getConnectionOrCreate("default");
+
     // const apolloServer = await apolloLaunch();
     // apolloServer.applyMiddleware({ app, path: '/graphql' });
     
@@ -74,7 +75,7 @@ async function main() {
     }
 
     // Passport Authentication
-    let auth = Authentication(app, databases.db_net);
+    let auth = Authentication(app, databases.db_net, network);
 
     // Guest Authentication
     if ((process.config as any).guest) {

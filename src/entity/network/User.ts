@@ -66,5 +66,21 @@ export class User extends BaseEntity {
 
     @Field(() => String)
     @Column({ type: "text" })
+    G_AccessToken: string
+
+    @Field(() => String)
+    @Column({ type: "text" })
+    G_RefreshToken: string
+
+    @Field(() => String)
+    @Column({ type: "text" })
+    G_ID: string
+
+    @Field(() => String)
+    @Column({ type: "text" })
+    G_ProfileName: string
+
+    @Field(() => String)
+    @Column({ type: "text" })
     Redirect: string
 }

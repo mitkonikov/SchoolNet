@@ -7,8 +7,10 @@ import Express from 'express';
 import { IRequest } from '../types';
 
 import { Initialize as Passport } from './passport.logic';
+import { Connection } from 'typeorm';
+import { User } from '../entity/network/User';
 
-let Initialize = (app: Express.Express, network) => {
+let Initialize = (app: Express.Express, network, networkORM: Connection) => {
     let MySQLStore = MySQLStores(sess);
     let MySQLOptions = {
         config: {
@@ -44,7 +46,7 @@ let Initialize = (app: Express.Express, network) => {
     }));
 
     // Initializes the passport module
-    let passport_module = Passport(app, network);
+    let passport_module = Passport(app, network, networkORM);
 
     let passportPass = {
         store           : store,
@@ -126,8 +128,14 @@ let Initialize = (app: Express.Express, network) => {
         }
     });
 
-    app.get('/auth/facebook', (req: IRequest, res) => {
-        passport_module.passport.authenticate('facebook')(req, res);
+    app.get('/auth/:oauth', (req: IRequest, res) => {
+        if (req.params.oauth == "facebook") {
+            passport_module.passport.authenticate('facebook')(req, res);
+        } else if (req.params.oauth == "google") {
+            passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
+        } else {
+            res.redirect('/');
+        }
     });
 
     app.get('/auth/facebook/:platform', (req: IRequest, res) => {
@@ -147,10 +155,6 @@ let Initialize = (app: Express.Express, network) => {
                 });
             })(req, res);
         }
-    });
-
-    app.get('/auth/google', (req: IRequest, res) => {
-        passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
     });
 
     app.get('/auth/google/callback', (req: IRequest, res) => {

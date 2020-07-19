@@ -4,8 +4,37 @@ import crypto from 'crypto';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
+import { Connection } from 'typeorm';
+import { User } from '../entity/network/User';
+import { Statistic } from '../entity/network/Statistic';
+import { UserInfo } from '../entity/network/UserInfo';
+import { IRequest } from '../types';
 
-let Initialize = (app: Express.Express, network) => {
+let userPassportWrapper = (entity: User) => {
+    return {
+        ID: entity.ID,
+        // Basic Info
+        Nickname: entity.Nickname,
+        Role: entity.Role,
+        Firstname: entity.Firstname,
+        Lastname: entity.Lastname,
+        School_ID: entity.School_ID,
+        Email: entity.Email,
+        Gender: entity.Gender,
+        Online: entity.Online,
+        // OAuth Tokens
+        FB_AccessToken: entity.FB_AccessToken,
+        FB_RefreshToken: entity.FB_RefreshToken,
+        FB_ProfileName: entity.FB_ProfileName,
+        FB_ID: entity.FB_ID,
+        G_AccessToken: entity.G_AccessToken,
+        G_RefreshToken: entity.G_RefreshToken,
+        G_ProfileName: entity.G_ProfileName,
+        G_ID: entity.G_ID
+    }
+}
+
+let Initialize = (app: Express.Express, network, networkORM: Connection) => {
     // let flash = require("connect-flash");
 
     // app.use(flash());
@@ -66,7 +95,7 @@ let Initialize = (app: Express.Express, network) => {
         )
     );
 
-    let facebookStrategyConfig = {
+    const facebookStrategyConfig = {
         clientID: process.env.FACEBOOK_APP_ID,
         clientSecret: process.env.FACEBOOK_APP_SECRET,
         callbackURL: process.env.FACEBOOK_CALLBACK_URL,
@@ -75,97 +104,76 @@ let Initialize = (app: Express.Express, network) => {
 
     passport.use(
         new FacebookStrategy(facebookStrategyConfig,
-            (req, accessToken, refreshToken, profile, done) => {
+            async (req: IRequest, accessToken, refreshToken, profile, done) => {
                 console.log(req.params);
                 
-                let FB_NAME = profile._json.name;
-                let FB_ID = profile._json.id;
-                let encAccessToken = accessToken;
+                const FB_NAME = profile._json.name;
+                const FB_ID = profile._json.id;
+                const encAccessToken = accessToken;
 
                 if (req.isAuthenticated() && req.user.FB_ID == '' && req.user.G_ID != '') {
-                    let FBEntry = {
-                        FB_ProfileName: FB_NAME,
-                        FB_AccessToken: encAccessToken,
-                        FB_ID: FB_ID
-                    }
-                    
+                    // This is to connect an existing user to a Facebook account
+                    let user = await User.findOne({ ID: req.user.ID });
+                    user.FB_ProfileName = FB_NAME;
+                    user.FB_AccessToken = encAccessToken;
+                    user.FB_ID = FB_ID;
+
                     if (typeof refreshToken != "undefined") {
-                        FBEntry["FB_RefreshToken"] = refreshToken;
+                        user.FB_RefreshToken = refreshToken;
                     }
-                    
-                    network.query("UPDATE tbl_students SET ? WHERE ID = ?", [FBEntry, req.user.ID], () => {
-                        network.query("SELECT * FROM tbl_students WHERE ID = ?", [req.user.ID], (err, rows) => {
-                            done(null, rows[0]);
-                        });
-                    });
+
+                    let updatedUser = await networkORM.getRepository(User).save(user);
+                    done(null, userPassportWrapper(updatedUser));
                 } else {
-                    network.query(
-                        "SELECT * FROM tbl_students WHERE FB_ID = ?", [FB_ID], (err, qfb_id) => {
-                            if (err) console.trace(err);
+                    // Check if a user already exists
+                    let user = await User.findOne({ FB_ID: FB_ID });
+                    if (user) {
+                        user.Online = false;
 
-                            if (typeof qfb_id != "undefined" && qfb_id.length != 0) {
-                                //if (encAccessToken == qfb_id[0].FB_AccessToken) {
-                                network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, qfb_id[0].ID]);
-                                
-                                let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                                network.query("UPDATE tbl_stats SET Last_Date_Login = ? WHERE ID = ?", [loginTime, qfb_id[0].ID]);
-                                network.query("UPDATE tbl_stats SET Logins = Logins + 1 WHERE ID = ?", [qfb_id[0].ID]);
+                        let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                        let statistics = await Statistic.findOne({ ID: user.ID });
+                        statistics.Last_Date_Login = loginTime;
+                        statistics.Logins += 1;
 
-                                done(null, qfb_id[0]);
-                                //}
-                            } else {
-                                // create a user
-                                let values = {
-                                    ID: "",
-                                    Role: 0,
-                                    Valid: 1,
-                                    Online: 1,
-                                    FB_ProfileName: FB_NAME,
-                                    FB_AccessToken: encAccessToken,
-                                    FB_ID: FB_ID
-                                };
+                        done(null, userPassportWrapper(user));
+                    } else {
+                        // Create a new user
+                        let newUser = new User();
+                        newUser.Role = 0;
+                        newUser.Valid = true;
+                        newUser.Online = true;
+                        newUser.FB_ProfileName = FB_NAME;
+                        newUser.FB_AccessToken = encAccessToken;
+                        newUser.FB_ID = FB_ID;
 
-                                if (typeof refreshToken != "undefined") {
-                                    values["FB_RefreshToken"] = refreshToken;
-                                }
-
-                                network.query("INSERT INTO tbl_students SET ?", values, () => {
-                                        network.query("SELECT * FROM tbl_students WHERE FB_AccessToken = ? AND FB_ID = ?", [encAccessToken, FB_ID],
-                                            (err, newRows) => {
-                                                let Registered_ID = newRows[0].ID;
-
-                                                let valuesINFO = {
-                                                    ID: Registered_ID,
-                                                    Display_Name: FB_NAME
-                                                };
-
-                                                // INSERT AT STUDENTS INFO
-                                                network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
-                                                    // STATISTICS
-                                                    let valuesStats = {
-                                                        ID: Registered_ID,
-                                                        Last_Date_Login: new Date()
-                                                            .toISOString()
-                                                            .slice(0, 19)
-                                                            .replace("T", " "),
-                                                        Successive_Logins: 1,
-                                                        Logins: 1
-                                                    };
-
-                                                    network.query(
-                                                        "INSERT INTO tbl_stats SET ?",
-                                                        valuesStats
-                                                    );
-                                                        
-                                                    done(null, newRows[0]);
-                                                });
-                                            }
-                                        );
-                                    }
-                                );
-                            }
+                        if (typeof refreshToken != "undefined") {
+                            newUser.FB_RefreshToken = refreshToken;
                         }
-                    );
+
+                        let createdUser = await networkORM.getRepository(User).save(newUser);
+
+                        // Create a new User Info Object
+                        let newUserInfo = new UserInfo();
+                        newUserInfo.ID = createdUser.ID;
+                        newUserInfo.Display_Name = FB_NAME;
+
+                        // Create a new User Statistics Object
+                        let newUserStats = new Statistic();
+                        newUserStats.ID = createdUser.ID;
+                        newUserStats.Last_Date_Login = new Date()
+                            .toISOString()
+                            .slice(0, 19)
+                            .replace("T", " ");
+                        newUserStats.Successive_Logins = 1;
+                        newUserStats.Logins = 1;
+
+                        // Save them
+                        await networkORM.getRepository(UserInfo).save(newUserInfo);
+                        networkORM.getRepository(Statistic).save(newUserStats);
+
+                        // Call done on passport authentication
+                        done(null, userPassportWrapper(createdUser));
+                    }
                 }
             }
         )

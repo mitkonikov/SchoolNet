@@ -69,6 +69,8 @@ If anyone wants to set up this server on their own computer, he can absolutely d
 
 > **PAY ATTENTION**: The **API** for external games is not finished! You should **NOT** develop games for it, without contacting us!
 
+> **THE `SERVER` FOLDER IS DEPRECATED, WE MOVED TO TYPESCRIPT AT THE MAIN `src` FOLDER!**
+
 ### STEP 1: Download the repository
 
 If you already have the GitHub setup for Desktop and Visual Studio Code, just clone the repository. But if you don't have it, here's how to set it up.
