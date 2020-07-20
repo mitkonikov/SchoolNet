@@ -16,13 +16,15 @@
      "emitDecoratorMetadata": true,
      "experimentalDecorators": true,
      "sourceMap": true,
-     "strictPropertyInitialization": false
+     "strictPropertyInitialization": false,
+     "skipLibCheck": true
   },
   "include": [
      "server-src/**/*"
   ],
   "exclude": [
      "./node_modules",
+     "./node_modules/@types/testing-library__dom",
      "**/*.spec.ts",
      "./src",
      "./build",

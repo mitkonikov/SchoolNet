@@ -119,7 +119,7 @@ You would also need the missing libraries from the `/client/static/js` and the `
 Here are some download links for the libraries:
  - [swal.js](https://cdn.jsdelivr.net/npm/sweetalert2@9)
 
-We are going to modify the way of serving of these files as we implement the Reactframe. But, for now, this remains a pain. *(TODO)*
+We are going to modify the way of serving of these files as we implement the Svelte Frame. But, for now, this remains a pain. *(TODO)*
 
 * There is a file in the `css` and `js` folder listing the missing files there.
 

@@ -3,14 +3,14 @@
 // 1. npm install
 // 2. Setup links
 
-const REACT_APPS = ['./znam', './zbor', './pilot'];
+const REACT_APPS = ['./znam', './zbor'];
 
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
 const CLEANER_FOLDERS = ['cleaner', 'cleaner-link'];
-const REACT_FRAME = path.join(__dirname, './reactframe');
+const REACT_FRAME = path.join(__dirname, './pilot');
 
 // process all the arguments given when starting this module
 let argsRaw = process.argv;
@@ -58,7 +58,7 @@ const exe = (command, args) => {
     });
 }
 
-const makeLinksReact = () => {
+const makeLinksReact = async () => {
     // make links in the play directory
     let play = __dirname + '/play';
     let files = fs.readdirSync(play);
@@ -79,7 +79,7 @@ const makeLinksReact = () => {
         let fileInDirectory = path.join(play, file);
         if (fs.lstatSync(fileInDirectory).isDirectory()) {
             makeLink(fileInDirectory, REACT_FRAME);
-            buildApp(fileInDirectory, file);
+            await buildApp(fileInDirectory, file);
         }
     }
 
@@ -99,6 +99,8 @@ const makeLink = (location, target) => {
     location = location.replace(/\\/g, '/');
     target = target.replace(/\\/g, '/');
 
+    if (location.includes('pilot')) return;
+
     if (args.verbose) {
         console.log("Location: " + location);
         console.log("Target: " + target);
@@ -115,7 +117,7 @@ const runLinkCommands = async () => {
     });
 }
 
-const buildApp = (location, appName) => {
+const buildApp = async (location, appName) => {
     console.log("Compiling typescript for " + appName);
     await exe('tsc', {
         cwd: location,
@@ -128,21 +130,21 @@ const main = async () => {
         shell: true
     };
 
-    console.log("Installing NPM packages...");
+    console.log("\x1b[34m%s\x1b[0m", "Installing NPM packages...");
     console.log("This may not show anything in the console, but it's actually installing...");
     
     if (!args.npmskip) {
         await exe("npm install .", options);
-        await exe("npm install .", { ...options, cwd: './reactframe'});
+        await exe("npm install .", { ...options, cwd: './pilot'});
         await exe("npm install typescript -g");
     }
 
-    fs.writeFileSync(path.join(__dirname, './reactframe/.env'), "SKIP_PREFLIGHT_CHECK=true");
+    fs.writeFileSync(path.join(__dirname, './pilot/.env'), "SKIP_PREFLIGHT_CHECK=true");
 
-    console.log("Making Symbolic links to the React Frame dependencies...");
-    makeLinksReact();
+    console.log("\x1b[34m%s\x1b[0m", "Making Symbolic links to the React Frame dependencies...");
+    await makeLinksReact();
     await runLinkCommands();
-    console.log("All lights green!");
+    console.log("\x1b[32m%s\x1b[0m", "All lights green!");
 
     process.exit();
 }
