@@ -17,6 +17,7 @@ import { Connect as DBController, DB } from './database/controller';
 import { main as SubApps } from './apps/main';
 import { main as StaticExpress } from './apps/static';
 import { IRequest } from "./types";
+import { Guests } from "./entity/network/Guests";
 
 async function apolloLaunch() {
     const schema = await buildSchema({
@@ -79,10 +80,9 @@ async function main() {
 
     // Guest Authentication
     if ((process.config as any).guest) {
-        Guest({
-            app,
-            network: databases.db_net
-        });
+        Guest(app, network);
+        const guestCount = await network.getRepository(Guests).count();
+        console.log(`Guest Count: ${guestCount}`);
     }
 
     // Applications such as ZNAM and ZBOR
