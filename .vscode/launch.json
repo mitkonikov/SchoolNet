@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\SchoolNet.js"
+            "program": "${workspaceFolder}\\build\\index.js"
             // "preLaunchTask": "npm_scss_watch"
         },
         {
@@ -16,7 +16,7 @@
             "args": ["--trace-sync-io"],
             "request": "launch",
             "name": "Launch Program with Trace Sync IO",
-            "program": "${workspaceFolder}\\SchoolNet.js"
+            "program": "${workspaceFolder}\\build\\index.js"
             // "preLaunchTask": "npm_scss_watch"
         }
     ]
