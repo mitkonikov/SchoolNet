@@ -35,6 +35,8 @@ $mdc-shape-large-component-radius: 0;
     }
 }
 
+// We don't like Svelte's hover after effect (It stays activated for ever with a little bit of opacity)
+// To kill that, we set the opacity to 0
 .mdc-button--unelevated.mdc-ripple-upgraded--background-focused:before {
     opacity: 0;
 }
@@ -45,4 +47,50 @@ $mdc-shape-large-component-radius: 0;
 
 .mdc-text-field .mdc-text-field__input {
     caret-color: $mdc-theme-on-primary;
+}
+
+// -------------------------
+// Navigation Bar Style
+// -------------------------
+
+.mdc-tab-bar {
+    background-color: $mdc-theme-secondary;
+    height: 48px;
+}
+
+.mdc-tab-scroller {
+    width: 50vh;
+    margin: auto;
+
+    @media only screen and (max-width: 530px) {
+        width: 100%;
+    }
+}
+
+// The content in a Nav Bar Page
+.mdc-tab__content {
+    .mdc-tab__text-label {
+        color: inherit;
+    }
+
+    .mdc-tab__icons {
+        width: 2em;
+        height: 2em;
+        margin-right: 0.5em;
+        color: inherit;
+    }
+}
+
+// Default Colors for inactive and active
+.mdc-tab > .mdc-tab__content {
+    color: $mdc-theme-primary;
+}
+
+.mdc-tab--active > .mdc-tab__content {
+    color: $mdc-theme-background;
+}
+
+// Fix the hover after effect
+.mdc-tab__ripple.mdc-ripple-upgraded--background-focused:before {
+    opacity: 0;
 }

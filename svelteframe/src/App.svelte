@@ -6,28 +6,26 @@
 	import List, {Item, Graphic, Meta, Subheader, Separator, Text, PrimaryText, SecondaryText} from '@smui/list';
 
 	import IconButton, {Icon} from '@smui/icon-button';
+	  
+	import CenterMobile from './components/Center.svelte';
+	import Navigation from './components/Navigation.svelte';
 
-	// Icons from Svelte Material Icons
-	import Alarm from 'svelte-material-icons/Alarm.svelte';
-	import Magnify from 'svelte-material-icons/Magnify.svelte'
+	import './theme/common.scss';
 
 	// We want to load the theme file last,
 	// this way, it will give the priority to our theme file
-  	import './theme/_smui-theme.scss';
-
+	import './theme/_smui-theme.scss';
 </script>
 
 <main>
-	<div class="center">
+	<CenterMobile>
 		<h1>Under Construction</h1>
-	</div>
+	</CenterMobile>
+	<Navigation />
 </main>
 
 <style>
-	.center {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
+	h1 {
+		text-align: center;
 	}
 </style>
