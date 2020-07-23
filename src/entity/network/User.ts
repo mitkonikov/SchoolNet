@@ -12,7 +12,6 @@ export class User extends BaseEntity {
     @Column({ type: "text" })
     Nickname: string
 
-    @Field(() => String)
     @Column({ type: "text" })
     Password: string
 
@@ -48,11 +47,9 @@ export class User extends BaseEntity {
     @Column({ type: "tinyint", width: 1 })
     Online: boolean
 
-    @Field(() => String)
     @Column({ type: "text" })
     FB_AccessToken: string
 
-    @Field(() => String)
     @Column({ type: "text" })
     FB_RefreshToken: string
 
@@ -60,19 +57,15 @@ export class User extends BaseEntity {
     @Column({ type: "text" })
     FB_ProfileName: string
 
-    @Field(() => String)
     @Column({ type: "text" })
     FB_ID: string
 
-    @Field(() => String)
     @Column({ type: "text" })
     G_AccessToken: string
 
-    @Field(() => String)
     @Column({ type: "text" })
     G_RefreshToken: string
 
-    @Field(() => String)
     @Column({ type: "text" })
     G_ID: string
 
@@ -80,7 +73,6 @@ export class User extends BaseEntity {
     @Column({ type: "text" })
     G_ProfileName: string
 
-    @Field(() => String)
     @Column({ type: "text" })
     Redirect: string
 }

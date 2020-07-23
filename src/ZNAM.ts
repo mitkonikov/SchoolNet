@@ -30,7 +30,7 @@ async function main() {
     let network = await getConnectionOrCreate("default");
 
     // Passport Authentication
-    let auth = Authentication(app, databases.db_net, network);
+    let auth = Authentication(app, network);
 
     // Connect the ZNAM Controller (TODO)
     ZNAMController(databases, limiter);

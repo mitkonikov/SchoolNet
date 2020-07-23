@@ -41,6 +41,12 @@ export const DB = function(database: string) {
                     console.trace(err);
                     return;
                 }
+
+                if (typeof rows[0] == "undefined") {
+                    console.trace("Cannot find stats for user with ID: ", user);
+                    callback(true);
+                    return;
+                }
         
                 if (rows[0].Logins == 1) {
                     callback(true);

@@ -10,7 +10,7 @@ import { Initialize as Passport } from './passport.logic';
 import { Connection } from 'typeorm';
 import { User } from '../entity/network/User';
 
-let Initialize = (app: Express.Express, network, networkORM: Connection) => {
+let Initialize = (app: Express.Express, networkORM: Connection) => {
     let MySQLStore = MySQLStores(sess);
     let MySQLOptions = {
         config: {
@@ -46,7 +46,7 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
     }));
 
     // Initializes the passport module
-    let passport_module = Passport(app, network, networkORM);
+    let passport_module = Passport(app, networkORM);
 
     let passportPass = {
         store           : store,
@@ -148,10 +148,9 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
                     return;
                 }
 
-                req.logIn(user, (err) => {
-                    network.query("UPDATE tbl_students SET Redirect = ?, Online = ? WHERE ID = ?", ["ZNAM", 1, req.user.ID], (err, rows) => {
-                        res.redirect('https://znam.schoolnet.mk/');
-                    });
+                req.logIn(user, async () => {
+                    await networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: true, Redirect: "ZNAM" });
+                    res.redirect('https://znam.schoolnet.mk/');
                 });
             })(req, res);
         }
@@ -164,11 +163,10 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
                     return;
                 }
                 
-                req.logIn(user, (err) => {
-                    network.query("UPDATE tbl_students SET Redirect = ?, Online = ? WHERE ID = ?", ["ZNAM", 1, req.user.ID], (err, rows) => {
-                        res.redirect('https://znam.schoolnet.mk/');
-                    });
-                })
+                req.logIn(user, async () => {
+                    await networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: true, Redirect: "ZNAM" });
+                    res.redirect('https://znam.schoolnet.mk/');
+                });
             })(req, res);
         }
     );
@@ -177,9 +175,9 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
         
     });
 
-    app.get('/client/logout', function(req: IRequest, res) {
+    app.get('/client/logout', (req: IRequest, res) => {
         if (req.isAuthenticated()) {
-            network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, req.user.ID]);
+            networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: false });
             req.logout();
         }
         res.redirect('/');

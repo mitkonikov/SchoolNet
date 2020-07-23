@@ -8,9 +8,9 @@ import { Connection } from 'typeorm';
 import { User } from '../entity/network/User';
 import { Statistic } from '../entity/network/Statistic';
 import { UserInfo } from '../entity/network/UserInfo';
-import { IRequest } from '../types';
+import { IRequest, IUser } from '../types';
 
-let userPassportWrapper = (entity: User) => {
+let userPassportWrapper = (entity: User): IUser => {
     return {
         ID: entity.ID,
         // Basic Info
@@ -34,10 +34,84 @@ let userPassportWrapper = (entity: User) => {
     }
 }
 
-let Initialize = (app: Express.Express, network, networkORM: Connection) => {
-    // let flash = require("connect-flash");
+/**
+ * Connect an existing user to a Facebook account
+ * @param UserID ID for the existing user
+ * @param ID Facebook supplied ID number
+ * @param name Facebook supplied name
+ * @param accessToken Access Token for Facebook
+ * @param refreshToken Refresh Token for Facebook
+ * @param network Connection to the main database
+ */
+const connectUserToFacebook = async (UserID: number, ID: string, name: string, accessToken: string, refreshToken: string, network: Connection) => {
+    // This is to connect an existing user to a Facebook account
+    let user = await User.findOne({ ID: UserID });
+    user.FB_ProfileName = name;
+    user.FB_AccessToken = accessToken;
+    user.FB_ID = ID;
 
-    // app.use(flash());
+    if (typeof refreshToken != "undefined") {
+        user.FB_RefreshToken = refreshToken;
+    }
+
+    return await network.getRepository(User).save(user);
+}
+
+/**
+ * Connect an existing user to a Google account
+ * @param UserID ID for the existing user
+ * @param ID Google supplied ID number
+ * @param name Google supplied name
+ * @param accessToken Access Token for Google
+ * @param refreshToken Refresh Token for Google
+ * @param network Connection to the main database
+ */
+const connectUserToGoogle = async (UserID: number, ID: string, name: string, accessToken: string, refreshToken: string, network: Connection) => {
+    // This is to connect an existing user to a Google account
+    let user = await User.findOne({ ID: UserID });
+    user.G_ProfileName = name;
+    user.G_AccessToken = accessToken;
+    user.G_ID = ID;
+
+    if (typeof refreshToken != "undefined") {
+        user.G_RefreshToken = refreshToken;
+    }
+
+    return await network.getRepository(User).save(user);
+}
+
+const updateLoginStats = async (UserID: number) => {
+    const loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let statistics = await Statistic.findOne({ ID: UserID });
+    statistics.Last_Date_Login = loginTime;
+    statistics.Logins += 1;
+    await statistics.save();
+    return statistics;
+}
+
+/** Creates a new User Info Object */
+const createUserInfo = async (ID: number, name: string, network: Connection) => {
+    let newUserInfo = new UserInfo();
+    newUserInfo.ID = ID;
+    newUserInfo.Display_Name = name;
+    return await network.getRepository(UserInfo).save(newUserInfo);
+}
+
+/** Create a new User Statistics Object */
+const createUserStatistics = async (ID: number, network: Connection) => {
+    let newUserStats = new Statistic();
+    newUserStats.ID = ID;
+    newUserStats.Last_Date_Login = new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " ");
+    newUserStats.Successive_Logins = 1;
+    newUserStats.Logins = 1;
+    // Save them
+    return await network.getRepository(Statistic).save(newUserStats);
+}
+
+const Initialize = (app: Express.Express, network: Connection) => {
     app.use(passport.initialize());
     app.use(passport.session());
 
@@ -50,47 +124,29 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
     passport.use(
         "local",
         new LocalStrategy(localStrategyConfig,
-            (req, username, password, done) => {
+            async (req: IRequest, username: string, password: string, done: Function) => {
                 let salt = process.env.PASSPORT_SALT;
 
                 let school = req.body.school;
 
-                network.query(
-                    "SELECT * FROM tbl_students WHERE Nickname = ? AND School_ID = ?",
-                    [username, school],
-                    function(err, rows) {
-                        if (err != null) console.log(err);
-                        if (err) return done(err);
-
-                        if (typeof rows === "undefined") {
-                            return done(null, false);
-                        }
-
-                        if (!rows.length) {
-                            return done(null, false);
-                        }
-
-                        salt = salt + "" + password;
-
-                        let encPassword = crypto
+                const user = await network.getRepository(User).findOne({ Nickname: username, School_ID: school });
+                if (user) {
+                    salt = salt + password;
+                    let encPassword = crypto
                             .createHash("sha256")
                             .update(salt)
                             .digest("hex");
-                        let dbPassword = rows[0].Password;
 
-                        if (!(dbPassword == encPassword)) {
-                            return done(null, false);
-                        }
+                    let dbPassword = user.Password;
 
-                        network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [1, rows[0].ID]);
-                        network.query("UPDATE tbl_stats SET Logins = Logins + 1 WHERE ID = ?", [rows[0].ID]);
-                            
-                        let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                        network.query("UPDATE tbl_stats SET Last_Date_Login = ? WHERE ID = ?", [loginTime, rows[0].ID]);
-
-                        done(null, rows[0]);
+                    // Password matches
+                    if (dbPassword == encPassword) {
+                        await updateLoginStats(user.ID);
+                        return done(null, userPassportWrapper(user));
                     }
-                );
+                }
+                
+                done(null, false);
             }
         )
     );
@@ -112,37 +168,33 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
                 const encAccessToken = accessToken;
 
                 if (req.isAuthenticated() && req.user.FB_ID == '' && req.user.G_ID != '') {
-                    // This is to connect an existing user to a Facebook account
-                    let user = await User.findOne({ ID: req.user.ID });
-                    user.FB_ProfileName = FB_NAME;
-                    user.FB_AccessToken = encAccessToken;
-                    user.FB_ID = FB_ID;
-
-                    if (typeof refreshToken != "undefined") {
-                        user.FB_RefreshToken = refreshToken;
-                    }
-
-                    let updatedUser = await networkORM.getRepository(User).save(user);
+                    const updatedUser = await connectUserToFacebook(
+                        req.user.ID,
+                        FB_ID,
+                        FB_NAME,
+                        encAccessToken,
+                        refreshToken,
+                        network
+                    );
+                    
                     done(null, userPassportWrapper(updatedUser));
                 } else {
                     // Check if a user already exists
                     let user = await User.findOne({ FB_ID: FB_ID });
                     if (user) {
-                        user.Online = false;
-
-                        let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                        let statistics = await Statistic.findOne({ ID: user.ID });
-                        statistics.Last_Date_Login = loginTime;
-                        statistics.Logins += 1;
-
+                        user.Online = true;
+                        await user.save();
+                        updateLoginStats(user.ID);
                         done(null, userPassportWrapper(user));
                     } else {
+                        const profileName = FB_NAME;
+
                         // Create a new user
                         let newUser = new User();
                         newUser.Role = 0;
                         newUser.Valid = true;
                         newUser.Online = true;
-                        newUser.FB_ProfileName = FB_NAME;
+                        newUser.FB_ProfileName = profileName;
                         newUser.FB_AccessToken = encAccessToken;
                         newUser.FB_ID = FB_ID;
 
@@ -150,26 +202,10 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
                             newUser.FB_RefreshToken = refreshToken;
                         }
 
-                        let createdUser = await networkORM.getRepository(User).save(newUser);
+                        let createdUser = await network.getRepository(User).save(newUser);
 
-                        // Create a new User Info Object
-                        let newUserInfo = new UserInfo();
-                        newUserInfo.ID = createdUser.ID;
-                        newUserInfo.Display_Name = FB_NAME;
-
-                        // Create a new User Statistics Object
-                        let newUserStats = new Statistic();
-                        newUserStats.ID = createdUser.ID;
-                        newUserStats.Last_Date_Login = new Date()
-                            .toISOString()
-                            .slice(0, 19)
-                            .replace("T", " ");
-                        newUserStats.Successive_Logins = 1;
-                        newUserStats.Logins = 1;
-
-                        // Save them
-                        await networkORM.getRepository(UserInfo).save(newUserInfo);
-                        networkORM.getRepository(Statistic).save(newUserStats);
+                        await createUserInfo(createdUser.ID, profileName, network);
+                        await createUserStatistics(createdUser.ID, network);
 
                         // Call done on passport authentication
                         done(null, userPassportWrapper(createdUser));
@@ -188,111 +224,70 @@ let Initialize = (app: Express.Express, network, networkORM: Connection) => {
 
     passport.use(
         new GoogleStrategy(googleStrategyConfig,
-            (req, accessToken, refreshToken, profile, done) => {
-                /*User.findOrCreate({ googleId: profile.id }, function (err, user) {
-                    return done(err, user);
-                });*/
-
+            async (req: IRequest, accessToken, refreshToken, profile, done) => {
                 console.log(req.params);
 
-                let G_ID = profile.id;
-                let G_NAME = profile.displayName;
+                const G_ID = profile.id;
+                const G_NAME = profile.displayName;
 
                 if (req.isAuthenticated() && req.user.FB_ID != '' && req.user.G_ID == '') {
-                    let GEntry = {
-                        G_ProfileName: G_NAME,
-                        G_AccessToken: accessToken,
-                        G_ID: G_ID
-                    }
-
-                    if (typeof refreshToken != "undefined") {
-                        GEntry["G_RefreshToken"] = refreshToken;
-                    }
-
-                    network.query("UPDATE tbl_students SET ? WHERE ID = ?", [GEntry, req.user.ID], () => {
-                        network.query("SELECT * FROM tbl_students WHERE ID = ?", [req.user.ID], (err, rows) => {
-                            done(null, rows[0]);
-                        });
-                    });
-                } else {
-                    network.query(
-                        "SELECT * FROM tbl_students WHERE G_ID = ?", [G_ID], (err, qg_id) => {
-                            if (err) console.trace(err);
-
-                            if (typeof qg_id != "undefined" && qg_id.length != 0) {
-                                network.query("UPDATE tbl_students SET Online = ? WHERE ID = ?", [0, qg_id[0].ID]);
-                                
-                                let loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                                network.query("UPDATE tbl_stats SET Last_Date_Login = ? WHERE ID = ?", [loginTime, qg_id[0].ID]);
-                                network.query("UPDATE tbl_stats SET Logins = Logins + 1 WHERE ID = ?", [qg_id[0].ID]);
-
-                                done(null, qg_id[0]);
-                            } else {
-                                // create a user
-                                let values = {
-                                    ID: "",
-                                    Role: 0,
-                                    Valid: 1,
-                                    Online: 1,
-                                    G_ProfileName: G_NAME,
-                                    G_AccessToken: accessToken,
-                                    G_ID: G_ID
-                                };
-
-                                if (typeof refreshToken != "undefined") {
-                                    values["G_RefreshToken"] = refreshToken;
-                                }
-
-                                network.query("INSERT INTO tbl_students SET ?", values, () => {
-                                        network.query("SELECT * FROM tbl_students WHERE G_AccessToken = ? AND G_ID = ?", [accessToken, G_ID],
-                                            (err, newRows) => {
-                                                let Registered_ID = newRows[0].ID;
-
-                                                let valuesINFO = {
-                                                    ID: Registered_ID,
-                                                    Display_Name: G_NAME
-                                                };
-
-                                                // INSERT AT STUDENTS INFO
-                                                network.query("INSERT INTO tbl_students_info SET ?", valuesINFO, function(err, rows) {
-                                                    // STATISTICS
-                                                    let valuesStats = {
-                                                        ID: Registered_ID,
-                                                        Last_Date_Login: new Date()
-                                                            .toISOString()
-                                                            .slice(0, 19)
-                                                            .replace("T", " "),
-                                                        Successive_Logins: 1,
-                                                        Logins: 1
-                                                    };
-
-                                                    network.query(
-                                                        "INSERT INTO tbl_stats SET ?",
-                                                        valuesStats
-                                                    );
-                                                        
-                                                    done(null, newRows[0]);
-                                                });
-                                            }
-                                        );
-                                    }
-                                );
-                            }
-                        }
+                    const updatedUser = await connectUserToGoogle(
+                        req.user.ID,
+                        G_ID,
+                        G_NAME,
+                        accessToken,
+                        refreshToken,
+                        network
                     );
+                    
+                    done(null, userPassportWrapper(updatedUser));
+                } else {
+                    // Check if a user already exists
+                    let user = await User.findOne({ G_ID: G_ID });
+                    if (user) {
+                        user.Online = true;
+                        await user.save();
+                        updateLoginStats(user.ID);
+                        done(null, userPassportWrapper(user));
+                    } else {
+                        const profileName = G_NAME;
+
+                        // Create a new user
+                        let newUser = new User();
+                        newUser.Role = 0;
+                        newUser.Valid = true;
+                        newUser.Online = true;
+                        newUser.G_ProfileName = profileName;
+                        newUser.G_AccessToken = accessToken;
+                        newUser.G_ID = G_ID;
+
+                        if (typeof refreshToken != "undefined") {
+                            newUser.G_RefreshToken = refreshToken;
+                        }
+
+                        let createdUser = await network.getRepository(User).save(newUser);
+
+                        await createUserInfo(createdUser.ID, profileName, network);
+                        await createUserStatistics(createdUser.ID, network);
+
+                        // Call done on passport authentication
+                        done(null, userPassportWrapper(createdUser));
+                    }
                 }
         }
     ));
 
-    passport.serializeUser((user, done) => {
+    passport.serializeUser((user: User, done) => {
         done(null, user.ID);
     });
 
-    passport.deserializeUser((ID, done) => {
-        network.query("SELECT * FROM tbl_students WHERE ID = ?", [ID], (err, rows) => {
-            rows[0].Password = '';
-            done(err, rows[0]);
-        });
+    passport.deserializeUser(async (ID: number, done) => {
+        const user = await User.findOne({ ID });
+        if (user) {
+            done(null, userPassportWrapper(user));
+        } else {
+            done("User not found", {});
+        }
     });
 
     return {

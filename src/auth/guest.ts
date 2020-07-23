@@ -32,8 +32,7 @@ export const Guest = (app: express.Express, network: Connection) => {
         // if the user is logged in, just skip it, or
         // if the object exists, just skip it
         if (req.isAuthenticated() || req.guest) {
-            next();
-            return;
+            return next();
         }
 
         // look at the request cookies
@@ -66,8 +65,7 @@ export const Guest = (app: express.Express, network: Connection) => {
                 crawlers.forEach(element => {
                     if (typeof element != "undefined") {
                         if (RegExp(element.pattern).test(req.headers['user-agent'])) {
-                            next();
-                            return;
+                            return next();
                         }
                     }
                 });
@@ -87,7 +85,7 @@ export const Guest = (app: express.Express, network: Connection) => {
             req.guest = GuestPassportWrapper(createdGuest);
         }
 
-        next();
+        return next();
     });
     
     // Testing endpoint for guest sessions

@@ -16,8 +16,9 @@ import { Guest } from './auth/guest';
 import { Connect as DBController, DB } from './database/controller';
 import { main as SubApps } from './apps/main';
 import { main as StaticExpress } from './apps/static';
-import { IRequest } from "./types";
+import { IRequest, IContext } from "./types";
 import { Guests } from "./entity/network/Guests";
+import { User } from "./entity/network/User";
 
 async function apolloLaunch() {
     const schema = await buildSchema({
@@ -30,7 +31,10 @@ async function apolloLaunch() {
         context: ({ req }) => {
             // GraphQL Authentication
             let reqExpress = req as IRequest;
-            return { user: reqExpress.user };
+            return {
+                user: reqExpress.user,
+                guest: reqExpress.guest
+            } as IContext;
         }
     });
 
@@ -60,11 +64,11 @@ async function main() {
     // Set up the connection to MySQL
     let network = await getConnectionOrCreate("default");
 
-    // const apolloServer = await apolloLaunch();
-    // apolloServer.applyMiddleware({ app, path: '/graphql' });
+    const apolloServer = await apolloLaunch();
+    apolloServer.applyMiddleware({ app, path: '/graphql' });
     
     // Set up the connection to MongoDB
-    let connection = await connectMongo() as MongoClient;
+    const connection = await connectMongo() as MongoClient;
     let play = connection.db('play');
 
     // Set up the connection to MySQL
@@ -76,7 +80,7 @@ async function main() {
     }
 
     // Passport Authentication
-    let auth = Authentication(app, databases.db_net, network);
+    let auth = Authentication(app, network);
 
     // Guest Authentication
     if ((process.config as any).guest) {
@@ -97,23 +101,24 @@ async function main() {
     initPlay(playDir, app, play);
 
     // Main page
-    app.get('/', (req: IRequest, res) => {
+    app.get('/', async (req: IRequest, res) => {
         if (req.isAuthenticated()) {
-            databases.db_net.query("SELECT Redirect FROM tbl_students WHERE ID = ?", req.user.ID, (err, rows) => {
-                if (rows[0].Redirect == "ZNAM") {
-                    res.redirect("https:\/\/znam.schoolnet.mk/");
-                } else {
-                    // res.sendFile(__dirname + '/client/lobby/index.html');
-                    res.redirect("https:\/\/znam.schoolnet.mk/");
-                }
-            });
+            const user = await User.findOne({ ID: req.user.ID });
+            if (user.Redirect == "ZNAM") {
+                res.redirect("https:\/\/znam.schoolnet.mk/");
+            } else {
+                // res.sendFile(__dirname + '/client/lobby/index.html');
+                res.redirect("https:\/\/znam.schoolnet.mk/");
+            }
         } else {
             res.sendFile(path.join(__dirname, '../client/index.html'));
         }
     });
 
     app.get('*', (req, res) => {
-        res.redirect('/');
+        if (!res.headersSent) {
+            res.redirect('/');
+        }
     });
 
     app.listen(process.env.PORT);
