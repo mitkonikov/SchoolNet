@@ -12,16 +12,25 @@ export const queryFetch = body => {
     });
 };
 
-export const graphQL = body => {
-    return fetch(domain() + "graphql", {
+export const graphQL = (body, callback) => {
+    fetch(domain() + "graphql", {
         method: "POST",
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    }).then(response => response.json())
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response && response.data) {
+            callback(response);
+        } else {
+            callback(undefined);
+        }
+    })
     .catch((err) => {
+        callback(undefined);
         console.log("Error fetching...");
     });
 };

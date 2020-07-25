@@ -19,6 +19,9 @@ import { main as StaticExpress } from './apps/static';
 import { IRequest, IContext } from "./types";
 import { Guests } from "./entity/network/Guests";
 import { User } from "./entity/network/User";
+import { siteRedirect } from "./auth/redirects";
+
+import { misc } from './misc/misc';
 
 async function apolloLaunch() {
     const schema = await buildSchema({
@@ -44,6 +47,7 @@ async function apolloLaunch() {
 async function main() {
     // Load the config files
     dotenv.config();
+    misc();
 
     process.config = {
         ...process.config,
@@ -104,11 +108,10 @@ async function main() {
     app.get('/', async (req: IRequest, res) => {
         if (req.isAuthenticated()) {
             const user = await User.findOne({ ID: req.user.ID });
-            if (user.Redirect == "ZNAM") {
-                res.redirect("https:\/\/znam.schoolnet.mk/");
+            if (user.Redirect == '') {
+                res.redirect('/');
             } else {
-                // res.sendFile(__dirname + '/client/lobby/index.html');
-                res.redirect("https:\/\/znam.schoolnet.mk/");
+                res.redirect(siteRedirect[user.Redirect]);
             }
         } else {
             res.sendFile(path.join(__dirname, '../client/index.html'));
@@ -123,25 +126,6 @@ async function main() {
 
     app.listen(process.env.PORT);
     console.log(`[SchoolNet] Server started at port ${process.env.PORT}.`);
-}
-
-(String as any).prototype.multiReplace = (array) => {
-    let result = "";
-    
-    for (let c = 0; c < this.length; ++c) { // for every letter in the string
-        let replaced = false;
-        for (let r in array) { // check for replacements in the array
-            if (this[c] == r) {
-                result += array[r];
-                replaced = true;
-                break;
-            }
-        }
-
-        if (!replaced) result += this[c];
-    }
-
-    return result;
 }
 
 main();

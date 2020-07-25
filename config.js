@@ -137,6 +137,7 @@ const main = async () => {
         await exe("npm install .", options);
         await exe("npm install .", { ...options, cwd: './pilot'});
         await exe("npm install typescript -g");
+        await exe("npm install react-scripts -g");
     }
 
     fs.writeFileSync(path.join(__dirname, './pilot/.env'), "SKIP_PREFLIGHT_CHECK=true");

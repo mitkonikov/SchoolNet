@@ -99,7 +99,8 @@ Install the dependencies from the package file and start the server.
 ```sh
 $ cd schoolnet
 $ node config.js
-$ node SchoolNet.js
+$ tsc
+$ node build
 ```
 
 We are implemented symbolic links to avoid dependency duplications. This is done by the `config.js`.

@@ -1,10 +1,11 @@
 import sess from 'express-session';
-import crypto from 'crypto';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import MySQLStores from 'connect-mysql';
 import Express from 'express';
 import { IRequest } from '../types';
+
+import { redirect, siteRedirect } from './redirects';
 
 import { Initialize as Passport } from './passport.logic';
 import { Connection } from 'typeorm';
@@ -12,7 +13,7 @@ import { User } from '../entity/network/User';
 
 let Initialize = (app: Express.Express, networkORM: Connection) => {
     let MySQLStore = MySQLStores(sess);
-    let MySQLOptions = {
+    const MySQLOptions = {
         config: {
             user     : process.env.DATABASE_USER,
             password : process.env.DATABASE_PASS,
@@ -128,18 +129,26 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
         }
     });
 
-    app.get('/auth/:oauth', (req: IRequest, res) => {
-        if (req.params.oauth == "facebook") {
-            passport_module.passport.authenticate('facebook')(req, res);
-        } else if (req.params.oauth == "google") {
-            passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
-        } else {
-            res.redirect('/');
-        }
-    });
+    // app.get('/auth/:oauth', (req: IRequest, res) => {
+    //     if (req.params.oauth == "facebook") {
+    //         passport_module.passport.authenticate('facebook')(req, res);
+    //     } else if (req.params.oauth == "google") {
+    //         passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
+    //     } else {
+    //         res.redirect('/');
+    //     }
+    // });
 
-    app.get('/auth/facebook/:platform', (req: IRequest, res) => {
-        if (req.params.platform != "callback") {
+    app.get('/auth/facebook/:platform', async (req: IRequest, res) => {
+        if (req.params.platform != "callback") { // This is the initial call for auth
+            let Redirect = '';
+            if (typeof redirect[req.params.platform] != "undefined") {
+                Redirect = redirect[req.params.platform];
+            }
+
+            // Remember the platform for user redirection after authentication
+            await networkORM.getRepository(User).update({ ID: req.user.ID }, { Redirect });
+
             passport_module.passport.authenticate('facebook')(req, res);
         } else {
             passport_module.passport.authenticate('facebook', (err, user, info) => {
@@ -149,27 +158,53 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
                 }
 
                 req.logIn(user, async () => {
-                    await networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: true, Redirect: "ZNAM" });
-                    res.redirect('https://znam.schoolnet.mk/');
+                    const user = await networkORM.getRepository(User).findOne({ ID: req.user.ID });
+                    user.Online = true;
+                    await user.save();
+                    if (user.Redirect == '') {
+                        res.redirect('/');
+                    } else {
+                        res.redirect(siteRedirect[user.Redirect]);
+                    }
                 });
             })(req, res);
         }
     });
 
-    app.get('/auth/google/callback', (req: IRequest, res) => {
+    app.get('/auth/google/:platform', async (req: IRequest, res) => {
+        if (req.params.platform != "callback") { // This is the initial call for auth
+            let Redirect = '';
+            if (typeof redirect[req.params.platform] != "undefined") {
+                Redirect = redirect[req.params.platform];
+            }
+            
+            // Remember the platform for user redirection after authentication
+            await networkORM.getRepository(User).update({ ID: req.user.ID }, { Redirect });
+
+            // OAuth with Google
+            passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
+        } else {
+            // If it's callback, it means that google agrees with the auth
             passport_module.passport.authenticate('google', (err, user, info) => {
                 if (err) {
                     res.send("Sorry... A server problem.");
                     return;
                 }
                 
+                // On login redirect the user accordingly
                 req.logIn(user, async () => {
-                    await networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: true, Redirect: "ZNAM" });
-                    res.redirect('https://znam.schoolnet.mk/');
+                    const user = await networkORM.getRepository(User).findOne({ ID: req.user.ID });
+                    user.Online = true;
+                    await user.save();
+                    if (user.Redirect == '') {
+                        res.redirect('/');
+                    } else {
+                        res.redirect(siteRedirect[user.Redirect]);
+                    }
                 });
             })(req, res);
         }
-    );
+    });
 
     app.get('/deauth/facebook/callback', (req, res) => {
         
@@ -177,7 +212,7 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
 
     app.get('/client/logout', (req: IRequest, res) => {
         if (req.isAuthenticated()) {
-            networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: false });
+            networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: false, Redirect: '' });
             req.logout();
         }
         res.redirect('/');
@@ -185,8 +220,7 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
 
     return {
         passport_module,
-        passportPass,
-        crypto
+        passportPass
     }
 }
 

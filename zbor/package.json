@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "react-ga": "^2.7.0"
+    
   },
   "scripts": {
     "start": "react-scripts start",

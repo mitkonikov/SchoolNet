@@ -27,10 +27,6 @@ function AuthMessage() {
 }
 
 class Authentication extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <React.Fragment>
@@ -68,7 +64,7 @@ class Authentication extends Component {
                                                 category: "Sign In",
                                                 action: "Facebook Enter"
                                             });
-                                            window.location.href += "auth/facebook";
+                                            window.location.href += "auth/facebook/znam";
                                         }}
                                     >
                                         <FacebookIcon id="facebook-signin" />
@@ -81,7 +77,7 @@ class Authentication extends Component {
                                                 category: "Sign In",
                                                 action: "Google Enter"
                                             });
-                                            window.location.href += "auth/google";
+                                            window.location.href += "auth/google/znam";
                                         }}
                                     >
                                         <img src={GoogleIcon} id="google-signin" alt="Google"/>

@@ -20,6 +20,7 @@ import theme from "./theme";
 import { queryFetch, ReactLazyPreload } from "./js/common";
 import EndScreen from "./components/endScreen";
 
+// Import all the lazy components
 const Authentication = React.lazy(() => import("./components/authentication"));
 const SubjectSelector = React.lazy(() =>
     import("./components/subjectSelector")
@@ -97,8 +98,6 @@ class App extends Component {
                     icon: "success",
                 });
             }
-
-            console.log("auth data: ", data);
 
             if (data.intro) {
                 this.setState({ intro: data.intro });
