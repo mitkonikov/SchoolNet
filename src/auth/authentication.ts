@@ -117,6 +117,7 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
 
     app.get('/auth/connect/:provider', (req: IRequest, res) => {
         if (req.isAuthenticated()) {
+            console.log(`User ${req.user.ID} connecting their second account...`);
             if (req.params.provider == "Facebook" && req.user.FB_ID == "") {
                 passport_module.passport.authenticate('facebook')(req, res);
             } else if (req.params.provider == "Google" && req.user.G_ID == "") {
@@ -129,82 +130,69 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
         }
     });
 
-    // app.get('/auth/:oauth', (req: IRequest, res) => {
-    //     if (req.params.oauth == "facebook") {
-    //         passport_module.passport.authenticate('facebook')(req, res);
-    //     } else if (req.params.oauth == "google") {
-    //         passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
-    //     } else {
-    //         res.redirect('/');
-    //     }
-    // });
-
-    app.get('/auth/facebook/:platform', async (req: IRequest, res) => {
+    app.get('/auth/facebook/:platform', (req: IRequest, res, next) => {
         if (req.params.platform != "callback") { // This is the initial call for auth
-            let Redirect = '';
-            if (typeof redirect[req.params.platform] != "undefined") {
-                Redirect = redirect[req.params.platform];
-            }
+            req.session.returnTo = req.params.platform; // Remember the platform for redirection later
 
-            // Remember the platform for user redirection after authentication
-            await networkORM.getRepository(User).update({ ID: req.user.ID }, { Redirect });
-
-            passport_module.passport.authenticate('facebook')(req, res);
+            passport_module.passport.authenticate('facebook')(req, res, next);
         } else {
             passport_module.passport.authenticate('facebook', (err, user, info) => {
                 if (err) {
+                    console.log(`User ${user.ID} had a server problem while logging at ${req.session.returnTo}.`);
                     res.send("Sorry... A server problem.");
                     return;
                 }
 
-                req.logIn(user, async () => {
-                    const user = await networkORM.getRepository(User).findOne({ ID: req.user.ID });
-                    user.Online = true;
-                    await user.save();
-                    if (user.Redirect == '') {
-                        res.redirect('/');
-                    } else {
-                        res.redirect(siteRedirect[user.Redirect]);
-                    }
-                });
-            })(req, res);
+                login(user, req, res);
+            })(req, res, next);
         }
     });
 
     app.get('/auth/google/:platform', async (req: IRequest, res) => {
         if (req.params.platform != "callback") { // This is the initial call for auth
-            let Redirect = '';
-            if (typeof redirect[req.params.platform] != "undefined") {
-                Redirect = redirect[req.params.platform];
-            }
-            
-            // Remember the platform for user redirection after authentication
-            await networkORM.getRepository(User).update({ ID: req.user.ID }, { Redirect });
+            req.session.returnTo = req.params.platform; // Remember the platform for redirection later
 
-            // OAuth with Google
-            passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
+            passport_module.passport.authenticate('google', {
+                scope: ['https://www.googleapis.com/auth/plus.login']
+            })(req, res);
         } else {
             // If it's callback, it means that google agrees with the auth
             passport_module.passport.authenticate('google', (err, user, info) => {
                 if (err) {
+                    console.log(`User ${user.ID} had a server problem while logging at ${req.session.returnTo}.`);
                     res.send("Sorry... A server problem.");
                     return;
                 }
                 
-                // On login redirect the user accordingly
-                req.logIn(user, async () => {
-                    const user = await networkORM.getRepository(User).findOne({ ID: req.user.ID });
-                    user.Online = true;
-                    await user.save();
-                    if (user.Redirect == '') {
-                        res.redirect('/');
-                    } else {
-                        res.redirect(siteRedirect[user.Redirect]);
-                    }
-                });
+                login(user, req, res);
             })(req, res);
         }
     });
+
+    const login = (user: any, req: IRequest, res: any) => {
+        req.logIn(user, async () => {
+            const currentUser = await networkORM.getRepository(User).findOne({ ID: req.user.ID });
+            currentUser.Online = true;
+
+            console.log(`User ${user.ID} successfully logged in at ${req.session.returnTo}.`);
+
+            // Check if returnTo is supplied
+            if (req.session && req.session.returnTo) {
+                // Find to which site we want to redirect the user
+                let Redirect = '/';
+                if (typeof redirect[req.session.returnTo] != "undefined") {
+                    Redirect = redirect[req.session.returnTo];
+                    currentUser.Redirect = Redirect;
+                }
+
+                await currentUser.save();
+
+                res.redirect(siteRedirect[Redirect]);
+            } else {
+                res.redirect('/');
+            }
+        });
+    }
 
     app.get('/deauth/facebook/callback', (req, res) => {
         
@@ -212,6 +200,7 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
 
     app.get('/client/logout', (req: IRequest, res) => {
         if (req.isAuthenticated()) {
+            console.log(`User ${req.user.ID} logged out.`);
             networkORM.getRepository(User).update({ ID: req.user.ID }, { Online: false, Redirect: '' });
             req.logout();
         }

@@ -5,5 +5,6 @@ export const redirect = {
 
 export const siteRedirect = {
     ZNAM: 'https://znam.schoolnet.mk/',
-    FRAME: 'https://schoolnet.mk/frame'
+    FRAME: 'https://schoolnet.mk/frame',
+    '/': 'https://schoolnet.mk'
 }

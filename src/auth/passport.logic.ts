@@ -161,7 +161,7 @@ const Initialize = (app: Express.Express, network: Connection) => {
     passport.use(
         new FacebookStrategy(facebookStrategyConfig,
             async (req: IRequest, accessToken, refreshToken, profile, done) => {
-                console.log(req.params);
+                console.log("req.params: ", req.params);
                 
                 const FB_NAME = profile._json.name;
                 const FB_ID = profile._json.id;
@@ -225,7 +225,7 @@ const Initialize = (app: Express.Express, network: Connection) => {
     passport.use(
         new GoogleStrategy(googleStrategyConfig,
             async (req: IRequest, accessToken, refreshToken, profile, done) => {
-                console.log(req.params);
+                console.log("req.params: ", req.params);
 
                 const G_ID = profile.id;
                 const G_NAME = profile.displayName;

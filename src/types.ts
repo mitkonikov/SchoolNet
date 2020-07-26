@@ -4,6 +4,10 @@ export interface IRequest extends Request {
     user: IUser;
     guest: any;
     clientIp: string;
+    session: {
+        [key: string]: any,
+        returnTo: string
+    };
 }
 
 export interface IDatabases {
