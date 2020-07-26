@@ -40,6 +40,7 @@ if (args.verbose) {
  * @param {Object} args Node JS Spawn object Arguments
  */
 const exe = (command, args) => {
+    console.log("Please wait...");
     return new Promise((resolve, reject) => {
         let process = spawn(command, args);
 
@@ -132,12 +133,13 @@ const main = async () => {
 
     console.log("\x1b[34m%s\x1b[0m", "Installing NPM packages...");
     console.log("This may not show anything in the console, but it's actually installing...");
+    console.log("Please wait...");
     
     if (!args.npmskip) {
         await exe("npm install .", options);
         await exe("npm install .", { ...options, cwd: './pilot'});
+        await exe("npm install .", { ...options, cwd: './svelteframe'});
         await exe("npm install typescript -g");
-        await exe("npm install react-scripts -g");
     }
 
     fs.writeFileSync(path.join(__dirname, './pilot/.env'), "SKIP_PREFLIGHT_CHECK=true");
