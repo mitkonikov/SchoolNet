@@ -27,7 +27,7 @@ tests.js
 ecosystem.config.js
 
 .idea/
-.vscode/
+/.vscode/
 node_modules/
 build/
 tmp/

@@ -40,6 +40,7 @@ if (args.verbose) {
  * @param {Object} args Node JS Spawn object Arguments
  */
 const exe = (command, args) => {
+    console.log("Please wait...");
     return new Promise((resolve, reject) => {
         let process = spawn(command, args);
 
@@ -60,7 +61,7 @@ const exe = (command, args) => {
 
 const makeLinksReact = async () => {
     // make links in the play directory
-    let play = __dirname + '/play';
+    let play = path.join(__dirname, './play');
     let files = fs.readdirSync(play);
     for (let file of files) {
         if (args.verbose)
@@ -106,15 +107,28 @@ const makeLink = (location, target) => {
         console.log("Target: " + target);
     }
     
-    linkCommands += `New-Item -Path ${location}/node_modules -ItemType SymbolicLink -Value ${target}/node_modules \; `;
+    if (/^win/.test(process.platform)) {
+        linkCommands += `New-Item -Path ${location}/node_modules -ItemType SymbolicLink -Value ${target}/node_modules \; `;
+    } else if (/^linux/.test(process.platform)) {
+        linkCommands += `ln -s ${target}/node_modules ${location}; `;
+    }
+    
     fs.writeFileSync(path.join(location, './.env'), "SKIP_PREFLIGHT_CHECK=true");
 }
 
-let linkCommands = ''; // This is used to stack up multiple commands in one powershell line
+// This is used to stack up multiple commands in one powershell/bash line
+let linkCommands = '';
+
 const runLinkCommands = async () => {
-    await exe(`powershell \"Start-Process powershell -ArgumentList '${linkCommands}' -Verb RunAs\"`, {
-        shell: true
-    });
+    if (/^win/.test(process.platform)) {
+        await exe(`powershell \"Start-Process powershell -ArgumentList '${linkCommands}' -Verb RunAs\"`, {
+            shell: true
+        });
+    } else if (/^linux/.test(process.platform)) {
+        await exe(linkCommands, {
+            shell: true
+        });
+    }
 }
 
 const buildApp = async (location, appName) => {
@@ -132,20 +146,29 @@ const main = async () => {
 
     console.log("\x1b[34m%s\x1b[0m", "Installing NPM packages...");
     console.log("This may not show anything in the console, but it's actually installing...");
+    console.log("Please wait...");
     
     if (!args.npmskip) {
         await exe("npm install .", options);
-        await exe("npm install .", { ...options, cwd: './pilot'});
-        await exe("npm install typescript -g");
-        await exe("npm install react-scripts -g");
+        await exe("npm install .", { ...options, cwd: path.join(__dirname, './pilot') });
+        await exe("npm install .", { ...options, cwd: path.join(__dirname, './svelteframe')});
+        await exe("npm install typescript -g", options);
     }
 
     fs.writeFileSync(path.join(__dirname, './pilot/.env'), "SKIP_PREFLIGHT_CHECK=true");
 
-    console.log("\x1b[34m%s\x1b[0m", "Making Symbolic links to the React Frame dependencies...");
-    await makeLinksReact();
-    await runLinkCommands();
+    if (/^win/.test(process.platform) || /^linux/.test(process.platform)) {
+        console.log("\x1b[34m%s\x1b[0m", "Making Symbolic links to the React Frame dependencies...");
+        await makeLinksReact();
+        await runLinkCommands();
+    } else {
+        console.log("Your platform is: ", process.platform);
+        console.log("Symbolic Links are not supported on this platform.");
+        console.log("Contact the developers on GitHub.");
+    }
+    
     console.log("\x1b[32m%s\x1b[0m", "All lights green!");
+    console.log("Setup TypeORM's config file and you can run 'tsc' to build SchoolNet");
 
     process.exit();
 }

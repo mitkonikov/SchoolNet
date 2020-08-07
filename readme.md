@@ -71,6 +71,14 @@ If anyone wants to set up this server on their own computer, he can absolutely d
 
 > **THE `SERVER` FOLDER IS DEPRECATED, WE MOVED TO TYPESCRIPT AT THE MAIN `src` FOLDER!**
 
+### OS SERVER SUPPORT
+
+[![Windows 64bit Excellent Support](https://img.shields.io/badge/Windows%2064bit-Excellent-green.svg)](https://shields.io/)  [![Windows 32bit Good Enough Support](https://img.shields.io/badge/Windows%2032bit-Good%20Enough-green.svg)](https://shields.io/)  [![Linux 64bit Good Enough](https://img.shields.io/badge/Linux%2064bit-Good%20Enough-green.svg)](https://shields.io/)  [![Linux 32bit Good Enough](https://img.shields.io/badge/Linux%2032bit-Good%20Enough-green.svg)](https://shields.io/)
+
+For Linux Server OS, please read [these](https://github.com/mitkonikov/SchoolNet/blob/master/documentation/install/Linux.md) installation steps.
+
+## Windows Setup Steps
+
 ### STEP 1: Download the repository
 
 If you already have the GitHub setup for Desktop and Visual Studio Code, just clone the repository. But if you don't have it, here's how to set it up.
@@ -91,22 +99,18 @@ If you really don't want to be directly connected to GitHub and lose the ability
 
 ### STEP 2: Download dependecies
 
-SchoolNet requires [Node.js](https://nodejs.org/) v10.15.0 to run.
+SchoolNet requires [Node.js](https://nodejs.org/) v10.15.0 or later to run.
 
-Install the dependencies from the package file and start the server.
-`config.js` will require administrator privileges in order to create the symbolic links.
+To install and setup the server properly, we have created the `config.js` file. It will require administrator/superuser privileges in order to create the symbolic links.
 
 ```sh
-$ cd schoolnet
+$ cd SchoolNet
 $ node config.js
 $ tsc
 $ node build
 ```
 
-We are implemented symbolic links to avoid dependency duplications. This is done by the `config.js`.
-Now only works for Windows, but in the future we are planning a Linux support.
-If you are using Linux, you need to download the `react-scripts` dependency in each React app or create a link to it.
-Read more in the `config.js` file.
+We are implemented symbolic links to avoid dependency duplications. We have full support for Windows and Linux.
 
 You would also need the missing libraries from the `/client/static/js` and the `/client/static/css` folder. Because we don't have the rights to distribute these dependencies in our repository, you would need to download them yourself.
 
@@ -241,7 +245,7 @@ Here are people that contributed to the building of this project. We can't thank
 
 ## Our libraries
 
-* LightQuery-ORM - A library developed for direct quering to the database by AJAX JSON requests. This library works on top of the QueryBuilder from TypeORM.
+* [LightQuery-ORM](https://www.npmjs.com/package/lightquery-orm) - A library developed for direct quering to the database by AJAX JSON requests. This library works on top of the QueryBuilder from TypeORM.
 
 ### Todos
 
@@ -295,7 +299,7 @@ That's it! Now you are authenticated and ready to clone the repository!
 
 ```sh
 $ cd "C:/"
-$ git clone git@github.com:mitkonikov/SchoolNet.git
+$ git clone git@github.com:<yourUsername>/SchoolNet.git
 ```
 
 
