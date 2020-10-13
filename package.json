@@ -38,13 +38,8 @@
     "material-components-web": "^4.0.0",
     "mongodb": "^3.5.9",
     "mysql": "^2.17.1",
-<<<<<<< HEAD
     "node-fetch": "^2.6.1",
-    "nodemon": "^2.0.1",
-=======
-    "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
->>>>>>> d7d51dfaa20e3627f00472a82698841bee229127
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth": "^2.0.0",
