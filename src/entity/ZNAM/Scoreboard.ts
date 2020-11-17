@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity } from "typeorm";
 
-@Entity({ name: "tbl_leaderboard" })
+@Entity({ name: "tbl_scoreboard" })
 @Index(["Rank"])
 @Index(["Score", "Rank"])
 export class Scoreboard extends BaseEntity {

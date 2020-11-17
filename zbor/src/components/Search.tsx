@@ -49,8 +49,8 @@ export default class Search extends Component {
         
         lightFetch({
             word: {
-                select: ["ID", "Word", "Wiki_Frq"],
-                where: { Word: "%" + converted + "%", limit: 5 },
+                select: ["ID", "Word_Text", "Wiki_Frq"],
+                where: { Word_Text: "%" + converted + "%", limit: 5 },
             },
         }).then((res) => {
             this.setState({
@@ -100,7 +100,7 @@ export default class Search extends Component {
         let wordDOM = [];
 
         for (let i = 0; i < this.state.word.length; ++i) {
-            if (typeof this.state.word[i].Word == "undefined") continue;
+            if (typeof this.state.word[i].Word_Text == "undefined") continue;
 
             wordDOM.push(
                 <Grow in={true} timeout={500 + 50 * i}>
@@ -110,7 +110,7 @@ export default class Search extends Component {
                         onClick={() => {}}
                         key={this.state.word[i].ID}
                     >
-                        <ListItemText primary={this.state.word[i].Word} />
+                        <ListItemText primary={this.state.word[i].Word_Text} />
                         <div className="mistake-button-icon">
                             <IconButton 
                                 onClick={() => this.onMistake(this.state.word[i].ID)}

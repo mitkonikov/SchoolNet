@@ -12,12 +12,12 @@ import dotenv from 'dotenv';
 import { MongoClient } from "typeorm";
 import { initPlay } from "./play/main";
 import { Initialize as Authentication } from './auth/authentication';
-import { Guest } from './auth/guest';
+import { GuestModule } from './auth/guest';
 import { Connect as DBController, DB } from './database/controller';
 import { main as SubApps } from './apps/main';
 import { main as StaticExpress } from './apps/static';
 import { IRequest, IContext } from "./types";
-import { Guests } from "./entity/network/Guests";
+import { Guest } from "./entity/network/Guest";
 import { User } from "./entity/network/User";
 import { siteRedirect } from "./auth/redirects";
 
@@ -88,8 +88,8 @@ async function main() {
 
     // Guest Authentication
     if ((process.config as any).guest) {
-        Guest(app, network);
-        const guestCount = await network.getRepository(Guests).count();
+        GuestModule(app, network);
+        const guestCount = await network.getRepository(Guest).count();
         console.log(`Guest Count: ${guestCount}`);
     }
 

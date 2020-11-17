@@ -9,7 +9,7 @@ export class ContactEntry extends BaseEntity {
     @Column({ type: "text" })
     Contact: string;
 
-    @Column()
+    @Column({ default: -1 })
     Student_ID: number;
 
     @Column()

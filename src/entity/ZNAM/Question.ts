@@ -49,6 +49,6 @@ export class Question extends BaseEntity {
     @Column({ type: "tinyint", width: 1, default: 1 })
     Rated: boolean;
 
-    @Column({ type: "tinyint", width: 1 })
+    @Column({ type: "tinyint", width: 1, default: 0 })
     Verified: boolean;
 }

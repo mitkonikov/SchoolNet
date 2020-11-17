@@ -1,14 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity } from "typeorm";
 
 @Entity({ name: "tbl_words" })
-@Index(["Mistake", "Word"])
-export class Words extends BaseEntity {
+@Index(["Mistake", "Word_Text"])
+export class Word extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     ID: number;
 
     @Column()
-    Word: string;
+    Word_Text: string;
 
     @Column()
     Type: number;

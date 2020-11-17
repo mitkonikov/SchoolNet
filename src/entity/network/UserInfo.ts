@@ -27,4 +27,8 @@ export class UserInfo extends BaseEntity {
     @Field(() => Boolean)
     @Column({ type: "tinyint", width: 1 })
     Manifest: boolean
+
+    @Field(() => Date)
+    @Column({ type: "datetime" })
+    Last_Name_Change: Date
 }

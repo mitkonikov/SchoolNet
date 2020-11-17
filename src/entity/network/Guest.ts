@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity } from "typeo
 
 @Entity({ name: "tbl_guests" })
 @Index(["Cookie"])
-export class Guests extends BaseEntity {
+export class Guest extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     ID: number;
@@ -16,7 +16,7 @@ export class Guests extends BaseEntity {
     @Column({ type: "tinyint", width: 1 })
     Mobile: boolean;
 
-    @Column()
+    @Column({ default: "" })
     Display_Name: string;
 
     @Column()

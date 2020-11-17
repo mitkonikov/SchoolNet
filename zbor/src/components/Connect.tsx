@@ -75,7 +75,7 @@ export default class Connect extends Component {
     onSearch() {
         lightFetch({
             word: {
-                select: ["ID", "Word", "Mistake"],
+                select: ["ID", "Word_Text", "Mistake"],
                 where: { ID: getRandomInt(0, 30000), limit: 1 },
             },
         }).then((res) => {
@@ -83,7 +83,7 @@ export default class Connect extends Component {
             if (parseInt(wordFromAPI.Mistake) === 1) {
                 this.onSearch();
             } else {
-                wordFromAPI.Word = wordFromAPI.Word.toUpperCase();
+                wordFromAPI.Word = wordFromAPI.Word_Text.toUpperCase();
                 this.setState({ wordFrom: wordFromAPI });
             }
         });
@@ -100,12 +100,12 @@ export default class Connect extends Component {
 
         lightFetch({
             word: {
-                select: ["ID", "Word"],
-                where: { Word: converted + "%", limit: 1 },
+                select: ["ID", "Word_Text"],
+                where: { Word_Text: converted + "%", limit: 1 },
             },
         }).then((res) => {
             let wordToAPI = res.word[0];
-            wordToAPI.Word = wordToAPI.Word.toUpperCase();
+            wordToAPI.Word = wordToAPI.Word_Text.toUpperCase();
             this.setState({ wordTo: wordToAPI });
         });
     }

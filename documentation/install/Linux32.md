@@ -1,6 +1,6 @@
 ## Linux 32 bit Installation Guide
 
-Linux 32bit is legacy, so it is very diffucult to find some dependencies. But if that's your only option, here's a detailed guide.
+Linux 32bit is legacy, so it is very difficult to find some dependencies. But if that's your only option, here's a detailed guide.
 
 ### STEP 1: Download the repository
 
@@ -25,7 +25,7 @@ That's it! Now you are authenticated and ready to clone the **forked** repositor
 > We recommend cloning the repository directly on the C drive, hence our first command:
 
 ```sh
-$ cd /
+$ cd ~/
 $ sudo git clone git@github.com:<yourUsername>/SchoolNet.git
 ```
 
@@ -101,7 +101,7 @@ To install and setup the server properly, we have created the `config.js` file. 
 
 ```properties
 sudo -s
-cd /SchoolNet
+cd ~/SchoolNet
 node config.js
 tsc
 ```
@@ -117,3 +117,7 @@ node build
 ```
 
 [Let's start the party!](github.com/mitkonikov/SchoolNet)
+
+### Using PM2
+
+Just install it with `npm install pm2` and enable it in the `config.json` file.

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity, ManyToOne } from "typeorm";
-import { Words } from "./Words";
+import { Word } from "./Word";
 
 @Entity({ name: "tbl_word_connections" })
 export class WordConnection extends BaseEntity {
@@ -7,13 +7,13 @@ export class WordConnection extends BaseEntity {
     @PrimaryGeneratedColumn()
     ID: number;
 
-    @ManyToOne(type => Words)
-    wordFrom: Words;
+    @ManyToOne(type => Word)
+    wordFrom: Word;
 
-    @ManyToOne(type => Words)
-    wordTo: Words;
+    @ManyToOne(type => Word)
+    wordTo: Word;
 
-    @Column()
+    @Column({ default: -1 })
     Student_ID: number;
 
     @Column()

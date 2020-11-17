@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity, ManyToOne } from "typeorm";
-import { Words } from "./Words";
+import { Word } from "./Word";
 
 @Entity({ name: "tbl_contributions" })
 export class WordContribution extends BaseEntity {
@@ -7,10 +7,10 @@ export class WordContribution extends BaseEntity {
     @PrimaryGeneratedColumn()
     ID: number;
 
-    @ManyToOne(type => Words)
-    Word: Words;
+    @ManyToOne(type => Word)
+    Word: Word;
 
-    @Column()
+    @Column({ default: -1 })
     Student_ID: number;
 
     @Column()

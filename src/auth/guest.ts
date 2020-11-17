@@ -3,11 +3,11 @@ import uuidv4 from 'uuid/v4';
 
 import { IRequest } from '../types';
 import { Connection } from 'typeorm';
-import { Guests } from '../entity/network/Guests';
+import { Guest } from '../entity/network/Guest';
 
 const crawlers = require('crawler-user-agents');
 
-const GuestPassportWrapper = (entity: Guests) => {
+const GuestPassportWrapper = (entity: Guest) => {
     return {
         ID: entity.ID,
         Cookie: entity.Cookie,
@@ -18,7 +18,7 @@ const GuestPassportWrapper = (entity: Guests) => {
     }
 }
 
-export const Guest = (app: express.Express, network: Connection) => {
+export const GuestModule = (app: express.Express, network: Connection) => {
     const cookieName = process.env.GUEST_SESSION_NAME;
     const cookieSecret = process.env.GUEST_SESSION_SECRET;
 
@@ -36,12 +36,19 @@ export const Guest = (app: express.Express, network: Connection) => {
         }
 
         // look at the request cookies
+        let exist = true;
         if (typeof req.cookies[cookieName] != "undefined") {
             let cookie = req.cookies[cookieName];
-            let Guest = await network.getRepository(Guests).findOne({ Cookie: cookie });
+            let FoundGuest = await network.getRepository(Guest).findOne({ Cookie: cookie });
+        
+            if (typeof FoundGuest == "undefined") {
+                exist = false;
+            } else {
+                req.guest = GuestPassportWrapper(FoundGuest);
+            }
+        }
 
-            req.guest = GuestPassportWrapper(Guest);
-        } else {
+        if (!exist) {
             // generate random session id
             const sessionID = uuidv4();
 
@@ -75,12 +82,12 @@ export const Guest = (app: express.Express, network: Connection) => {
 
             const now = Math.round(new Date().valueOf()/1000);
 
-            let createdGuest = await network.getRepository(Guests).save({
+            let createdGuest = await network.getRepository(Guest).save({
                 Cookie: sessionID,
                 IP: req.clientIp,
                 Mobile: isMobile,
                 Expires: now + (60 * 60 * 24 * 1095)
-            });
+            } as Guest);
 
             req.guest = GuestPassportWrapper(createdGuest);
         }

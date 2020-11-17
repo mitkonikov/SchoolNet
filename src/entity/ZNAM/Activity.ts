@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity } from "typeo
 
 @Entity({ name: "tbl_activities" })
 @Index(["Student_ID"])
-export class Activities extends BaseEntity {
+export class Activity extends BaseEntity {
 
     @PrimaryGeneratedColumn()
     ID: number;

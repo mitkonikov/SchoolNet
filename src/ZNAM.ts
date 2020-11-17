@@ -46,11 +46,11 @@ async function main() {
     QueryInitialize(DBController, ZNAMController, ZNAMGameLogic);
     UpdateInitialize(DBController, ZNAMController, ZNAMGameLogic);
 
-    // Query and Update APIs
-    app.post('/query', Query);
-    app.post('/update', Update);
-
     if (!process.env.ZNAM_OFF) {
+        // Query and Update APIs
+        app.post('/query', Query);
+        app.post('/update', Update);
+        
         app.get('*', (req, res, next) => {
             express.static(path.join(__dirname, './../znam/build'), { fallthrough: true })(req, res, next);
         });

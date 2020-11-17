@@ -9,7 +9,7 @@ export class Statistic extends BaseEntity {
     @Column({ type: 'datetime' })
     Last_Date_Login: string;
 
-    @Column()
+    @Column({ default: 0 })
     Successive_Logins: number;
 
     @Column({ default: 0 })

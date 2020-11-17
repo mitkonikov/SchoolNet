@@ -21,6 +21,8 @@ dashboard_admin.js
 /client/static/css/portfolioBundle.js
 /server/demos
 /server/python/deploy.py
+/server/python/deploy_config.py
+/server/python/__pycache__
 keywords.js
 tests.js
 /tests

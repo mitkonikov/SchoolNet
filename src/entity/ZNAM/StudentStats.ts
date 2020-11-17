@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, BaseEntity } from "typeorm";
 
-@Entity({ name: "tbl_leaderboard" })
+@Entity({ name: "tbl_student_stats" })
 export class StudentStats extends BaseEntity {
 
     @PrimaryGeneratedColumn()

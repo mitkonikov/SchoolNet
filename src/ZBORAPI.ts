@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Connection } from "typeorm";
 import { getConnectionOrCreate } from "./database/connection";
-import { Words } from "./entity/ZBOR/Words";
+import { Word } from "./entity/ZBOR/Word";
 import { WordGenerated } from "./entity/ZBOR/WordGenerated";
 import { WordDay } from "./entity/ZBOR/WordDay";
 import { WordConnection } from "./entity/ZBOR/WordConnection";
@@ -25,7 +25,7 @@ let switchCallback = (key) => {
 
     switch(key.toLowerCase()) {
         case "word":
-            repository = Words;
+            repository = Word;
             break;
         case "generated_word":
             repository = WordGenerated;
@@ -126,7 +126,6 @@ export const query = async (req, res) => {
                 contribution.Word = data.ID;
                 contribution.Type = -1;
                 contribution.Mistake = true;
-                contribution.Student_ID = 0;
                 contribution.Student_IP = req.clientIp;
 
                 let exists = await connection

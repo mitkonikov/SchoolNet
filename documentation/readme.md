@@ -3,6 +3,29 @@
 If you just want to get started developing SchoolNet, there is much more information in the main [readme.md](https://github.com/mitkonikov/SchoolNet/blob/master/readme.md) file. We are actively writing the documentation of this project.
 
 ---
+### Source Folder Structure
+
+The main entry points are:
+  - index.ts
+  - ZNAM.ts
+
+Built-in sub-apps are:
+  - ZBORAPI.ts
+  - PILOTAPI.ts
+
+The folder structure:
+  - apps (sub-app logic) [1](#1)
+  - play (module-app logic)
+  - auth (authentication logic)
+  - database (common database connectors)
+  - deploy (pm2 setup)
+  - entity & resolvers (for TypeORM and GraphQL)
+
+Other Typescript Support Files are:
+  - Dynamo.ts
+  - types.ts
+
+---
 # API Functions
 
 ### **Back-end controllers passed in each game**:
@@ -111,3 +134,8 @@ The following scheme should be used as a starting point when creating a demo tem
     "log"       : { ... }
   }
 ```
+
+---
+#### 1
+
+Sub-Apps we call the apps that are developed by our team. The Module-Apps are the apps that are developed by the users.
