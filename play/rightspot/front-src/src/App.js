@@ -8,7 +8,7 @@ import io from "socket.io-client";
 let prevTime = 0;
 
 const socket = io(domain());
-socket.nsp = "/game";
+socket.nsp = "/game/rightspot";
 
 class App extends Component {
     constructor(props) {

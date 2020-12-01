@@ -3,7 +3,7 @@
     "short_name": "rightspot",
     "color": "#45b553",
     "description": "It's the right spot to start developing your own app!",
-    "frontend": "./build",
+    "frontend": "./front-src/build",
     "backend": "./server-build",
     "author": "Mitko Nikov"
 }

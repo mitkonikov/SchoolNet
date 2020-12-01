@@ -1,24 +1,18 @@
 import path from 'path';
 import fs from 'fs';
 import { Db } from 'typeorm';
-import express, { IRouter } from 'express';
+import express, { IRouter, Express } from 'express';
+import { Requirements, IAPI } from './types';
+import socketio from 'socket.io';
+import { Server } from 'http';
 
 const CLEANER_APPS = ["cleaner", "cleaner-link"];
 let allCollections = [];
-let app, play: Db;
+let app: Express, play: Db;
 
-let requireGame = (name: string, path: string, read: any) => {
-    interface Requirements {
-        modules: [string],
-        collections: [string]
-    }
-    
-    interface IAPI {
-        modules: any,
-        collections: any,
-        error: any
-    }
-    
+let socketIO: socketio.Server;
+
+let requireGame = (path: string, read: any) => {
     let Game = require(path);
     let requirements = Game.requirements as Requirements;
 
@@ -31,7 +25,7 @@ let requireGame = (name: string, path: string, read: any) => {
     for (let req of requirements.modules) {
         switch (req) {
             case "socketio": {
-                API.modules.socketio = "socketmodule";
+                API.modules.socketio = socketIO.of('/game/' + read.short_name);
             }
         }
     }
@@ -56,8 +50,8 @@ let requireGame = (name: string, path: string, read: any) => {
         }
     }
 
-    console.log(name + " requires modules: ", requirements.modules);
-    console.log(name + " requires collections: ", requirements.collections)
+    console.log(read.short_name + " requires modules: ", requirements.modules);
+    console.log(read.short_name + " requires collections: ", requirements.collections)
 
     // call the init function of the game
     Game.initialize(API);
@@ -108,7 +102,7 @@ let findJSON = (source: string, dir: string) => {
     // Serve the warm dish
     app.use(url, express.static(gameDir));
 
-    requireGame(read.short_name, mainModule, read);
+    requireGame(mainModule, read);
 }
 
 const recursiveSync = (source: string, level: number) => {
@@ -128,7 +122,9 @@ const recursiveSync = (source: string, level: number) => {
     }
 }
 
-export const initPlay = async (source: string, node_app, database: Db) => {
+export const initPlay = async (source: string, node_app: Express, server: Server, database: Db) => {
+    socketIO = socketio(server);
+
     app = node_app;
     play = database;
 

@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { getConnectionOrCreate, connectMongo, connectMySQL } from "./database/connection";
 import express from "express";
+import http from "http";
 import requestIp from 'request-ip';
 import { buildSchema } from 'type-graphql';
 import { UserResolver } from "./resolvers/UserResolver";
@@ -61,6 +62,7 @@ async function main() {
 
     // Create the Express and Apollo apps
     const app = express();
+    const server = http.createServer(app);
 
     // Request Comes with Client's IP
     app.use(requestIp.mw())
@@ -102,7 +104,7 @@ async function main() {
 
     // Require all the games
     let playDir = path.join(__dirname, '../play');
-    initPlay(playDir, app, play);
+    initPlay(playDir, app, server, play);
 
     // Main page
     app.get('/', async (req: IRequest, res) => {
@@ -124,7 +126,7 @@ async function main() {
         }
     });
 
-    app.listen(process.env.PORT);
+    server.listen(process.env.PORT);
     console.log(`[SchoolNet] Server started at port ${process.env.PORT}.`);
 }
 

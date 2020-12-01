@@ -5,7 +5,7 @@ const readline = require('readline');
 const path = require('path');
 const { spawn } = require('child_process');
 
-let dirs = ['src', 'server', 'public'];
+let dirs = ['front-src', 'server-src', 'src', 'public'];
 let includeExt = ['js', 'html', 'config', 'ts', 'jsx', 'tsx', 'css', 'json', 'txt', 'md'];
 
 // process all the arguments given when starting this module
