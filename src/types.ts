@@ -43,3 +43,12 @@ export interface IUser {
     G_ProfileName: string,
     G_ID: string
 }
+
+export interface IConfig {
+    usePM2: Boolean,
+    guest: Boolean,
+    gameLogic: Boolean,
+    databaseController: Boolean,
+    subApps: Boolean,
+    indexAPI: Boolean
+}

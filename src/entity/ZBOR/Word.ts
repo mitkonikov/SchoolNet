@@ -10,15 +10,15 @@ export class Word extends BaseEntity {
     @Column()
     Word_Text: string;
 
-    @Column()
+    @Column({ default: 0 })
     Type: number;
 
-    @Column({ type: "text" })
+    @Column({ type: "text", nullable: true })
     Occurrences: string;
 
-    @Column({ type: "tinyint", width: 1 })
+    @Column({ type: "tinyint", width: 1, default: false })
     Mistake: boolean;
 
-    @Column()
+    @Column({ default: 0 })
     Wiki_Frq: number;
 }

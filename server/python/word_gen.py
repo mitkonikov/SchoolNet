@@ -1,7 +1,12 @@
-from __future__ import absolute_import, division, print_function
+import logging
+logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
 import tensorflow as tf
-tf.enable_eager_execution()
+from tensorflow.python.keras.engine.sequential import Sequential
+from tensorflow.python.ops.gen_dataset_ops import BatchDataset
+
+print("TF Eager:", tf.executing_eagerly())
+tf.device('/cpu')
 
 import numpy as np
 import os
@@ -9,18 +14,17 @@ import sys
 import time
 
 import functools
-import fileinput
 import random
 
 import codecs
-sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
-sys.stdin = codecs.getwriter('utf8')(sys.stdin.buffer)
-sys.stderr = codecs.getwriter('utf8')(sys.stderr.buffer)
+
+VERBOSE_OUTPUT = True
+PRINT_MODEL_SUMMARY = True
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 WORDS_TXT_FILE = DIR_PATH + "/wikipedia-mk-database-words.txt"
-checkpoint_dir = DIR_PATH + '/training_checkpoints'
+CHECKPOINT_DIR = DIR_PATH + "/training_checkpoints"
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -34,62 +38,58 @@ text_as_int = None
 rnn = functools.partial(
     tf.keras.layers.GRU, recurrent_activation='sigmoid')
 
-# The maximum length sentence we want for a single input in characters
-seq_length = 10
-
-# The embedding dimension 
-embedding_dim = 64
-
-# Number of RNN units
-rnn_units = 256
-
+SEQ_LENGTH = 10 # The maximum length sentence we want for a single input in characters
+EMBEDDING_DIM = 64 # The embedding dimension 
+RNN_UNITS = 256
 EPOCHS = 3
-
 BATCH_SIZE = 10
 
-def prepare(DATABASE_FILE):
-    global embedding_dim, rnn_units, EPOCHS, seq_length, text_as_int
-    global char2idx, idx2char, vocab_size, text_lenght, rnn
+def prepare(database_file):
+    """Prepare the dataset, vocabulary and the mappings required
+
+    Args:
+        database_file (str): File containing all the words
+    """
+    global char2idx, idx2char, vocab_size, text_lenght, text_as_int
 
     # Read, then decode for py2 compat.
-    text = open(DATABASE_FILE, 'rb').read().decode(encoding='utf-8')
+    text = open(database_file, 'rb').read().decode(encoding='utf-8')
+    text = text.replace('è', 'е')
+    text = text.replace('ѝ', 'и')
 
-    # length of text is the number of characters in it
     text_lenght = len(text)
-    #print ('Length of text: {} characters'.format(text_lenght))
+    VERBOSE_OUTPUT and print ('Length of text: {} characters'.format(text_lenght))
 
     # The unique characters in the file
     vocab = sorted(set(text))
-
-    # Length of the vocabulary in chars
     vocab_size = len(vocab)
-
-    #print ('{} unique characters'.format(vocab_size))
-    # print (vocab)
-
-    #print ("Letters in the official alphabet: ", len("абвгдѓежзѕијклљмнњопрстќуфхцчџш"))
+    if VERBOSE_OUTPUT:
+        print ("Letters in the official alphabet: ", len("абвгдѓежзѕијклљмнњопрстќуфхцчџш"))
+        print ('{} unique characters in our vocab.'.format(vocab_size))
+        print ("The vocab: ", vocab)
 
     char2idx = {u:i for i, u in enumerate(vocab)}
     idx2char = np.array(vocab)
 
     text_as_int = np.array([char2idx[c] for c in text])
 
-    #print(" ======================================================== ")
+    VERBOSE_OUTPUT and print(" ======================================================== ")
 
 def trainModel():
-    global embedding_dim, rnn_units, EPOCHS, seq_length, BATCH_SIZE
-    global char2idx, idx2char, vocab_size, text_lenght, rnn, checkpoint_dir, text_as_int
+    global char2idx, idx2char, vocab_size, text_lenght, rnn, text_as_int
 
-    examples_per_epoch = text_lenght//seq_length
+    examples_per_epoch = text_lenght // SEQ_LENGTH
 
     # Create training examples / targets
     char_dataset = tf.data.Dataset.from_tensor_slices(text_as_int)
 
-    sequences = char_dataset.batch(seq_length+1, drop_remainder=True)
+    # Slice the characters in batches of 10 chars
+    sequences = char_dataset.batch(SEQ_LENGTH + 1, drop_remainder=True)
 
+    # For each sequence create input and target vectors
     dataset = sequences.map(split_input_target)
 
-    steps_per_epoch = examples_per_epoch//BATCH_SIZE
+    steps_per_epoch = examples_per_epoch // BATCH_SIZE
     
     # Buffer size to shuffle the dataset
     # (TF data is designed to work with possibly infinite sequences, 
@@ -98,23 +98,26 @@ def trainModel():
     BUFFER_SIZE = 10000
     
     dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True)
-    # print(dataset)
+    # print(dataset[:5])
 
+    loss = 0
+    model: Sequential
     model = build_model(
-    vocab_size = vocab_size, 
-    embedding_dim=embedding_dim, 
-    rnn_units=rnn_units,
-    batch_size=BATCH_SIZE,
-    rnn=rnn)
+        vocab_size = vocab_size,
+        embedding_dim=EMBEDDING_DIM,
+        rnn_units=RNN_UNITS,
+        batch_size=BATCH_SIZE,
+        rnn=rnn
+    )
 
     randomPrediction(model, dataset)
 
     model.summary()
 
-    optimizer = tf.train.AdamOptimizer()
+    optimizer = tf.keras.optimizers.Adam()
 
     # Name of the checkpoint files
-    checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt_{epoch}")
+    checkpoint_prefix = os.path.join(CHECKPOINT_DIR, "ckpt_{epoch}")
 
     for epoch in range(EPOCHS):
         start = time.time()
@@ -123,114 +126,114 @@ def trainModel():
         # initally hidden is None
         model.reset_states()
         
+        maxBatchSize = len(dataset)
         for (batch_n, (inp, target)) in enumerate(dataset):
             with tf.GradientTape() as tape:
-                # feeding the hidden state back into the model
-                # This is the interesting step
                 predictions = model(inp)
-                loss = tf.losses.sparse_softmax_cross_entropy(target, predictions)
-                
+                loss = tf.reduce_mean(
+                    tf.keras.losses.sparse_categorical_crossentropy(
+                        target, predictions, from_logits=True))
             grads = tape.gradient(loss, model.trainable_variables)
             optimizer.apply_gradients(zip(grads, model.trainable_variables))
 
             if batch_n % 100 == 0:
-                template = 'Epoch {} Batch {} Loss {:.4f}'
-                #print(template.format(epoch+1, batch_n, loss))
+                template = 'Epoch {} Batch {}/{} Loss {:.4f}'
+                print(template.format(epoch+1, batch_n, maxBatchSize, loss))
 
         # saving (checkpoint) the model every 5 epochs
         if (epoch + 1) % 5 == 0:
             model.save_weights(checkpoint_prefix.format(epoch=epoch))
 
-        #print ('Epoch {} Loss {:.4f}'.format(epoch+1, loss))
-        #print ('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
+        if VERBOSE_OUTPUT:
+            print('Epoch {} Loss {:.4f}'.format(epoch + 1, loss))
+            print('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
 
         model.save_weights(checkpoint_prefix.format(epoch=epoch))
 
-    #print(" ======================================================== ")
+    print(" " + ("=" * 70) + " ")
 
 def loadModel():
-    global vocab_size, embedding_dim, rnn_units, rnn
-    global checkpoint_dir
+    global vocab_size, EMBEDDING_DIM, RNN_UNITS, rnn
+    global CHECKPOINT_DIR
 
-    latestModel = tf.train.latest_checkpoint(checkpoint_dir)
+    latestModel = tf.train.latest_checkpoint(CHECKPOINT_DIR)
 
-    model = build_model(vocab_size, embedding_dim, rnn_units, batch_size=1, rnn=rnn)
+    model = build_model(vocab_size, EMBEDDING_DIM, RNN_UNITS, batch_size=1, rnn=rnn)
 
     model.load_weights(latestModel)
 
     model.build(tf.TensorShape([1, None]))
 
-    #print(" ======================================================== ")
-
-    #model.summary()
-
-    #print(" ======================================================== ")
+    if PRINT_MODEL_SUMMARY:
+        print("=" * 70)
+        model.summary()
+        print("=" * 70)
 
     return model
 
-def predict(model, start_string, temperature):
-    print(generate_text(model, start_string=start_string, temperature=temperature))
+def printPredict(model, start_string = None, temperature = 1.0):
+    print(generate_text(model, start_string, temperature))
 
-def predictRandomStartString(model, temperature):
-    print(generate_text(model, temperature=temperature, start_numbers=True))
-
-### GET JUST THE FIRST RANDOM PREDICTION FROM THE MODEL
-def randomPrediction(model, dataset):
+def randomPrediction(model, dataset: BatchDataset):
+    """Get just the first random prediction from the model
+    """
     global idx2char
     
-    for input_example_batch, target_example_batch in dataset.take(1): 
+    for input_example_batch, target_example_batch in dataset.take(1):
         example_batch_predictions = model(input_example_batch)
-        #print(example_batch_predictions.shape, "# (batch_size, sequence_length, vocab_size)")
+        VERBOSE_OUTPUT and print(example_batch_predictions.shape, "# (batch_size, sequence_length, vocab_size)")
 
-    sampled_indices = tf.random.multinomial(example_batch_predictions[0], num_samples=1)
-    sampled_indices = tf.squeeze(sampled_indices,axis=-1).numpy()
-
-    #print("Input: \n", repr("".join(idx2char[input_example_batch[0]])))
-    #print()
-    #print("Next Char Predictions: \n", repr("".join(idx2char[sampled_indices])))
-
+    sampled_indices = tf.random.categorical(example_batch_predictions[0], num_samples=1)
+    sampled_indices = tf.squeeze(sampled_indices, axis = -1).numpy()
     example_batch_loss  = loss(target_example_batch, example_batch_predictions)
-    #print("Prediction shape: ", example_batch_predictions.shape, " # (batch_size, sequence_length, vocab_size)") 
-    #print("scalar_loss:      ", example_batch_loss.numpy().mean())
 
-    #print(" ======================================================== ")
+    if VERBOSE_OUTPUT:
+        print("Prediction shape: ", example_batch_predictions.shape, " # (batch_size, sequence_length, vocab_size)") 
+        print("Scalar Loss:      ", example_batch_loss.numpy().mean())
+        print(" ======================================================== ")
 
-### GET THE LOSS FROM THE MODEL
 def loss(labels, logits):
+    """Calculate the loss from the model"""
     return tf.keras.losses.sparse_categorical_crossentropy(labels, logits)
 
-### BUILD THE MODEL
 def build_model(vocab_size, embedding_dim, rnn_units, batch_size, rnn):
-  model = tf.keras.Sequential([
-    tf.keras.layers.Embedding(vocab_size, embedding_dim, 
-                              batch_input_shape=[batch_size, None]),
-    rnn(rnn_units,
-        return_sequences=True, 
-        recurrent_initializer='glorot_uniform',
-        stateful=True),
-    tf.keras.layers.Dense(vocab_size)
-  ])
-  return model
+    model = tf.keras.Sequential([
+        tf.keras.layers.Embedding(vocab_size, embedding_dim, 
+                                batch_input_shape=[batch_size, None]),
+        rnn(rnn_units,
+            return_sequences=True, 
+            recurrent_initializer='glorot_uniform',
+            stateful=True),
+        tf.keras.layers.Dense(vocab_size)
+    ])
+    return model
 
-### SPLIT INPUT CHUNKS
 def split_input_target(chunk):
+    """It splits the chunk into input and target subchunks.
+        The input subchunk is from 0 to the element one from the last
+        The target subchunk starts from 1, training the network to
+        be able to predict the next character
+    """
     input_text = chunk[:-1]
     target_text = chunk[1:]
     return input_text, target_text
 
-### (OPTIONAL) PRINTING THE FIRST 20 CHARACTERS IN THE VOCAB
-def printVocab(vocab, char2idx):
-    # print the vocab
-    print('{')
-    for char,_ in zip(char2idx, range(20)):
-        print('  {:4s}: {:3d},'.format(repr(char), char2idx[char]))
-    print('  ...\n}')
+def generate_text(model, start_string = None, temperature = 1.0):
+    """Generating text based on a start string
 
-### GENERATING TEXT BASED ON A START STRING
-def generate_text(model, start_string = None, temperature=1.0, start_numbers = False):
-    # Low temperatures results in more predictable text.
-    # Higher temperatures results in more surprising text.
-    # Experiment to find the best setting.
+    ## Temperature
+     - Low temperatures results in more predictable text.
+     - Higher temperatures results in more surprising text.
+     - Experiment to find the best setting.
+
+    ## Args:
+        - model: The RNN model
+        - startstring (str, optional): String which is used at the start of the word. Defaults to None.
+        - temperature (float, optional): Temperature is used to determine the randomness of the word generation. Defaults to 1.0.
+
+    ## Returns:
+        str: Generated String
+    """
 
     global char2idx, idx2char, vocab_size
     
@@ -239,17 +242,17 @@ def generate_text(model, start_string = None, temperature=1.0, start_numbers = F
     # Number of characters to generate
     num_generate = 50
 
-    if start_numbers:
+    if start_string == None:
         input_eval = []
         start_string = ""
         for x in range(2):
-            input_eval.append(random.randint(0,vocab_size - 1))
+            input_eval.append(random.randint(0, vocab_size - 1))
             start_string += idx2char[input_eval[x]]
-        
     else:
         # Converting our start string to numbers (vectorizing) 
         input_eval = [char2idx[s] for s in start_string]
     
+    # Convert input to TF tensor
     input_eval = tf.expand_dims(input_eval, 0)
 
     # Empty string to store our results
@@ -264,7 +267,7 @@ def generate_text(model, start_string = None, temperature=1.0, start_numbers = F
 
         # using a multinomial distribution to predict the word returned by the model
         predictions = predictions / temperature
-        predicted_id = tf.multinomial(predictions, num_samples=1)[-1,0].numpy()
+        predicted_id = tf.random.categorical(predictions, num_samples=1)[-1,0].numpy()
         
         # We pass the predicted word as the next input to the model
         # along with the previous hidden state
@@ -274,19 +277,20 @@ def generate_text(model, start_string = None, temperature=1.0, start_numbers = F
 
     return (start_string + ''.join(text_generated))
 
-
 def userInteraction():
     TEMP = 1.0
     START_STRING = u"ан"
 
     # MAIN CALLS
     prepare(WORDS_TXT_FILE)
-    # trainModel()
     MODEL = None
 
     # UI
     while True:
         INPUT = input("> ").split()
+        if (len(INPUT) == 0):
+            break
+
         if (INPUT[0] == "train"):
             trainModel()
         elif (INPUT[0] == "load"):
@@ -294,15 +298,17 @@ def userInteraction():
         elif (INPUT[0] == "temperature"):
             TEMP = float(INPUT[1])
             print ("Temperature set to: " + str(TEMP))
-            predict(MODEL, START_STRING, TEMP)
+            printPredict(MODEL, START_STRING, TEMP)
         elif (INPUT[0] == "startstring"):
             START_STRING = INPUT[1]
-            print ("Start String set to: " + START_STRING)
-            predict(MODEL, START_STRING, TEMP)
+            print("Start String set to:", START_STRING)
+            printPredict(MODEL, START_STRING, TEMP)
         elif (INPUT[0] == "predict"):
-            predict(MODEL, START_STRING, TEMP)
+            printPredict(MODEL, START_STRING, TEMP)
         elif (INPUT[0] == "exit"):
             break
+        else:
+            print("Unknown command", INPUT[0])
 
 MODEL = None
 
@@ -320,6 +326,9 @@ def nodeSetup():
 
 def nodeLoop():
     global MODEL
+    sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
+    sys.stdin = codecs.getwriter('utf8')(sys.stdin.buffer)
+    sys.stderr = codecs.getwriter('utf8')(sys.stderr.buffer)
 
     # wait for input from node
     while True:
@@ -328,7 +337,7 @@ def nodeLoop():
             TEMP = 1.0
     
             # predict and write to stdout
-            predictRandomStartString(MODEL, TEMP)
+            printPredict(MODEL, temperature = TEMP)
             sys.stdout.flush()
 
-nodeSetup()
+userInteraction()

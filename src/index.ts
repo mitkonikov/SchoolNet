@@ -17,7 +17,7 @@ import { GuestModule } from './auth/guest';
 import { Connect as DBController, DB } from './database/controller';
 import { main as SubApps } from './apps/main';
 import { main as StaticExpress } from './apps/static';
-import { IRequest, IContext } from "./types";
+import { IRequest, IContext, IConfig } from "./types";
 import { Guest } from "./entity/network/Guest";
 import { User } from "./entity/network/User";
 import { siteRedirect } from "./auth/redirects";
@@ -56,7 +56,7 @@ async function main() {
     }
 
     // PM2 Connection  
-    if ((process.config as any).usePM2) {
+    if ((process.config as Partial<IConfig>).usePM2) {
         require('./deploy/pm2setup');
     }
 
@@ -81,7 +81,7 @@ async function main() {
     let databases = await connectMySQL();
 
     // The Main Controller Module for database access
-    if ((process.config as any).databaseController) {
+    if ((process.config as Partial<IConfig>).databaseController) {
         DBController(databases);
     }
 
@@ -89,14 +89,14 @@ async function main() {
     let auth = Authentication(app, network);
 
     // Guest Authentication
-    if ((process.config as any).guest) {
+    if ((process.config as Partial<IConfig>).guest) {
         GuestModule(app, network);
         const guestCount = await network.getRepository(Guest).count();
         console.log(`Guest Count: ${guestCount}`);
     }
 
     // Applications such as ZNAM and ZBOR
-    if ((process.config as any).subApps) {
+    if ((process.config as Partial<IConfig>).subApps) {
         SubApps(app);
     }
 

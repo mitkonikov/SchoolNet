@@ -3,5 +3,6 @@
     "guest": true,
     "gameLogic": true,
     "databaseController": true,
-    "subApps": true
+    "subApps": true,
+    "indexAPI": false
 }
