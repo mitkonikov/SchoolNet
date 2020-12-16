@@ -1,15 +1,18 @@
+import env
+
 import logging
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = ('3' if env.PROD else '0')
 
 import tensorflow as tf
 from tensorflow.python.keras.engine.sequential import Sequential
 from tensorflow.python.ops.gen_dataset_ops import BatchDataset
 
-print("TF Eager:", tf.executing_eagerly())
-tf.device('/cpu')
+not env.PROD and print("TF Eager:", tf.executing_eagerly())
 
 import numpy as np
-import os
 import sys
 import time
 
@@ -18,15 +21,13 @@ import random
 
 import codecs
 
-VERBOSE_OUTPUT = True
-PRINT_MODEL_SUMMARY = True
+VERBOSE_OUTPUT = not env.PROD
+PRINT_MODEL_SUMMARY = not env.PROD
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 WORDS_TXT_FILE = DIR_PATH + "/wikipedia-mk-database-words.txt"
 CHECKPOINT_DIR = DIR_PATH + "/training_checkpoints"
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 char2idx = None
 idx2char = None
@@ -41,8 +42,11 @@ rnn = functools.partial(
 SEQ_LENGTH = 10 # The maximum length sentence we want for a single input in characters
 EMBEDDING_DIM = 64 # The embedding dimension 
 RNN_UNITS = 256
-EPOCHS = 3
+EPOCHS = 5
 BATCH_SIZE = 10
+
+MODEL: Sequential
+optimizer = tf.keras.optimizers.Adam()
 
 def prepare(database_file):
     """Prepare the dataset, vocabulary and the mappings required
@@ -101,8 +105,7 @@ def trainModel():
     # print(dataset[:5])
 
     loss = 0
-    model: Sequential
-    model = build_model(
+    MODEL = build_model(
         vocab_size = vocab_size,
         embedding_dim=EMBEDDING_DIM,
         rnn_units=RNN_UNITS,
@@ -110,11 +113,21 @@ def trainModel():
         rnn=rnn
     )
 
-    randomPrediction(model, dataset)
+    randomPrediction(MODEL, dataset)
 
-    model.summary()
+    MODEL.summary()
 
-    optimizer = tf.keras.optimizers.Adam()
+    @tf.function
+    def train_step(inp, target):
+        with tf.GradientTape() as tape:
+            predictions = MODEL(inp)
+            loss = tf.reduce_mean(
+                tf.keras.losses.sparse_categorical_crossentropy(
+                    target, predictions, from_logits=True))
+        grads = tape.gradient(loss, MODEL.trainable_variables)
+        optimizer.apply_gradients(zip(grads, MODEL.trainable_variables))
+
+        return loss
 
     # Name of the checkpoint files
     checkpoint_prefix = os.path.join(CHECKPOINT_DIR, "ckpt_{epoch}")
@@ -124,31 +137,21 @@ def trainModel():
         
         # initializing the hidden state at the start of every epoch
         # initally hidden is None
-        model.reset_states()
+        MODEL.reset_states()
         
         maxBatchSize = len(dataset)
         for (batch_n, (inp, target)) in enumerate(dataset):
-            with tf.GradientTape() as tape:
-                predictions = model(inp)
-                loss = tf.reduce_mean(
-                    tf.keras.losses.sparse_categorical_crossentropy(
-                        target, predictions, from_logits=True))
-            grads = tape.gradient(loss, model.trainable_variables)
-            optimizer.apply_gradients(zip(grads, model.trainable_variables))
+            loss = train_step(inp, target)
 
             if batch_n % 100 == 0:
                 template = 'Epoch {} Batch {}/{} Loss {:.4f}'
                 print(template.format(epoch+1, batch_n, maxBatchSize, loss))
 
-        # saving (checkpoint) the model every 5 epochs
-        if (epoch + 1) % 5 == 0:
-            model.save_weights(checkpoint_prefix.format(epoch=epoch))
-
         if VERBOSE_OUTPUT:
             print('Epoch {} Loss {:.4f}'.format(epoch + 1, loss))
-            print('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
+            print('Time taken for epoch {} - {} sec\n'.format(epoch+1, time.time() - start))
 
-        model.save_weights(checkpoint_prefix.format(epoch=epoch))
+        MODEL.save_weights(checkpoint_prefix.format(epoch=epoch))
 
     print(" " + ("=" * 70) + " ")
 
@@ -309,8 +312,6 @@ def userInteraction():
             break
         else:
             print("Unknown command", INPUT[0])
-
-MODEL = None
 
 def nodeSetup():
     global MODEL
