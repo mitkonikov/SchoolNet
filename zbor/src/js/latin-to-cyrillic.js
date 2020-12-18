@@ -36,7 +36,7 @@ let lMapping = {
 }
 
 export function isLatin(text) {
-    let reg = new RegExp('([a-z]|[A-Z]|\ )+');
+    let reg = new RegExp('([a-z]|[A-Z]| )+');
     return reg.test(text);
 }
 

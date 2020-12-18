@@ -14,7 +14,7 @@ import theme from "./theme";
 
 import WordDay from "./components/WordDay";
 import Search from "./components/Search";
-import Connect from "./components/Connect";
+import Connect from "./components/Connect/Connect";
 import Artificial from "./components/Artificial";
 import Contact from "./components/Contact.jsx";
 import NavBar from "./components/NavBar";

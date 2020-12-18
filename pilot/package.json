@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "/pilot",
   "dependencies": {
-    "react-scripts": "^4.0.0"
+    "react-scripts": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

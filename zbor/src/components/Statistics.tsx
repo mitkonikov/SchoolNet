@@ -45,12 +45,7 @@ export default class Statistics extends Component {
                 clientIp: data.clientIp
             });
 
-            let count = 0;
-            for (let i in data.stats) {
-                count++;
-            }
-
-            if (count > 0) {
+            if (Object.keys(data.stats).length > 0) {
                 this.setState({ isStats: true });
             }
         });

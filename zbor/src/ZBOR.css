@@ -1,6 +1,6 @@
 @font-face {
     font-family: Kapak;
-    src: url(/res/Kapak.ttf); 
+    src: url(./res/Kapak.ttf); 
 }
 
 .card-flex {

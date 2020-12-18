@@ -9,29 +9,12 @@ import HelpIcon from "@material-ui/icons/Help";
 
 import swal from "sweetalert";
 
-import { lightFetch, getRandomInt, queryFetch } from "../js/common";
-import { cyrillic, isLatin } from "../js/latin-to-cyrillic";
+import { queryFetch } from "../../js/common";
 
-import "./../styles/Connect.css";
+import "./../../styles/Connect.css";
 
-type Word = {
-    ID: number;
-    Word: string;
-};
-
-type State = {
-    wordFrom: Word;
-    wordTo: Word;
-    wordLike: string;
-    wordLikeRAW: string;
-    fire: number;
-    connections: number;
-};
-
-type Props = {
-    reloadStats: Function;
-    stats: Function;
-}
+import { State, Props } from './types';
+import { onSearch, onSearchLike } from './main';
 
 export default class Connect extends Component {
     state: State;
@@ -55,12 +38,11 @@ export default class Connect extends Component {
             connections: 0
         };
 
-        this.onSearch = this.onSearch.bind(this);
         this.onConnect = this.onConnect.bind(this);
     }
 
     componentDidMount() {
-        this.onSearch();
+        onSearch((newState) => this.setState(newState));
         setTimeout(() => {
             let stats = this.props.stats();
             if (typeof stats !== "undefined") {
@@ -69,45 +51,6 @@ export default class Connect extends Component {
                 });
             }
         }, 1000);
-    }
-
-    /** Gets a random word from the words table */
-    onSearch() {
-        lightFetch({
-            word: {
-                select: ["ID", "Word_Text", "Mistake"],
-                where: { ID: getRandomInt(0, 30000), limit: 1 },
-            },
-        }).then((res) => {
-            let wordFromAPI = res.word[0];
-            if (parseInt(wordFromAPI.Mistake) === 1) {
-                this.onSearch();
-            } else {
-                wordFromAPI.Word = wordFromAPI.Word_Text.toUpperCase();
-                this.setState({ wordFrom: wordFromAPI });
-            }
-        });
-    }
-
-    /** Gets a word similar to the users input */
-    onSearchLike(wordLike: string) {
-        let converted = "";
-        if (isLatin(wordLike)) {
-            converted = cyrillic(wordLike);
-        } else {
-            converted = wordLike;
-        }
-
-        lightFetch({
-            word: {
-                select: ["ID", "Word_Text"],
-                where: { Word_Text: converted + "%", limit: 1 },
-            },
-        }).then((res) => {
-            let wordToAPI = res.word[0];
-            wordToAPI.Word = wordToAPI.Word_Text.toUpperCase();
-            this.setState({ wordTo: wordToAPI });
-        });
     }
 
     /** Connects the two words */
@@ -119,7 +62,7 @@ export default class Connect extends Component {
                     ID: 0,
                 },
             });
-            this.onSearch();
+            
             return null;
         }
 
@@ -145,7 +88,7 @@ export default class Connect extends Component {
                 wordLike: "",
                 wordLikeRAW: ""
             });
-            this.onSearch();
+            onSearch((newState) => this.setState(newState));
             this.props.reloadStats();
         });
     }
@@ -189,8 +132,9 @@ export default class Connect extends Component {
                                         this.setState({
                                             wordLike: e.target.value.toLowerCase(),
                                         });
-                                        this.onSearchLike(
-                                            e.target.value.toLowerCase()
+                                        onSearchLike(
+                                            e.target.value.toLowerCase(),
+                                            (newState) => this.setState(newState)
                                         );
                                     }}
                                 />
@@ -214,7 +158,7 @@ export default class Connect extends Component {
                                                 </div>
                                             </span>
                                         );
-                                    } 
+                                    }
                                     
                                     if (this.state.connections > 0) {
                                         return (
