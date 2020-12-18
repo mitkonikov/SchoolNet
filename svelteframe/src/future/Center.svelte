@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<style>
+<style type="text/scss">
     .form-center-container {
         position: relative;
         width: 100%;

@@ -116,7 +116,7 @@ async function main() {
                 res.redirect(siteRedirect[user.Redirect]);
             }
         } else {
-            res.sendFile(path.join(__dirname, '../client/index.html'));
+            res.sendFile(path.join(__dirname, '../svelteframe/public/index.html'));
         }
     });
 

@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<style>
+<style type="text/scss">
     #login-buttons {
         position: relative;
         height: 8em;

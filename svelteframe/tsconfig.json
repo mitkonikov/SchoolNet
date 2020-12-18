@@ -1,28 +1,10 @@
 {
-  "compilerOptions": {
-     "lib": [
-        "es5",
-        "es6",
-        "esnext"
-     ],
-     "target": "es6",
-     "module": "commonjs",
-     "moduleResolution": "node",
-     "rootDir": ".",
-     "outDir": "./public/build",
-     "baseUrl": "./frame",
-     "removeComments": true,
-     "esModuleInterop": true,
-     "emitDecoratorMetadata": true,
-     "experimentalDecorators": true,
-     "sourceMap": true,
-     "strictPropertyInitialization": false
-  },
-  "include": [
-     "src/**/*",
-     "node_modules/svelte-material-icons/**/*"
-  ],
-  "exclude": [
-     "**/*.spec.ts"
- ]
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "removeComments": true,
+        "sourceMap": true,
+        "module": "ES6",
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules/*", "__sapper__/*", "public/*"]
 }
