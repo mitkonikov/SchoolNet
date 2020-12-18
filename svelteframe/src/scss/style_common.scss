@@ -1,26 +1,26 @@
 @font-face {
     font-family: Kapak;
-    src: url(/res/Kapak.ttf);
+    src: url(/frame/res/Kapak.ttf);
 }
 
 /*@font-face {
     font-family: Roboto-Thin;
-    src: url(/client/static/res/Roboto-Thin.ttf);
+    src: url(/frame/res/Roboto-Thin.ttf);
 }
 
 @font-face {
     font-family: Roboto-Light;
-    src: url(/client/static/res/Roboto-Light.ttf);
+    src: url(/frame/res/Roboto-Light.ttf);
 }
 
 @font-face {
     font-family: Roboto-Regular;
-    src: url(/client/static/res/Roboto-Regular.ttf);
+    src: url(/frame/res/Roboto-Regular.ttf);
 }
 
 @font-face {
     font-family: Roboto-Bold;
-    src: url(/client/static/res/Roboto-Bold.ttf);
+    src: url(/frame/res/Roboto-Bold.ttf);
 }*/
 
 :root {
@@ -374,7 +374,7 @@ img {
 }
 
 .alert-img {
-    background-image: url("/client/static/img/alert.png");
+    background-image: url("/frame/img/alert.png");
 	background-repeat: no-repeat;
 	background-size: contain;
 	width: 100%;

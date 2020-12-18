@@ -124,6 +124,17 @@ The typescript config file by default (Svelte's template) extends upon their own
 },
 ```
 
+<br>
+<br>
+
+## Deployment
+
+---
+
+We use Express.JS with conjunction to Node.JS to deploy our apps. So, we have to deploy the SvelteFrame from a separate directory. All of the static links that we use should start with `/frame`, so that Express knows that these links would be served statically.
+
+<br>
+
 ---
 
 ### Complications

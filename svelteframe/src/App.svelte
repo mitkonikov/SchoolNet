@@ -66,7 +66,7 @@
                         title="ЗБОР"
                         content="Множество на зборови со отворен извор"
                         callback={() => {
-                            window.location.href = "https:\/\/zbor.schoolnet.mk/"
+                            window.location.href = "https:\/\/zbor.schoolnet.mk/";
                         }}
                     />
                 </div>

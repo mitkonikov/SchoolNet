@@ -9,7 +9,7 @@
 
 <div class="row">
     <div class="s-form no-padding box">
-        <button type="button" class="btn btn-special" id={id} on:click={() => callback}> 
+        <button type="button" class="btn btn-special" id={id} on:click={() => callback()}> 
             <img id="logo" src={image} alt={alt}>
             <div class="btn-special-text">
                 <div class="btn-special-title">{title}</div>
