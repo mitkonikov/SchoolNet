@@ -41,6 +41,9 @@ There are two types of logs:
   - [demo](#demo-template) - file in the `./server/demos` directory that is used for storing the finished game log
 
 ### **Database Controller** - (databaseController.js)
+
+This is deprecated. We changed the database handling to GraphQL.
+
     TODO: Deny access to some functions according to privilages.
  - `Connect(databases) : function` - *(off-limits)*
  - `DB(database) : function`

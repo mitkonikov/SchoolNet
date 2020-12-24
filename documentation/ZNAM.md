@@ -8,7 +8,7 @@ ZNAM uses Material UI (Material Design for React).
 
 ## Game Logic
 
-We implemented *Dense Ranking* according to Scores, but still yet to implement ELO Rating. <br>
+We implemented *Dense Ranking* according to Scores, but still yet to implement ELO display and ranging. <br>
 There are two different types of ranking:
   * ranking according to a score in a specific subject
     - this ranking is stored in the `tbl_scoreboard`

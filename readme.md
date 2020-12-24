@@ -2,32 +2,26 @@
 
 #### **Real Time Gaming in School?!**
 
-SchoolNet is a network which is designed to help teachers and students organize and colaborate together while making the classes and lessons more interactive with fun real-time games, statistics and awards. SchoolNet is and should be seen, only as a tool in the educational process. The main SchoolNet platform is still in construction, so you won't be able to join it and play it. However we are releasing the ZNAM platform, which is a so-called "Cloud of Knowledge".
+The idea behind the SchoolNet Core is a service which will host modular sandboxed real-time educational games created and played by students. Making classes and lessons more interactive with fun real-time games, statistics and awards will be the future of the education process. The SchoolNet Core is still in construction, so you won't be able to join it and play it. However, we are releasing the **ZBOR** and **ZNAM** platform soon.
 
 ## ZNAM
 
-ZNAM is a web-app that hosts questions on multiple school subjects for anyone to practice on. It was initially designed to digitize the questions from the national prom (high-school graduation) exam. However, we have further extended the capabilities, so anyone can contribute questions. The purpose of this platform is to create a national database or cloud of knowledge which would not only be useful to teachers and students, but also to scientists and inventors a like.
+ZNAM is a web-app that hosts questions on multiple school subjects for anyone to practice on. It was initially designed to digitize the questions from the national high-school graduation exam. However, we have further extended the capabilities, so anyone can contribute questions. The purpose of this platform is to create a national database or "Cloud of Knowledge" which would not only be useful to teachers and students, but also to scientists and inventors a like.
 
-## How does SchoolNet work?
+## ZBOR
 
-SchoolNet hosts games and its main goals are to connect teachers and students together with interactive real-time games.
+ZBOR is small web-app that hosts an open-source dictionary with fast word querying. We created this dictionary only by parsing the Macedonian Wikipedia. We also trained an RNN AI model for word generation and we have plans to create new language AI models for various of interesting purposes.
 
-## When to play?
-
-SchoolNet is designed to be used *only* in the school! *(Hell yeah!)*
-Seriosly, you can contribute and make levels from home too, but when you play on the system, everyone (the students and the teacher) should be gathered **together**. It's important to have face-to-face interactions, not only considering the coordination when starting and finishing levels, but also considering the social aspect. We don't want the digitalization of a system to impact the level of social interaction - we've seen enough of that already.
-
-## Is is hosted now?
+### Is is hosted now?
 
 **No, not yet.** We are still in development and any contribution or donation would speed the process a ton. Thank you.
 
-## Plans for the future
+### Plans for the future
 
 Oh, we have huge plans and everyone is welcomed to fantasizes with us. Some of our plans include:
  - SchoolNet's course based system
  - SchoolNet's tournament system
  - The SAKAM platform - a platform for voting and exhanging ideas and changes
- - The ZBOR platform - Open Source downloadable national dictionary with cool statistics
 Come down to the [contribute section](#contribute) and put your signature on the [Hall of Fame](#hall-of-fame).
 
 ## Tech
@@ -63,9 +57,9 @@ SchoolNet uses a number of open source projects to work properly:
 
 ## Development
 
-If anyone wants to set up this server on their own computer, he can absolutely do it and here's how! We know that some of you might prefer Sublime, or Notepad++, or Visual Studio, but we **strongly** recommend **Visual Studio Code** as your main editor. It allows you to run multiple shell consoles inside the editor itself. Also, debugging Node.js app with Visual Studio Code is really easy! You can set breakpoints anywhere in the code! It's just beautiful!
+If you want to develop ZBOR or ZNAM, you don't need to do learn anything about the SchoolNet Core. They are sub-apps which for know are really outside the Core. But, because of our mono-repository structure, you will have to Fork or Download to whole repo in order to contribute. We know that some of you might prefer Sublime, or Notepad++, or Visual Studio, but we **strongly** recommend **Visual Studio Code** as your main editor.
 
-> You don't need to follow every step to develop the ZNAM platform. For exclusive development of the front-end of ZNAM you only need the first step to set up the repository and after that, the development of React is described [here](https://github.com/mitkonikov/SchoolNet/blob/master/znam/README.md).
+> For exclusive development of the front-end of ZNAM you only need the first step to set up the repository and after that, the development of React is described [here](https://github.com/mitkonikov/SchoolNet/blob/master/znam/README.md).
 
 > **PAY ATTENTION**: The **API** for external games is not finished! You should **NOT** develop games for it, without contacting us!
 
@@ -75,9 +69,14 @@ If anyone wants to set up this server on their own computer, he can absolutely d
 
 [![Windows 64bit Excellent Support](https://img.shields.io/badge/Windows%2064bit-Excellent-green.svg)](https://shields.io/)  [![Windows 32bit Good Enough Support](https://img.shields.io/badge/Windows%2032bit-Good%20Enough-green.svg)](https://shields.io/)  [![Linux 64bit Good Enough](https://img.shields.io/badge/Linux%2064bit-Good%20Enough-green.svg)](https://shields.io/)  [![Linux 32bit Good Enough](https://img.shields.io/badge/Linux%2032bit-Good%20Enough-green.svg)](https://shields.io/)
 
-For Linux Server OS, please read [these](https://github.com/mitkonikov/SchoolNet/blob/master/documentation/install/Linux.md) installation steps.
+ - For Linux OS Server, please read [these](https://github.com/mitkonikov/SchoolNet/blob/master/documentation/install/Linux.md) installation steps.
+ - Installation notes for the SchoolNet Core can be found [here](https://github.com/mitkonikov/SchoolNet/blob/master/documentation/install/Core.md).
 
-## Windows Setup Steps
+<br>
+
+### Developing ZBOR or ZNAM
+
+Developing these two platforms is surprisingly easy. Follow these steps to get them setup.
 
 ### STEP 1: Download the repository
 
@@ -90,16 +89,11 @@ If you already have the GitHub setup for Desktop and Visual Studio Code, just cl
 
 and have a GUI where you can clone the repository and watch it for further changes. With a press of a button, GitHub Desktop can connect it to Visual Studio Code.
 
-**On 32bit machine**, READ [HERE](#installing-git-bash-on-32-bit-machine)
+**On 32bit machine**, READ [HERE](https://github.com/mitkonikov/SchoolNet/blob/master/documentation/install/Git-32bit.md)
 
-##### IN WORSE CASE SCENARIO:
-If you really don't want to be directly connected to GitHub and lose the ability to pull request any changes, you can download the repository as a .ZIP file.
+### STEP 2: Download dependencies
 
-<br>
-
-### STEP 2: Download dependecies
-
-SchoolNet requires [Node.js](https://nodejs.org/) v10.15.0 or later to run.
+SchoolNet/ZNAM/ZBOR require [Node.js](https://nodejs.org/) v10.15.0 or later to run.
 
 To install and setup the server properly, we have created the `config.js` file. It will require administrator/superuser privileges in order to create the symbolic links.
 
@@ -112,107 +106,21 @@ $ node build
 
 We are implemented symbolic links to avoid dependency duplications. We have full support for Windows and Linux.
 
-You would also need the missing libraries from the `/client/static/js` and the `/client/static/css` folder. Because we don't have the rights to distribute these dependencies in our repository, you would need to download them yourself.
+### STEP 3: Deal with .ENV files
 
-```
-/client/static/css/jquery.fullPage.css
+In the main directory you need to have an .env file. Just run the following command in the main SchoolNet folder: 
 
-/client/static/js/jquery.fullpage.js
-/client/static/js/swal.js
-```
-
-Here are some download links for the libraries:
- - [swal.js](https://cdn.jsdelivr.net/npm/sweetalert2@9)
-
-We are going to modify the way of serving of these files as we implement the Svelte Frame. But, for now, this remains a pain. *(TODO)*
-
-* There is a file in the `css` and `js` folder listing the missing files there.
-
-You should only see errors about the connection to the databases. Now it's the time to install XAMPP!
-
-* Download XAMPP and install the Apache server and the MySQL database.
-* Download MongoDB with Compass
-
-<br>
-
-### STEP 3: .env FILE
-
-Create .env file in the main directory with the following options:
-
-```
-PORT = 3000
-PORT_ZNAM = 3001
-DOMAIN = <this is only for production env>
-DATABASE_PORT = 3306
-DATABASE_USER = <here the database username>
-DATABASE_PASS = <here the database password>
-SESSION_NAME = <session name>
-SESSION_SECRET = <!session secret!>
-GUEST_SESSION_NAME = <guest session name>
-GUEST_SESSION_SECRET = <!guest session secret!>
-PASSPORT_SALT = <salt>
-TATKIN_WORD_COUNT = 3000
+```sh
+mv example-env .env
 ```
 
-Default XAMPP/MySQL username is `"root"` with empty password (`""`).<br>
-Session Name, Secret and password salt are not important for development.<br>
-Even though we have more than 100 000 words in the Tatkin's word database, we only supply the example database file with a liitle more than 4000. So, it's safe to say that you should put the `TATKIN_WORD_COUNT = 3000`. <br>
-We know that this is not the full .env file, but it's the bare minimum you should have to start developing.
+This will rename the example-env file which already has some preliminary settings. You may need to add an .env file in ZBOR/ZNAM with the following line:
 
-<br>
+```
+SKIP_PREFLIGHT_CHECK=true
+```
 
-### STEP 4: Database setup
-
-There are 4 databases that SchoolNet uses:
-  * **db_net** - Main database where everything about the users is stored *(PRIVATE)*
-  * **db_records** - Database where records of games that are currently played are stored *(PRIVATE)*
-  * **db_words** - Database filled with words from Wikipedia and contributions from the users *(PUBLIC)*
-  * **db_znam** - Database for the ZNAM platform *(PRIVATE)*
-
-To set up the databases in myphpadmin follow the next steps:
- * Step 1: Extract the `example_databases.zip`
- * Step 2: Import the `structure.sql` file in phpmyadmin. You should get four databases with empty tables.
- * Step 3: Import the `schoolnetdbs.json` file in phpmyadmin to get example entries in the tables.
-
-Regarding private informations (such as account info. or statistical user information), they will never be made public!
-
-<br>
-
-### STEP 5: Port setup
-
-Now is the time to set up the ports.
-Our default ports are:
-* Node.js - 3000
-* Apache  - 8080
-* MySQL   - 3306
-
-By opening the Apache config (httpd.conf) file, you need to find the `Listen` keyword and write `Listen 8080`. After restarting the servers with the correct ports, now you can go to `http://localhost:8080/phpmyadmin` to see the databases.
-
-Go to `http://localhost:3000/` and if there are no error messages, hooray!
-
-**Go, have fun!**
-
-<br>
-
-### OPTIONAL: STEP 6: Development
-
-Because we have implemented Material Design in our project, it requires some kind of SASS compiler/watcher. We use webpack's watch command. Before running the server, just run the command: `npm run watch`
-
-You shouldn't have any problems with the file names when building the SASS files into CSS, but if you do, just report them here.
-
-For now, we have our Python AI in this repo, thus it requires you to download Python version > 3.6.2 if you want to try out the Tatkin game. We will shortly be making a script for you to setup Python in no time. We use the env variable 'PYTHON' to turn on/off the AI.
-
-### NOTES:
-
-* SchoolNet is a **really complex** network, you are going to need a couple of hours if not days to set it up...
-* Ok, so, here are some things you should know:
-* SchoolNet uses [.env](https://medium.com/the-node-js-collection/making-your-node-js-work-everywhere-with-environment-variables-2da8cdf6e786) variables
-* The *StartCluster.js* module is used only in production, don't use it. Start the server by running directly `node [server]`.
-* We are using SCSS for the main SchoolNet project, but yet there's no implementation for it in the React frontends (including ZNAM)
-* In production we implemented the *SSL* protocol and use HTTPS server, however in development we left the HTTP server, so you can easily try it at home.
-* We have two types of sessions (this is because of the different cookie expiration dates and the fact that we don't use passport.js authentication for guests):
-  - Passport.js' cookie session for authenticated users
-  - Our own cookie session for guests
+This is due to React's pre-build checks. But may not be necessary.
 
 ### Sources, useful links:
 
@@ -249,22 +157,17 @@ Here are people that contributed to the building of this project. We can't thank
 
 ### Todos
 
-- Switch the SchoolNet Dashboard to React.js
-- Implement Material Design everywhere
+- Switch the SchoolNet Dashboard to Svelte
+- Implement Material UI everywhere
 - Dependency Clean up
 - Email server
-  - Verification on sign-in
-  - Forgot the password
-- Sign-in via Google and Facebook
-- Class/students removal
-- Sub-contributions
+- Flexible contribution class
 - Contributions statistics
 - Add a news-feed dynamic updating
 - Clear console logs
 - Make a custom back-end admin control unit
 - Picture profile customization
 - Finalize database and file path organization
-- Upload SchoolNet Works repository on GitHub
 - SchoolNet API
 - SEO Optimization
 - Implement the Google 4.1.1 syntex rule:
@@ -272,37 +175,6 @@ Here are people that contributed to the building of this project. We can't thank
     even if the block contains only one instruction
 - Implement the Google 6.2.5 syntex rule:
   - Constant names are CONSTANT_CASED
-
-### Complications
-
-#### Installing Git Bash on 32 bit machine
-
-On 32 bit machine, you can't download GitHub Desktop thus requiring you to clone the repository from the Git Bash. Just bear with us, it takes couple of minutes.
-
-  - Step 1: Login into Github and fork SchoolNet
-  - Step 2: Run Git Bash
-
-The steps we are going to describe next are taken from [this GitHub help page](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh).
-
-  - Step 3: Generate a SSH Key pair with this command in your Git Bash: 
-  `ssh-keygen -t rsa -b 4096 -C "your@email.com"`
-    - `Enter file in which to save the key: ` - Here just press ENTER
-    - Enter a specific keyphrase, remember it, this will be your password
-    - You have the key
-  - Step 4: Run this command: `clip < ~/.ssh/id_rsa.pub` - This will copy the key to keyboard
-  - Step 5: Go in your GitHub settings
-  - Step 6: Go in the SSH and GPG Keys
-  - Step 7: Create a new SSH Key, name it whatever, and paste the key we just copied
-
-That's it! Now you are authenticated and ready to clone the repository!
-> We recommend cloning the repository directly on the C drive, hence our first command:
-
-```sh
-$ cd "C:/"
-$ git clone git@github.com:<yourUsername>/SchoolNet.git
-```
-
-
 
 License
 ----
