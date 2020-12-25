@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Connection } from 'typeorm';
 import { Word } from '../../entity/ZBOR/Word';
+import { WordGenerated } from '../../entity/ZBOR/WordGenerated';
 import { IRequest } from "./../../types";
 
 const key = process.env.INDEX_API_KEY;
@@ -12,9 +13,15 @@ export const open = (connection: Promise<Connection>) => {
             res.send({ status: "unauth" });
         } else {
             try {
-                let data = req.body; 
+                let data = req.body;
                 if (data.auth == key) {
-                    let msg = await importWords(data["words"], connection);
+                    let msg;
+                    if (data.aiGen) {
+                        msg = await importGeneratedWords(data["words"], connection);
+                    } else if (data.mainWords) {
+                        msg = await importWords(data["words"], connection);
+                    }
+
                     res.send({ status: msg });
                 }
             } catch (e) {
@@ -46,5 +53,23 @@ const importWords = async (data: { [key: string]: number }, connection: Promise<
             });
     }
 
+    return "success";
+}
+
+const importGeneratedWords = async (data: [string], connection: Promise<Connection>) => {
+    console.log("Importing generated words.");
+    let conn = await connection;
+    for (let i in data) {
+        let word = new WordGenerated();
+        word.Word = data[i];
+        await conn.getRepository(WordGenerated).insert(word)
+            .catch((reason) => {
+                console.log("Error: ", {
+                    "word": data[i],
+                    "reason": reason
+                });
+            });
+    }
+    
     return "success";
 }

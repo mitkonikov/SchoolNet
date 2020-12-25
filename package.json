@@ -92,7 +92,7 @@
     "start": "webpack-dev-server",
     "tsnode": "ts-node src/ZBORAPI.ts",
     "zbor": "cd build && node ZBORAPI.js",
-    "deploy": "C:/Python36/python.exe c:/SchoolNet/server/python/deploy.py"
+    "deploy": "C:/Python36/python.exe c:/SchoolNet/src/python/deploy.py"
   },
   "author": "Mitko Nikov",
   "license": "ISC"

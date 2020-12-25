@@ -8,13 +8,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = ('3' if env.PROD else '0')
 
 import tensorflow as tf
 from tensorflow.python.keras.engine.sequential import Sequential
-from tensorflow.python.ops.gen_dataset_ops import BatchDataset
+from tensorflow.python.ops.gen_dataset_ops import BatchDataset, interleave_dataset_eager_fallback
 
 not env.PROD and print("TF Eager:", tf.executing_eagerly())
 
 import numpy as np
 import sys
 import time
+import json
 
 import functools
 import random
@@ -221,7 +222,7 @@ def split_input_target(chunk):
     target_text = chunk[1:]
     return input_text, target_text
 
-def generate_text(model, start_string = None, temperature = 1.0):
+def generate_text(model, start_string = None, temperature = 1.0) -> str:
     """Generating text based on a start string
 
     ## Temperature
@@ -335,10 +336,37 @@ def nodeLoop():
     while True:
         line = input()
         if (len(line) > 0):
-            TEMP = 1.0
+            TEMP = 0.3
     
             # predict and write to stdout
             printPredict(MODEL, temperature = TEMP)
             sys.stdout.flush()
 
-userInteraction()
+def generateWords(count: int):
+    global MODEL
+
+    # prepare the model
+    prepare(WORDS_TXT_FILE)
+
+    # load the model
+    MODEL = loadModel()
+    words = []
+    for i in range(500):
+        currentString = generate_text(MODEL, temperature = 0.5 + random.randint(-100, 300) / 1000)
+        currentWords = currentString.split(' ')[:-1]
+        while len(currentWords) > 0:
+            if len(currentWords[0]) > 3:
+                words.append(currentWords[0])
+            currentWords.pop(0)
+        
+        if len(words) > count:
+            break
+
+    setWords = list(set(words))
+    export = { 'words': setWords }
+    export_file = open('ai_words.json', "w+", encoding="UTF-8")
+    export_file.write(json.dumps(export, ensure_ascii = False, indent = 4))
+    export_file.close()
+
+# userInteraction()
+generateWords(500)

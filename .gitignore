@@ -23,6 +23,9 @@ dashboard_admin.js
 /server/python/deploy.py
 /server/python/deploy_config.py
 /server/python/__pycache__
+/src/python/deploy.py
+/src/python/deploy_config.py
+/src/python/__pycache__
 keywords.js
 tests.js
 /tests

@@ -9,7 +9,7 @@ export class WordGenerated extends BaseEntity {
     @Column({ type: "text" })
     Word: string;
 
-    @Column()
-    Times_Played: number;
+    @Column({ default: 0 })
+    Likes: number;
 
 }

@@ -291,7 +291,7 @@ let tatkinSocket = function(API) {
  * @param {*} wordsDB   Word database
  */
 function pythonSetup(spawn, wordsDB) {
-    const pythonProcess = spawn('python', ["./server/python/word_gen.py"], { stdio: 'pipe'});
+    const pythonProcess = spawn('python', ["./src/python/word_gen.py"], { stdio: 'pipe'});
     
     pythonProcess.stdout.on('data', (data) => {
         let bufferOriginal = Buffer.from(data);
