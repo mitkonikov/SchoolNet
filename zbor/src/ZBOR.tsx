@@ -16,7 +16,7 @@ import WordDay from "./components/WordDay";
 import Search from "./components/Search";
 import Connect from "./components/Connect/Connect";
 import Artificial from "./components/Artificial";
-import Contact from "./components/Contact.jsx";
+import Contact from "./components/Contact/Contact.jsx";
 import NavBar from "./components/NavBar";
 import Statistics from "./components/Statistics";
 

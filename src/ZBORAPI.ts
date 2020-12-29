@@ -4,22 +4,21 @@ import { getConnectionOrCreate } from "./database/connection";
 import { Word } from "./entity/ZBOR/Word";
 import { WordGenerated } from "./entity/ZBOR/WordGenerated";
 import { WordDay } from "./entity/ZBOR/WordDay";
-import { WordConnection } from "./entity/ZBOR/WordConnection";
 
 import { light as Light } from "lightquery-orm";
-import { ContactEntry } from "./entity/ZBOR/ContactEntry";
-import { WordContribution } from "./entity/ZBOR/WordContribution";
 import { StatisticsIP } from "./entity/network/StatisticsIP";
 import { findOrCreate } from "./database/common";
 import { WordGuestStats } from "./entity/ZBOR/WordGuestStats";
 
 import Dynamo from "./Dynamo";
+import ZborAPI from "./apps/ZBOR/main";
 
 let connection: Connection;
 let network: Connection;
 let GuestDynamo: Dynamo;
+let API: ZborAPI;
 
-let switchCallback = (key) => {
+let switchCallback = (key: string) => {
     let repository: any;
     let failed: boolean;
 
@@ -49,6 +48,7 @@ export const connect = async () => {
     network = await getConnectionOrCreate("network");
 
     GuestDynamo = new Dynamo(connection, WordGuestStats);
+    API = new ZborAPI(connection, GuestDynamo);
 
     return connection;
 }
@@ -61,97 +61,15 @@ export const light = async (req, res) => {
 export const query = async (req, res) => {
     switch(req.body.command) {
         case "connect-words": {
-            let wordID1 = req.body.data.wordFrom;
-            let wordID2 = req.body.data.wordTo;
-
-            if (wordID1 == wordID2) {
-                res.send({ status: "failed" });
-                return;
-            }
-
-            let wordConnection = new WordConnection();
-            wordConnection.Student_IP = req.clientIp;
-            wordConnection.wordFrom = wordID1;
-            wordConnection.wordTo = wordID2;
-
-            let exists = await connection
-                .getRepository(WordConnection)    
-                .find(wordConnection)
-
-            if (exists.length === 0) {
-                await connection
-                    .getRepository(WordConnection)
-                    .insert(wordConnection)
-                    .catch((err) => {
-                        console.log(err);
-                    });
-
-                await GuestDynamo.incVariableOrCreate(req.guest.ID, "wordConnections");
-                res.send({ status: "success" });
-            } else {
-                res.send({ status: "failed" });
-            }
-            
+            res.send(await API.connectWords(req.guest, req.body.data, req.clientIp));
             break;
         }
         case "contact": {
-            let contactEntry = new ContactEntry();
-            contactEntry.Contact = req.body.data.message;
-            contactEntry.Student_IP = req.clientIp;
-
-            let exists = await connection
-                .getRepository(ContactEntry)    
-                .find(contactEntry)
-
-            if (exists.length === 0) {
-                await connection
-                    .getRepository(ContactEntry)
-                    .insert(contactEntry)
-                    .catch((err) => {
-                        console.log(err);
-                    });
-
-                await GuestDynamo.incVariableOrCreate(req.guest.ID, "contacts");
-                res.send({ status: "success" });
-            } else {
-                res.send({ status: "error", message: "limit" });
-            }
+            res.send(await API.contact(req.guest, req.body.data, req.clientIp));
             break;
         }
         case "flag-word": {
-            let data = req.body.data;
-
-            if (data.Mistake) {
-                let contribution = new WordContribution();
-                contribution.Word = data.ID;
-                contribution.Type = -1;
-                contribution.Mistake = true;
-                contribution.Student_IP = req.clientIp;
-
-                let exists = await connection
-                    .getRepository(WordContribution)    
-                    .find(contribution)
-            
-                let success = false;
-                if (exists.length === 0) {
-                    let response = await connection
-                        .getRepository(WordContribution)
-                        .insert(contribution);
-
-                    if (response.raw.affectedRows == 1) {
-                        await GuestDynamo.incVariableOrCreate(req.guest.ID, "wordContributions");
-                        res.send({ status: "success" });
-                        success = true;
-                    }
-                }
-
-                if (!success) {
-                    res.send({ status: "error" });
-                }
-            } else {
-                res.send({ status: "error"});
-            }
-            
+            res.send(await API.flagWord(req.guest, req.body.data, req.clientIp))
             break;
         }
         case "get-ip-stats": {

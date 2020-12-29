@@ -11,6 +11,7 @@ import swal from "sweetalert";
 
 import { lightFetch, queryFetch } from "../js/common";
 import { cyrillic, isLatin } from "../js/latin-to-cyrillic";
+import { ThankYouForContribution } from "../js/messages";
 
 type State = {
     word: Array<any>;
@@ -77,11 +78,7 @@ export default class Search extends Component {
                 }).then((response) => {
                     console.log(response);
                     if (response.status === "success") {
-                        swal({
-                            title: "Благодариме!",
-                            text: "Благодариме на придонесот!",
-                            icon: "success"
-                        });
+                        ThankYouForContribution();
                         
                         this.props.reloadStats();
                     } else {

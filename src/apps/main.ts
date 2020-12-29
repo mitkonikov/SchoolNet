@@ -22,6 +22,12 @@ export const main = (app: express.Express) => {
     app.post('/zbor/api/light', ZBORAPI.light);
     app.post('/zbor/api/query', ZBORAPI.query);
     app.post('/zbor/api/update', ZBORAPI.update);
+    
+    app.get('/zbor/dict/json', function(req, res){
+        const file = path.join(__dirname, './../../dumps/zbor_database_words.json');
+        res.download(file);
+    });
+
     app.use('/zbor', express.static(path.join(__dirname, './../../zbor/build')));            
 
     PILOTAPI.connect();

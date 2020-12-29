@@ -1,4 +1,4 @@
-.github-icon, .github-text, .connect-text {
+.wide-card-icon, .wide-card-text, .connect-text {
     width: fit-content;
     display: inline-block;
     color: white;
@@ -11,13 +11,13 @@
     float: right;
 }
 
-.github-icon {
+.wide-card-icon {
     position: absolute;
     top: 50%;
     transform: translate(0, -50%);
 }
 
-.github-text {
+.wide-card-text {
     width: calc(100% - 4.5em);
     font-size: 0.9em;
 }

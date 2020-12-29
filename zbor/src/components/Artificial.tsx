@@ -30,7 +30,7 @@ export default class Artificial extends Component {
         lightFetch({
             generated_word: {
                 select: ["Word"],
-                where: { ID: getRandomInt(0, 1000) }
+                where: { ID: getRandomInt(0, 500) }
             }
         }).then((res) => {
             let wordRes = res.generated_word[0].Word.toUpperCase();
