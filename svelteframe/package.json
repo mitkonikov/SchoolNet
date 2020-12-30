@@ -2,8 +2,8 @@
   "name": "svelteframe",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd public && rmdir /s /q build && cd .. && rollup -c",
-    "dev": "cd public && rmdir /s /q build && cd .. && rollup -c -w",
+    "build": "cd public/frame && rmdir /s /q build && cd ../.. && rollup -c",
+    "dev": "cd public/frame && rmdir /s /q build && cd ../.. && rollup -c -w",
     "start": "sirv public",
     "validate": "svelte-check"
   },
