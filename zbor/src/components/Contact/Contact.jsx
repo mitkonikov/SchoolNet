@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, Chip } from "@material-ui/core";
 
 import "./../../styles/contribute.css";
-import "./../../styles/contact.css";
+import "./Contact.css";
 import { queryFetch } from "../../js/common";
 
 import GradeIcon from "@material-ui/icons/Grade";
-import GitHubIcon from '@material-ui/icons/GitHub';
-import StorageIcon from '@material-ui/icons/Storage';
+import GitHubIcon from "@material-ui/icons/GitHub";
+import StorageIcon from "@material-ui/icons/Storage";
+import NewReleasesIcon from "@material-ui/icons/NewReleases";
 
-import WideCard from "../WideCard";
+import WideCard from "../WideCard/WideCard";
 import Terms from "./Terms";
 import { LimitOnRequests, ThankYouForContact } from "../../js/messages";
 
@@ -33,12 +34,11 @@ class Contact extends Component {
     render() {
         return (
             <div class="contribute-container center-vh">
-                <WideCard 
+                <WideCard
                     content="ЗБОР е мала апликација со множество на зборови извлечени од македонската Википедија. Таа се стреми да го направи првиот македонски речник со отворен извор."
                     icon={<GradeIcon fontSize="large" />}
                     callback={() => {
-                        window.location.href =
-                            "https://schoolnet.mk";
+                        window.location.href = "https://schoolnet.mk";
                     }}
                 />
 
@@ -113,7 +113,9 @@ class Contact extends Component {
 
                 {/* GitHub Card */}
                 <WideCard
-                    content={"Нашите платформи се со отворен извор (Open Source). Секој придонес прави голема разлика."}
+                    content={
+                        "Нашите платформи се со отворен извор (Open Source). Секој придонес прави голема разлика."
+                    }
                     icon={<GitHubIcon fontSize="large" />}
                     callback={() => {
                         window.location.href =
@@ -122,17 +124,30 @@ class Contact extends Component {
                 />
 
                 <div class="separator" />
-                
-                {/* Download Card */}
-                <WideCard
-                    content={"Симнете го речникот на зборови со соодветната фреквенција на појавување на Википедија."}
-                    icon={<StorageIcon fontSize="large" />}
-                    callback={() => {
-                        window.location =
-                            // "https://github.com/mitkonikov/SchoolNet/raw/master/dumps/zbor_database_words.json";
-                            "https://zbor.schoolnet.mk/dict/json";
-                    }}
-                />
+
+                <div className="download-card-container">
+                    {/* Download Card */}
+                    <WideCard
+                        content={
+                            "Симнете го речникот на зборови со соодветната фреквенција на појавување на Википедија."
+                        }
+                        icon={<StorageIcon fontSize="large" />}
+                        callback={() => {
+                            window.location =
+                                // "https://github.com/mitkonikov/SchoolNet/raw/master/dumps/zbor_database_words.json";
+                                "https://zbor.schoolnet.mk/dict/json";
+                        }}
+                    />
+
+                    <div className="download-card-chip-cont">
+                        <Chip
+                            color="secondary"
+                            icon={<NewReleasesIcon />}
+                            label="НОВО"
+                            onClick={() => {}}
+                        />
+                    </div>
+                </div>
 
                 <div class="separator" />
 

@@ -10,7 +10,8 @@ body {
 }
 
 $mdc-theme-primary: #44aed8;
-$mdc-theme-secondary: #eec81e;
+// $mdc-theme-secondary: #eec81e;
+$mdc-theme-secondary: #c72e19;
 
 $mdc-theme-background: #004750;
 $mdc-theme-surface: #004750;
@@ -33,6 +34,12 @@ $mdc-shape-large-component-radius: 0;
     .mdc-button > .mdc-button__label {
         color: $mdc-theme-on-surface;
     }
+}
+
+.mdc-card__primary-action {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
 // We don't like Svelte's hover after effect (It stays activated for ever with a little bit of opacity)

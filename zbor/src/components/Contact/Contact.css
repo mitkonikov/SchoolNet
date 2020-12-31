@@ -1,25 +1,7 @@
-.wide-card-icon, .wide-card-text, .connect-text {
+.connect-text {
     width: fit-content;
     display: inline-block;
     color: white;
-}
-
-.icon-container {
-    width: 4em;
-    height: 4em;
-    position: relative;
-    float: right;
-}
-
-.wide-card-icon {
-    position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
-}
-
-.wide-card-text {
-    width: calc(100% - 4.5em);
-    font-size: 0.9em;
 }
 
 .connect-text {
@@ -44,4 +26,16 @@
 
 .small-link:active {
     background-color: rgba(0, 0, 0, 0.12);
+}
+
+.download-card-container {
+    width: 100%;
+    position: relative;
+    padding-top: 1em;
+}
+
+.download-card-chip-cont {
+    position: absolute;
+    top: 0em;
+    right: 1em;
 }

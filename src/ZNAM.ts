@@ -36,10 +36,6 @@ async function main() {
     ZNAMController(databases, limiter);
     DBController.Connect(databases);
 
-    // Some Common Stuff (TODO: Check if needed)
-    let commonPath = path.join(__dirname, '../client/common');
-    app.use('/client/common', express.static(commonPath));
-    
     // Game Engine and Logic
     GameEngine.buildGameEngine(DBController);
     ZNAMGameLogic.Initialize(databases, GameEngine);

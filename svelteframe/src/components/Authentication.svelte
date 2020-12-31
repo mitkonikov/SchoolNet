@@ -8,7 +8,9 @@
 <div id="login-buttons">
     <div class="center-vh">
         <div class="auth-icon">
-            <IconButton class='large'>
+            <IconButton class='large' on:click={() => {
+                console.log("Facebook");
+            }}>
                 <Facebook/>
             </IconButton>
         </div>

@@ -8,9 +8,12 @@ function Loading() {
     );
 }
 
-function PlatformTitle(props) {
+function PlatformTitle(props: {
+    title: string,
+    isBeta: boolean
+}) {
     return (
-        <div id="platform-title">
+        <div id="platform-title" className="noselect">
             {props.title}
             {props.isBeta && <span className="beta">BETA</span>}
         </div>

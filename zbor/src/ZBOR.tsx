@@ -13,7 +13,7 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme";
 
 import WordDay from "./components/WordDay";
-import Search from "./components/Search";
+import Search from "./components/Search/Search";
 import Connect from "./components/Connect/Connect";
 import Artificial from "./components/Artificial";
 import Contact from "./components/Contact/Contact.jsx";

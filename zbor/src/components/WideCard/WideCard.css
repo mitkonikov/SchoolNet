@@ -1,0 +1,17 @@
+.wide-card-icon, .wide-card-text {
+    width: fit-content;
+    display: inline-block;
+    color: white;
+}
+
+.icon-container {
+    width: 4em;
+    height: 4em;
+    position: relative;
+    float: right;
+}
+
+.wide-card-text {
+    width: calc(100% - 4.5em);
+    font-size: 0.9em;
+}

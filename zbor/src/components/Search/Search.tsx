@@ -9,9 +9,10 @@ import ClearIcon from '@material-ui/icons/Clear';
 
 import swal from "sweetalert";
 
-import { lightFetch, queryFetch } from "../js/common";
-import { cyrillic, isLatin } from "../js/latin-to-cyrillic";
-import { ThankYouForContribution } from "../js/messages";
+import { queryFetch } from "../../js/common";
+import { cyrillic, isLatin } from "../../js/latin-to-cyrillic";
+import { ThankYouForContribution } from "../../js/messages";
+import { searchByText } from "./Search.logic";
 
 type State = {
     word: Array<any>;
@@ -40,20 +41,13 @@ export default class Search extends Component {
         this.onMistake = this.onMistake.bind(this);
     }
 
-    onSearch(value: string) {
-        let converted = "";
-        if (isLatin(value)) {
-            converted = cyrillic(value);
-        } else {
-            converted = value;
+    onSearch(text: string) {
+        let converted = text;
+        if (isLatin(text)) {
+            converted = cyrillic(text);
         }
         
-        lightFetch({
-            word: {
-                select: ["ID", "Word_Text", "Wiki_Frq"],
-                where: { Word_Text: "%" + converted + "%", limit: 5 },
-            },
-        }).then((res) => {
+        searchByText(converted).then((res) => {
             this.setState({
                 searching: true,
                 word: res.word,

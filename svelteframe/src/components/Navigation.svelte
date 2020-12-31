@@ -7,18 +7,21 @@
 	import School from 'svelte-material-icons/School.svelte';
 
 	let navTabs = {
-		'Дома': Home,
-		'ЗНАМ': School
+		'Најава': Home,
+		'ЗНАМ': School,
+		'ЗБОР': School
 	}
 	  
-	let active = 'Дома';
+	let active = 'Најава';
 
 	$: if (active == 'ЗНАМ') {
 		window.location = 'https://znam.schoolnet.mk';
+	} else if (active == 'ЗБОР') {
+		window.location = 'https://zbor.schoolnet.mk';
 	}
 </script>
 
-<TabBar tabs={['Дома', 'ЗНАМ']} let:tab bind:active>
+<TabBar tabs={['ЗБОР', 'Најава', 'ЗНАМ']} let:tab bind:active>
     <Tab {tab}>
         <span class='mdc-tab__icons'>
             <svelte:component this={navTabs[tab]} size='2em'/>
