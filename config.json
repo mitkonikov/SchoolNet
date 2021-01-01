@@ -2,7 +2,7 @@
     "usePM2": false,
     "guest": true,
     "gameLogic": true,
-    "databaseController": true,
+    "databaseController": false,
     "subApps": true,
     "indexAPI": false
 }

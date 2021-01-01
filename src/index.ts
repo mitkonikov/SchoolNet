@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { getConnectionOrCreate, connectMongo, connectMySQL } from "./database/connection";
-import express from "express";
+import express, { Response } from "express";
 import http from "http";
 import requestIp from 'request-ip';
 import { buildSchema } from 'type-graphql';
@@ -39,7 +39,10 @@ async function apolloLaunch() {
                 user: reqExpress.user,
                 guest: reqExpress.guest
             } as IContext;
-        }
+        },
+
+        playground: true,
+        introspection: true
     });
 
     return apolloServer;
@@ -77,11 +80,11 @@ async function main() {
     const connection = await connectMongo() as MongoClient;
     let play = connection.db('play');
 
-    // Set up the connection to MySQL
-    let databases = await connectMySQL();
-
-    // The Main Controller Module for database access
+    // This is going to be deprecated because of GraphQL
+    // DISABLED by default.
     if ((process.config as Partial<IConfig>).databaseController) {
+        // Set up the connection to MySQL
+        let databases = await connectMySQL();
         DBController(databases);
     }
 
@@ -107,17 +110,18 @@ async function main() {
     initPlay(playDir, app, server, play);
 
     // Main page
+    let sendIndexPage = (res: Response<any>) => res.sendFile(path.join(__dirname, '../svelteframe/public/index.html'));
+
     app.get('/', async (req: IRequest, res) => {
         if (req.isAuthenticated()) {
             const user = await User.findOne({ ID: req.user.ID });
-            if (user.Redirect == '') {
-                res.redirect('/');
-            } else {
+            if (user.Redirect != '') {
                 res.redirect(siteRedirect[user.Redirect]);
+                return;
             }
-        } else {
-            res.sendFile(path.join(__dirname, '../svelteframe/public/index.html'));
         }
+
+        sendIndexPage(res);
     });
 
     app.get('*', (req, res) => {

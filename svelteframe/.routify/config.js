@@ -4,9 +4,10 @@ module.exports = {
   "routifyDir": ".routify",
   "ignore": "",
   "dynamicImports": true,
-  "singleBuild": true,
+  "singleBuild": false,
   "noHashScroll": false,
   "distDir": "dist",
+  "childProcess": "svelteframe",
   "hashScroll": true,
   "extensions": [
     "html",
@@ -14,5 +15,5 @@ module.exports = {
     "md",
     "svx"
   ],
-  "started": "2020-12-31T19:43:52.580Z"
+  "started": "2021-01-01T12:38:08.600Z"
 }

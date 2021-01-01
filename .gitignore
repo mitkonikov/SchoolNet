@@ -40,3 +40,4 @@ temp/
 ormconfig.json
 deploy.bat
 /exe/
+ormlogs.log
