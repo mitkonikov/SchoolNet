@@ -1,8 +1,9 @@
 import { Request } from "express";
+import { Guest } from "./entity/network/Guest";
 
 export interface IRequest extends Request {
     user: IUser;
-    guest: any;
+    guest: Guest;
     clientIp: string;
     session: {
         [key: string]: any,
@@ -19,7 +20,7 @@ export interface IDatabases {
 
 export interface IContext {
     user: IUser;
-    guest: any;
+    guest: Guest;
 }
 
 export interface IUser {

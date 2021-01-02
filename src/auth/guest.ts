@@ -15,7 +15,7 @@ const GuestPassportWrapper = (entity: Guest) => {
         Display_Name: entity.Display_Name,
         Expires: entity.Expires,
         Mobile: entity.Mobile,
-    }
+    } as Guest;
 }
 
 export const GuestModule = (app: express.Express, network: Connection) => {

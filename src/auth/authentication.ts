@@ -7,7 +7,7 @@ import { IRequest } from '../types';
 
 import { redirect, siteRedirect } from './redirects';
 
-import { Initialize as Passport } from './passport.logic';
+import Passport from './passport.logic';
 import { Connection } from 'typeorm';
 import { User } from '../entity/network/User';
 
@@ -20,6 +20,10 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
             database: 'db_net'
         }
     };
+
+    const googleAuthOptions = {
+        scope: ['https://www.googleapis.com/auth/plus.login']
+    }
 
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
@@ -55,61 +59,7 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
         cookieParser    : cookieParser
     }
 
-    app.post('/client/signin', function(req: IRequest, res, next) {
-        const secret_key = process.env.CAPTCHA_SECRET;
-        const token = req.body.token;
-        const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${token}`;
-    
-        /*fetch(url, {
-            method: 'post'
-        })
-            .then(response => response.json())
-            .then(google_response => {
-                if (typeof google_response === "undefined") {
-                    res.redirect('/');
-                    return;
-                }*/
-    
-                //if (google_response.success) {
-                // if (false) {
-                
-                //     if (!protectionChecks.signinCheck(req)) {
-                //         res.send('incorrect');
-                //         return;
-                //     }
-                
-                //     passport_module.passport.authenticate('local', function(err, user, info) {
-                //         if (err) {
-                //             ErrorHandler.log("SQL", req.clientIp, null, err);
-                //             // further print the username entered
-                //             res.send(err);
-                //         }
-                
-                //         if (!user) { return res.send("incorrect"); }
-                        
-                //         req.logIn(user, (err) => {
-                //             if (err) { 
-                //                 ErrorHandler.log("SQL", req.clientIp, null, err);
-                //                 // further print the username entered
-                //                 res.send(err);
-                //             }
-                            
-                //             res.send("success");
-                //         });
-                //     })(req, res, next);
-                // } else {
-                //     res.send("failed");
-                // }
-    //        });
-    });
-
-    app.post('/auth/info', (req: IRequest, res) => {
-        res.send({
-            isAuth: req.isAuthenticated()
-        });
-    });
-
-    app.get('/auth/info', (req: IRequest, res) => {
+    app.use('/auth/info', (req: IRequest, res) => {
         res.send({
             isAuth: req.isAuthenticated()
         });
@@ -121,7 +71,7 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
             if (req.params.provider == "Facebook" && req.user.FB_ID == "") {
                 passport_module.passport.authenticate('facebook')(req, res);
             } else if (req.params.provider == "Google" && req.user.G_ID == "") {
-                passport_module.passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] })(req, res);
+                passport_module.passport.authenticate('google', googleAuthOptions)(req, res);
             } else {
                 res.redirect('/');
             }
@@ -152,9 +102,7 @@ let Initialize = (app: Express.Express, networkORM: Connection) => {
         if (req.params.platform != "callback") { // This is the initial call for auth
             req.session.returnTo = req.params.platform; // Remember the platform for redirection later
 
-            passport_module.passport.authenticate('google', {
-                scope: ['https://www.googleapis.com/auth/plus.login']
-            })(req, res);
+            passport_module.passport.authenticate('google', googleAuthOptions)(req, res);
         } else {
             // If it's callback, it means that google agrees with the auth
             passport_module.passport.authenticate('google', (err, user, info) => {

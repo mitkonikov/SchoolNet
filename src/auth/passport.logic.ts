@@ -10,6 +10,7 @@ import { Statistic } from '../entity/network/Statistic';
 import { UserInfo } from '../entity/network/UserInfo';
 import { IRequest, IUser } from '../types';
 
+/** Custom wrapper for the `User` entity => `IUser` */
 let userPassportWrapper = (entity: User): IUser => {
     return {
         ID: entity.ID,
@@ -80,6 +81,11 @@ const connectUserToGoogle = async (UserID: number, ID: string, name: string, acc
     return await network.getRepository(User).save(user);
 }
 
+/**
+ * It updates the login time and the number of logins of a user
+ * This is done in the `Statistics` entity
+ * @param UserID ID of the User
+ */
 const updateLoginStats = async (UserID: number) => {
     const loginTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     let statistics = await Statistic.findOne({ ID: UserID });
@@ -111,7 +117,8 @@ const createUserStatistics = async (ID: number, network: Connection) => {
     return await network.getRepository(Statistic).save(newUserStats);
 }
 
-const Initialize = (app: Express.Express, network: Connection) => {
+/** Our passport logic */
+export default (app: Express.Express, network: Connection) => {
     app.use(passport.initialize());
     app.use(passport.session());
 
@@ -160,7 +167,7 @@ const Initialize = (app: Express.Express, network: Connection) => {
 
     passport.use(
         new FacebookStrategy(facebookStrategyConfig,
-            async (req: IRequest, accessToken, refreshToken, profile, done) => {
+            async (req: IRequest, accessToken: string, refreshToken: string, profile, done) => {
                 console.log("req.params: ", req.params);
                 
                 const FB_NAME = profile._json.name;
@@ -293,8 +300,4 @@ const Initialize = (app: Express.Express, network: Connection) => {
     return {
         passport
     };
-};
-
-export {
-    Initialize
 };
