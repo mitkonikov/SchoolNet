@@ -45,6 +45,12 @@ export interface IUser {
     G_ID: string
 }
 
+export interface AuthInfo {
+    user: IUser,
+    guest: Guest,
+    clientIp: string
+}
+
 export interface IConfig {
     usePM2: Boolean,
     guest: Boolean,

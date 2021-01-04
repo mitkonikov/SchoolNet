@@ -1,7 +1,5 @@
-import { Initialize } from "../auth/passport.logic";
-
 export const misc = () => {
-    (String as any).prototype.multiReplace = (array) => {
+    (String as any).prototype.multiReplace = function(array) {
         let result = "";
         
         for (let c = 0; c < this.length; ++c) { // for every letter in the string
