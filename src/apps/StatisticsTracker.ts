@@ -9,12 +9,14 @@ export default class StatisticsTracker {
         {
             from: EntitySchema<unknown>;
             to: EntitySchema<unknown>;
-        }
-    ];
+        }?
+    ] = [];
 
     /**
      * This module links Guest and User repositories and
      * allows to transfer statistics from the Guest to the User repos.
+     * It works on only one connection, so if you have different connections
+     * you need to have different Statistical Trackers.
      * @param connection TypeORM Connection
      */
     constructor(connection: Connection) {
@@ -23,12 +25,13 @@ export default class StatisticsTracker {
 
     /**
      * It binds two repositories, so we can easily
-     * transfer statistical data from the guest to the user
+     * transfer statistical data from the **guest** to the **user**
      * when the user logins for the first time.
-     * @param from Statistical Repository that contains User_ID (this is the Guest_ID)
-     * @param to Statistical Repository that container User_ID
+     * Both the repositories must contain User_ID, Variable and Data.
+     * @param from - **Guest** repository
+     * @param to - **User** repository
      */
-    add(from: EntitySchema<unknown>, to: EntitySchema<unknown>) {
+    add(from: any, to: any) {
         this.links.push({
             from,
             to,
@@ -52,19 +55,36 @@ export default class StatisticsTracker {
                 .find({ User_ID: guest.ID }) as BaseStats[];
 
             if (query.length > 0) {
-                let stats = [];
                 for (const item of query) {
-                    let entry = new (link.to as any)();
-                    entry.User_ID = user.ID;
-                    entry.Variable = item.Variable;
-                    entry.Data = item.Data;
-                    stats.push(entry);
-                }
+                    let object = new (link.to as any)();
+                    object.User_ID = user.ID;
+                    object.Variable = item.Variable;
 
-                // TODO: We need to test whether we have already moved the stats
-                this.connection
-                    .getRepository(link.to)
-                    .insert(stats);
+                    // We search if that user has a statistic named with the same variable
+                    let duplicate = await this.connection
+                        .getRepository(link.to)
+                        .find(object) as BaseStats[];
+
+                    // If he doesn't have it, then we create it
+                    if (duplicate.length == 0) {
+                        let entry = new (link.to as any)();
+                        entry.User_ID = user.ID;
+                        entry.Variable = item.Variable;
+                        entry.Data = item.Data;
+
+                        // And insert it into the database
+                        this.connection
+                            .getRepository(link.to)
+                            .insert(entry)
+                            .catch((reason) => console.log(reason));
+                    } else {
+                        // TODO: Maybe depend this on a parameter
+                        this.connection
+                            .getRepository(link.to)
+                            .update(object, { Data: duplicate[0].Data + item.Data })
+                            .catch((reason) => console.log(reason));
+                    }
+                }
             }
         }
     }
