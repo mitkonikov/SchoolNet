@@ -3,14 +3,14 @@
 // 1. npm install
 // 2. Setup links
 
-const REACT_APPS = ['./znam', './zbor'];
+const REACT_APPS = ['./zbor'];
 
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
 const CLEANER_FOLDERS = ['cleaner', 'cleaner-link'];
-const REACT_FRAME = path.join(__dirname, './pilot');
+const REACT_FRAME = path.join(__dirname, './znam');
 
 // process all the arguments given when starting this module
 let argsRaw = process.argv;
@@ -143,19 +143,17 @@ const main = async () => {
     const options = {
         shell: true
     };
-
-    console.log("\x1b[34m%s\x1b[0m", "Installing NPM packages...");
-    console.log("This may not show anything in the console, but it's actually installing...");
-    console.log("Please wait...");
     
     if (!args.npmskip) {
+        console.log("\x1b[34m%s\x1b[0m", "Installing NPM packages...");
+        console.log("This may not show anything in the console, but it's actually installing...");
+        console.log("Please wait...");
+
         await exe("npm install .", options);
         await exe("npm install .", { ...options, cwd: path.join(__dirname, './pilot') });
         await exe("npm install .", { ...options, cwd: path.join(__dirname, './svelteframe')});
         await exe("npm install typescript -g", options);
     }
-
-    fs.writeFileSync(path.join(__dirname, './pilot/.env'), "SKIP_PREFLIGHT_CHECK=true");
 
     if (/^win/.test(process.platform) || /^linux/.test(process.platform)) {
         console.log("\x1b[34m%s\x1b[0m", "Making Symbolic links to the React Frame dependencies...");
