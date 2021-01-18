@@ -70,6 +70,7 @@ export default class Search extends Component {
                         Mistake: true
                     }
                 }).then((response) => {
+                    if (typeof response == "undefined") return swal.close();
                     console.log(response);
                     if (response.status === "success") {
                         ThankYouForContribution();

@@ -10,7 +10,8 @@ let lightFetch = body => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    }).then(response => response.json());
+    }).then(response => response.json())
+    .catch(error => console.log(error));
 };
 
 let queryFetch = body => {
@@ -21,7 +22,8 @@ let queryFetch = body => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    }).then(response => response.json());
+    }).then(response => response.json())
+    .catch(error => console.log(error));
 };
 
 let updateFetch = body => {
@@ -32,7 +34,8 @@ let updateFetch = body => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    }).then(response => response.json());
+    }).then(response => response.json())
+    .catch(error => console.log(error));
 };
 
 let domain = () => {

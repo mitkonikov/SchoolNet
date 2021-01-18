@@ -29,7 +29,7 @@ class WordDay extends Component {
                 where: { Day: new Date().toISOString().split("T")[0] },
             },
         }).then((res) => {
-            if (res.word_of_the_day.length !== 0) {
+            if (res?.word_of_the_day?.length > 0) {
                 let wordOfTheDay = res.word_of_the_day[0];
                 wordOfTheDay.Word = wordOfTheDay.Word.toUpperCase();
                 this.setState({ wordDay: wordOfTheDay });

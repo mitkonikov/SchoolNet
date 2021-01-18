@@ -33,6 +33,7 @@ export default class Artificial extends Component {
                 where: { ID: getRandomInt(0, 500) }
             }
         }).then((res) => {
+            if (typeof res == "undefined") return;
             let wordRes = res.generated_word[0].Word.toUpperCase();
             if (wordRes.length > 13) {
                 this.onSearch();
