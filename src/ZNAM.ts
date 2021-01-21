@@ -4,7 +4,7 @@ import express from 'express';
 import expressSanitizer from 'express-sanitizer';
 import { connectMySQL, connectLimiter, getConnectionOrCreate } from './database/connection';
 import { Initialize as Authentication } from './auth/authentication';
-import { Connect as ZNAMController, contact, contribute } from './database/ZNAM';
+import { Connect as ZNAMController } from './database/ZNAM';
 
 import DBController from './database/controller';
 import GameEngine from './apps/GameEngine';
@@ -39,7 +39,7 @@ async function main() {
     // Game Engine and Logic
     GameEngine.buildGameEngine(DBController);
     ZNAMGameLogic.Initialize(databases, GameEngine);
-    QueryInitialize(DBController, ZNAMController, ZNAMGameLogic);
+    QueryInitialize(DBController, ZNAMGameLogic);
     UpdateInitialize(DBController, ZNAMController, ZNAMGameLogic);
 
     if (!process.env.ZNAM_OFF) {

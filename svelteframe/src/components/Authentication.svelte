@@ -9,13 +9,15 @@
     <div class="center-vh">
         <div class="auth-icon">
             <IconButton class='large' on:click={() => {
-                console.log("Facebook");
+                window.location.href = "https://schoolnet.mk/auth/facebook/frame";
             }}>
                 <Facebook/>
             </IconButton>
         </div>
         <div class="auth-icon">
-            <IconButton class='large'>
+            <IconButton class='large' on:click={() => {
+                window.location.href = "https://schoolnet.mk/auth/google/frame";
+            }}>
                 <Google/>
             </IconButton>
         </div>

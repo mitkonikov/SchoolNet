@@ -78,3 +78,30 @@
 #small-word-day-container {
 	flex-grow: 1;
 }
+
+.login-card {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.login-icons {
+	width: 10em;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.auth-icon {
+    display: inline-block;
+    width: 3em;
+}
+
+#facebook-signin, #google-signin {
+    width: 1.5em;
+    height: 1em;
+    color: white;
+}
+
+.login-text {
+	width: 100%;
+}

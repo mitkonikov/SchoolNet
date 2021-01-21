@@ -1,7 +1,7 @@
 import { Connection, EntitySchema } from "typeorm";
 import { BaseStats } from "../entity/network/BaseStats";
 import { Guest } from "../entity/network/Guest";
-import { User } from "../entity/network/User";
+import { IUser } from "../types";
 
 export default class StatisticsTracker {
     connection: Connection;
@@ -44,9 +44,9 @@ export default class StatisticsTracker {
      * 
      * We only use the ID of both the object parameters.
      * @param guest Guest object
-     * @param user User object
+     * @param user IUser object because we don't need the database entity
      */
-    async transfer(guest: Guest, user: User) {
+    async transfer(guest: Guest, user: IUser) {
         // For every subscribed link, we check if
         // there are guest statistics in the guest session
         for (let link of this.links) {

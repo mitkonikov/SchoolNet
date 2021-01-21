@@ -23,11 +23,11 @@ let NavBar = (props) => {
                     component={Link}
                     to="/"
                 />
-                {/* <BottomNavigationAction
-                    label="ЗНАМ"
+                <BottomNavigationAction
+                    label="SchoolNet"
                     icon={<SchoolIcon />}
-                    href="https://znam.schoolnet.mk/"
-                /> */}
+                    href="https://schoolnet.mk/"
+                />
                 <BottomNavigationAction
                     label="За нас"
                     icon={<InfoIcon />}

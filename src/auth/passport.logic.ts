@@ -11,7 +11,7 @@ import { UserInfo } from '../entity/network/UserInfo';
 import { IRequest, IUser } from '../types';
 
 /** Custom wrapper for the `User` entity => `IUser` */
-let userPassportWrapper = (entity: User): IUser => {
+let userPassportWrapper = (entity: User, displayName: string): IUser => {
     return {
         ID: entity.ID,
         // Basic Info
@@ -19,6 +19,7 @@ let userPassportWrapper = (entity: User): IUser => {
         Role: entity.Role,
         Firstname: entity.Firstname,
         Lastname: entity.Lastname,
+        Display_Name: displayName,
         School_ID: entity.School_ID,
         Email: entity.Email,
         Gender: entity.Gender,
@@ -103,6 +104,15 @@ const createUserInfo = async (ID: number, name: string, network: Connection) => 
     return await network.getRepository(UserInfo).save(newUserInfo);
 }
 
+const getDisplayName = async (ID: number, network: Connection) => {
+    const userInfo = await network.getRepository(UserInfo).findOne({ ID });
+    if (typeof userInfo != "undefined") {
+        return userInfo.Display_Name;
+    } else {
+        return "";
+    }
+}
+
 /** Create a new User Statistics Object */
 const createUserStatistics = async (ID: number, network: Connection) => {
     let newUserStats = new Statistic();
@@ -149,7 +159,7 @@ export default (app: Express.Express, network: Connection) => {
                     // Password matches
                     if (dbPassword == encPassword) {
                         await updateLoginStats(user.ID);
-                        return done(null, userPassportWrapper(user));
+                        return done(null, userPassportWrapper(user, ""));
                     }
                 }
                 
@@ -183,8 +193,9 @@ export default (app: Express.Express, network: Connection) => {
                         refreshToken,
                         network
                     );
-                    
-                    done(null, userPassportWrapper(updatedUser));
+
+                    const displayName = await getDisplayName(req.user.ID, network);
+                    done(null, userPassportWrapper(updatedUser, displayName));
                 } else {
                     // Check if a user already exists
                     let user = await User.findOne({ FB_ID: FB_ID });
@@ -192,7 +203,8 @@ export default (app: Express.Express, network: Connection) => {
                         user.Online = true;
                         await user.save();
                         updateLoginStats(user.ID);
-                        done(null, userPassportWrapper(user));
+                        const displayName = await getDisplayName(req.user.ID, network);
+                        done(null, userPassportWrapper(user, displayName));
                     } else {
                         const profileName = FB_NAME;
 
@@ -215,7 +227,7 @@ export default (app: Express.Express, network: Connection) => {
                         await createUserStatistics(createdUser.ID, network);
 
                         // Call done on passport authentication
-                        done(null, userPassportWrapper(createdUser));
+                        done(null, userPassportWrapper(createdUser, profileName));
                     }
                 }
             }
@@ -247,7 +259,8 @@ export default (app: Express.Express, network: Connection) => {
                         network
                     );
                     
-                    done(null, userPassportWrapper(updatedUser));
+                    const displayName = await getDisplayName(req.user.ID, network);
+                    done(null, userPassportWrapper(updatedUser, displayName));
                 } else {
                     // Check if a user already exists
                     let user = await User.findOne({ G_ID: G_ID });
@@ -255,7 +268,8 @@ export default (app: Express.Express, network: Connection) => {
                         user.Online = true;
                         await user.save();
                         updateLoginStats(user.ID);
-                        done(null, userPassportWrapper(user));
+                        const displayName = await getDisplayName(req.user.ID, network);
+                        done(null, userPassportWrapper(user, displayName));
                     } else {
                         const profileName = G_NAME;
 
@@ -278,7 +292,7 @@ export default (app: Express.Express, network: Connection) => {
                         await createUserStatistics(createdUser.ID, network);
 
                         // Call done on passport authentication
-                        done(null, userPassportWrapper(createdUser));
+                        done(null, userPassportWrapper(createdUser, profileName));
                     }
                 }
         }
@@ -290,8 +304,9 @@ export default (app: Express.Express, network: Connection) => {
 
     passport.deserializeUser(async (ID: number, done) => {
         const user = await User.findOne({ ID });
+        const userInfo = await UserInfo.findOne({ ID });
         if (user) {
-            done(null, userPassportWrapper(user));
+            done(null, userPassportWrapper(user, userInfo.Display_Name));
         } else {
             done("User not found", {});
         }

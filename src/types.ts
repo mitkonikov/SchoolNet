@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 import { Guest } from "./entity/network/Guest";
 
 export interface IRequest extends Request {
@@ -30,6 +30,7 @@ export interface IUser {
     Role: number,
     Firstname: string,
     Lastname: string,
+    Display_Name: string,
     School_ID: number,
     Email: string,
     Gender: string,
@@ -45,10 +46,9 @@ export interface IUser {
     G_ID: string
 }
 
-export interface AuthInfo {
-    user: IUser,
-    guest: Guest,
-    clientIp: string
+export interface IExpress {
+    req: IRequest,
+    res: Response,
 }
 
 export interface IConfig {

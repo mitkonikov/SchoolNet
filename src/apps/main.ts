@@ -5,9 +5,11 @@ import { open as IIndexAPI } from './ZBOR/IndexAPI';
 
 import ZBORAPI from './../ZBORAPI';
 import PILOTAPI from './../PILOTAPI';
+import GuestModule from '../auth/guest';
 
-export const main = (app: express.Express) => {
-    let connectionPromise = ZBORAPI.connect();
+export const main = (app: express.Express, guestModule: GuestModule) => {
+    // ZBOR SERVING AND API
+    let connectionPromise = ZBORAPI.connect(guestModule);
 
     // Index API for ZBOR
     if ((process.config as Partial<IConfig>).indexAPI) {
@@ -30,6 +32,7 @@ export const main = (app: express.Express) => {
 
     app.use('/zbor', express.static(path.join(__dirname, './../../zbor/build')));            
 
+    // PILOT SERVING AND API
     PILOTAPI.connect();
     app.post('/pilot/api/light', (req: IRequest, res) => {
         if (req.isAuthenticated() && req.user.Role === 4) {

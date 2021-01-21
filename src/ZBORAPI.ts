@@ -12,11 +12,16 @@ import { WordGuestStats } from "./entity/ZBOR/WordGuestStats";
 
 import Dynamo from "./Dynamo";
 import ZborAPI from "./apps/ZBOR/main";
+import { IExpress, IRequest } from "./types";
+import StatisticsTracker from "./apps/StatisticsTracker";
+import { WordUserStats } from "./entity/ZBOR/WordUserStats";
+import GuestModule from "./auth/guest";
 
 let connection: Connection;
 let network: Connection;
 let GuestDynamo: Dynamo;
 let API: ZborAPI;
+let statisticsTracker: StatisticsTracker;
 
 let switchCallback = (key: string) => {
     let repository: any;
@@ -43,12 +48,16 @@ let switchCallback = (key: string) => {
     }
 }
 
-export const connect = async () => {
+export const connect = async (guestModule: GuestModule) => {
     connection = await getConnectionOrCreate("zbor");
     network = await getConnectionOrCreate("network");
 
-    GuestDynamo = new Dynamo(connection, WordGuestStats);
+    GuestDynamo = new Dynamo(connection, WordGuestStats, guestModule);
     API = new ZborAPI(connection, GuestDynamo);
+    statisticsTracker = new StatisticsTracker(connection);
+    statisticsTracker.add(WordGuestStats, WordUserStats);
+
+    guestModule.pushTracker(statisticsTracker);
 
     return connection;
 }
@@ -58,18 +67,26 @@ export const light = async (req, res) => {
     res.send(response);
 }
 
-export const query = async (req, res) => {
+export const query = async (req: IRequest, res) => {
+    let authInfo = {
+        req, res
+    } as IExpress;
+
     switch(req.body.command) {
         case "connect-words": {
-            res.send(await API.connectWords(req.guest, req.body.data, req.clientIp));
+            res.send(await API.connectWords(authInfo, req.body.data));
             break;
         }
         case "contact": {
-            res.send(await API.contact(req.guest, req.body.data, req.clientIp));
+            res.send(await API.contact(authInfo, req.body.data));
             break;
         }
         case "flag-word": {
-            res.send(await API.flagWord(req.guest, req.body.data, req.clientIp))
+            res.send(await API.flagWord(authInfo, req.body.data))
+            break;
+        }
+        case "get-user": {
+            res.send(await API.getUser(req));
             break;
         }
         case "get-ip-stats": {
@@ -88,41 +105,17 @@ export const query = async (req, res) => {
         }
         case "get-guest-user": {
             res.send({
-                ID: req.guest.ID
+                ID: req.guest?.ID
             });
             break;
         }
-        case "get-guest-stats": {
-            let object = new WordGuestStats();
-            object.User_ID = req.guest.ID;
-
-            let vars = await connection
-                .getRepository(WordGuestStats)
-                .find(object)
-            
-            let result = { };
-
-            if (vars.length !== 0) {
-                for (let v of vars) {
-                    result[v.Variable] = v.Data;
-                }
-            }
-
-            let response = {
-                clientIp: req.clientIp,
-                stats: result
-            }
-
-            res.send(response);
-            break;
-        }
         case "test-get-guest-stats": {
-            let result = await GuestDynamo.getVariableOrCreate(req.guest.ID, "testvar", "0");
+            let result = await GuestDynamo.getVariableOrCreate(req.guest?.ID, "testvar", "0");
             res.send(result);
             break;
         }
         case "test-set-guest-stats": {
-            let result = await GuestDynamo.setVariable(req.guest.ID, "testvar", req.body.testVar);
+            let result = await GuestDynamo.setVariable(req, res, "testvar", req.body.testVar);
             res.send(result);
             break;
         }

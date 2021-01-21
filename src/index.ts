@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 import { MongoClient } from "typeorm";
 import { initPlay } from "./play/main";
 import { Initialize as Authentication } from './auth/authentication';
-import { GuestModule } from './auth/guest';
+import GuestModule from './auth/guest';
 import { Connect as DBController, DB } from './database/controller';
 import { main as SubApps } from './apps/main';
 import { main as StaticExpress } from './apps/static';
@@ -88,19 +88,20 @@ async function main() {
         DBController(databases);
     }
 
+    // Guest Authentication
+    const guestModule = new GuestModule(network);
+    app.use(guestModule.getMiddleware());
+    guestModule.attachTestEndpoint(app);
+
+    const guestCount = await network.getRepository(Guest).count();
+    console.log(`Guest Count: ${guestCount}`);
+
     // Passport Authentication
     let auth = Authentication(app, network);
 
-    // Guest Authentication
-    if ((process.config as Partial<IConfig>).guest) {
-        GuestModule(app, network);
-        const guestCount = await network.getRepository(Guest).count();
-        console.log(`Guest Count: ${guestCount}`);
-    }
-
     // Applications such as ZNAM and ZBOR
     if ((process.config as Partial<IConfig>).subApps) {
-        SubApps(app);
+        SubApps(app, guestModule);
     }
 
     StaticExpress(app);

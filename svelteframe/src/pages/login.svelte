@@ -5,9 +5,7 @@
   	import Textfield, {Input, Textarea} from '@smui/textfield';
 	import List, {Item, Graphic, Meta, Subheader, Separator, Text, PrimaryText, SecondaryText} from '@smui/list';
 
-	import { queryFetch, graphQL } from './../js/common';
-
-	let isAuth = false;
+	import { graphQL, domain } from './../js/common';
 	
 	import CenterMobile from '../components/Center.svelte';
 	import Navigation from './../components/Navigation.svelte';
@@ -15,11 +13,11 @@
 	import PlatformTitle from '../components/PlatformTitle.svelte';
 	import Alert from '../components/Alert.svelte';
 
-	// graphQL({ query: "{ isAuth }" }, (data) => {
-	// 	if (data.isAuth > 0) {
-	// 		isAuth = true;
-	// 	}
-	// });
+	graphQL({ query: "{ isAuth }" }, (data) => {
+		if (data.isAuth > 0) {
+			window.location.href = domain();
+		}
+	});
 	
 </script>
 

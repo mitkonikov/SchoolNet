@@ -4,7 +4,6 @@ import { TextField, Button, Chip } from "@material-ui/core";
 
 import "./../../styles/contribute.css";
 import "./Contact.css";
-import { queryFetch } from "../../js/common";
 
 import GradeIcon from "@material-ui/icons/Grade";
 import GitHubIcon from "@material-ui/icons/GitHub";
@@ -13,7 +12,10 @@ import NewReleasesIcon from "@material-ui/icons/NewReleases";
 
 import WideCard from "../WideCard/WideCard";
 import Terms from "./Terms";
-import { LimitOnRequests, ThankYouForContact } from "../../js/messages";
+
+import ReactGA from "react-ga";
+
+import { contactFetch } from './script.ts';
 
 class Contact extends Component {
     state = {
@@ -83,25 +85,7 @@ class Contact extends Component {
                             color="primary"
                             disableElevation
                             onClick={() => {
-                                queryFetch({
-                                    command: "contact",
-                                    data: {
-                                        message: this.state.contact,
-                                    },
-                                }).then((data) => {
-                                    if (data.status === "success") {
-                                        ThankYouForContact();
-                                    } else if (data.status === "error") {
-                                        if (data.message === "limit") {
-                                            LimitOnRequests();
-
-                                            localStorage.setItem(
-                                                "contactMessage",
-                                                this.state.contact
-                                            );
-                                        }
-                                    }
-                                });
+                                contactFetch(this.state.contact);
                             }}
                         >
                             ТОЛКУ ЗА СЕГА.
@@ -118,6 +102,10 @@ class Contact extends Component {
                     }
                     icon={<GitHubIcon fontSize="large" />}
                     callback={() => {
+                        ReactGA.event({
+                            category: "External Link",
+                            action: "GitHub"
+                        });
                         window.location.href =
                             "https://github.com/mitkonikov/SchoolNet";
                     }}
@@ -133,6 +121,10 @@ class Contact extends Component {
                         }
                         icon={<StorageIcon fontSize="large" />}
                         callback={() => {
+                            ReactGA.event({
+                                category: "External Link",
+                                action: "Download Dictionary"
+                            });
                             window.location =
                                 // "https://github.com/mitkonikov/SchoolNet/raw/master/dumps/zbor_database_words.json";
                                 "https://zbor.schoolnet.mk/dict/json";

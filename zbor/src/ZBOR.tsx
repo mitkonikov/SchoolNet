@@ -2,7 +2,8 @@ import React, { Component, Suspense } from "react";
 import "./common.css";
 import "./ZBOR.css";
 
-import { Loading, CenterMobile, PlatformTitle } from "./common";
+import { Loading, CenterMobile } from "./common";
+import { queryFetch } from "./js/common";
 
 import { Switch, Route, Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
@@ -12,57 +13,62 @@ import ReactGA from "react-ga";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "./theme";
 
-import WordDay from "./components/WordDay";
-import Search from "./components/Search/Search";
-import Connect from "./components/Connect/Connect";
-import Artificial from "./components/Artificial";
 import Contact from "./components/Contact/Contact.jsx";
 import NavBar from "./components/NavBar";
-import Statistics from "./components/Statistics";
+import Home from "./pages/Home";
+
+import { User } from "./types/home.types";
 
 const trackingId = "UA-70623448-2";
 
-type State = {
+interface State {
     currentPage: number;
-    stats?: any;
-};
+    isUserFetched: boolean;
+    user: User;
+    stats?: { [key: string]: any };
+}
 
 class ZBOR extends Component {
     state: State;
     history: any;
-    statsRef: React.RefObject<Statistics>;
 
     constructor(props: any) {
         super(props);
 
         this.state = {
-            currentPage: 0
+            currentPage: 0,
+            isUserFetched: false,
+            user: {
+                isAuth: false,
+            },
         };
 
         this.history = createBrowserHistory();
         this.setPage = this.setPage.bind(this);
-        this.reloadStats = this.reloadStats.bind(this);
-        this.getStats = this.getStats.bind(this);
-        this.statsRef = React.createRef();
     }
 
     componentDidMount() {
+        this.updateStats();
         ReactGA.initialize(trackingId);
         ReactGA.pageview("/zbor");
     }
 
-    setPage(newPage: number) {
-        this.setState({
-            currentPage: newPage
+    updateStats() {
+        queryFetch({
+            command: "get-user",
+        }).then((res) => {
+            if (typeof res == "undefined") return;
+            this.setState({
+                isUserFetched: true,
+                ...res
+            });
         });
     }
 
-    reloadStats() {
-        this.statsRef.current.getGuestStats();
-    }
-
-    getStats() {
-        return this.statsRef.current.getStats();
+    setPage(newPage: number) {
+        this.setState({
+            currentPage: newPage,
+        });
     }
 
     render() {
@@ -75,35 +81,14 @@ class ZBOR extends Component {
                                 <Suspense fallback={<Loading />}>
                                     <CenterMobile>
                                         <Route exact path="/">
-                                            <PlatformTitle
-                                                title="ЗБОР"
-                                                isBeta={true}
+                                            <Home
+                                                auth={{
+                                                    user: this.state.user,
+                                                    isUserFetched: this.state.isUserFetched,
+                                                }}
+                                                stats={this.state.stats}
+                                                updateStats={this.updateStats}
                                             />
-
-                                            <div className="row-flex">
-                                                <div
-                                                    className="card-flex"
-                                                    id="small-word-day-container"
-                                                >
-                                                    <WordDay />
-                                                </div>
-
-                                                <div
-                                                    className="card-flex"
-                                                    id="small-stats-container"
-                                                >
-                                                    <Statistics ref={this.statsRef}/>
-                                                </div>
-                                            </div>
-
-                                            <Search reloadStats={this.reloadStats}/>
-
-                                            <Connect 
-                                                reloadStats={this.reloadStats} 
-                                                stats={this.getStats}
-                                            />
-
-                                            <Artificial />
                                         </Route>
                                         <Route path="/contact">
                                             <Contact />

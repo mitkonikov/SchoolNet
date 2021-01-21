@@ -30,7 +30,7 @@ let Update = function(req, res) {
                 ZNAMDBC.contribute(req.user.ID, req.body.data, (response) => res.send(response));
                 break;
             case 'display-name-change':
-                if (data.displayname && data.displayname.length >= 5 && data.displayname.length <= 100) {
+                if (typeof data.displayname == "string" && data.displayname.length >= 5 && data.displayname.length <= 100) {
                     network.query("SELECT Last_Name_Change FROM tbl_students_info WHERE ID = ?", req.user.ID, (err, last) => {
                         if (typeof last != "undefined") {
                             let oldDate = new Date(last[0].Last_Name_Change);
@@ -52,7 +52,7 @@ let Update = function(req, res) {
 
             // Description change
             case 'desc-change':
-                if (data.description && data.description.length >= 5 && data.description.length <= 250) {
+                if (typeof data.description == "string" && data.description.length >= 5 && data.description.length <= 250) {
                     network.query("UPDATE tbl_students_info SET About = ? WHERE ID = ? ", [data.description.trim(), req.user.ID], function(err, rows) {
                         if (rows) res.send({ status: "success" });
                         else res.send({ status: "failed" });

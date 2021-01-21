@@ -14,5 +14,5 @@ export type State = {
 
 export type Props = {
     reloadStats: Function;
-    stats: Function;
+    stats: { [key: string]: any };
 }

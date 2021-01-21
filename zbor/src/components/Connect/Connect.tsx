@@ -44,7 +44,7 @@ export default class Connect extends Component {
     componentDidMount() {
         onSearch((newState) => this.setState(newState));
         setTimeout(() => {
-            let stats = this.props.stats();
+            let stats = this.props.stats;
             if (typeof stats !== "undefined") {
                 this.setState({
                     connections: parseInt(stats.wordConnections)
@@ -73,7 +73,7 @@ export default class Connect extends Component {
                 wordTo: this.state.wordTo.ID,
             },
         }).then((res) => {
-            if (res.status && res.status === "success") {
+            if (res?.status && res.status === "success") {
                 this.setState({ 
                     fire: this.state.fire + 1, 
                     connections: this.state.connections + 1

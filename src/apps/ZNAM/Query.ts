@@ -4,13 +4,11 @@
 
 /** Database Controller */
 let database;
-let ZNAMDBC;
 let network;
 let GameLogic;
 
-let Initialize = function(node_databaseController, node_ZNAMDBC, node_GameLogic) {
+let Initialize = function(node_databaseController, node_GameLogic) {
     database = node_databaseController;
-    ZNAMDBC = node_ZNAMDBC;
     GameLogic = node_GameLogic;
     network = database.DB("db_net");
 }
