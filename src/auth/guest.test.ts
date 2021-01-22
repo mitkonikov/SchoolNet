@@ -3,6 +3,7 @@ import mockConnection from "../tests/mockConnection";
 import GuestModule from "./guest";
 import MockExpressRequest from 'mock-express-request';
 import MockExpressResponse from 'mock-express-response';
+import { Guest } from "../entity/network/Guest";
 
 let connection: Connection;
 const realUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36";
@@ -77,9 +78,14 @@ describe('Guest Module Tests', () => {
 
             let res = new MockExpressResponse();
 
-            await guestModule.createGuestSession(req, res);
+            let cookie = await guestModule.createGuestSession(req, res);
 
             expect(res.get('Set-Cookie')).toBeTruthy();
+            let guests = await connection.getRepository(Guest).find({
+                Cookie: cookie
+            });
+
+            expect(guests.length).toBe(1);
         });
     });
 });

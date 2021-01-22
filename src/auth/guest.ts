@@ -60,6 +60,7 @@ export default class GuestModule {
         let FoundGuest = await this.isGuest(req);
         if (FoundGuest) {
             req.guest = this.GuestPassportWrapper(FoundGuest);
+            return FoundGuest.Cookie;
         } else {
             // generate random session id
             const sessionID = uuidv4();
@@ -96,6 +97,8 @@ export default class GuestModule {
             } as Guest);
 
             req.guest = this.GuestPassportWrapper(createdGuest);
+
+            return sessionID;
         }
     }
 
