@@ -20,8 +20,12 @@ export default class GuestModule {
         this.cookieName = process.env.GUEST_SESSION_NAME;
         this.cookieSecret = process.env.GUEST_SESSION_SECRET;
 
+        if (typeof this.network == "undefined") {
+            console.log("[GUEST] Network connection undefined.");
+        }
+
         if (typeof this.cookieName == "undefined" || this.cookieName == '') {
-            console.log("Guest session cookies are not configured properly!");
+            console.log("[GUEST] Guest session cookies are not configured properly!");
         }
     }
 
