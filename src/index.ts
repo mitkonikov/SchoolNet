@@ -70,7 +70,7 @@ async function main() {
     const socket = socketio(server);
 
     // Request Comes with Client's IP
-    app.use(requestIp.mw())
+    app.use(requestIp.mw());
 
     // Set up the connection to MySQL
     let network = await getConnectionOrCreate("default");

@@ -203,7 +203,7 @@ export default (app: Express.Express, network: Connection) => {
                         user.Online = true;
                         await user.save();
                         updateLoginStats(user.ID);
-                        const displayName = await getDisplayName(req.user.ID, network);
+                        const displayName = await getDisplayName(user.ID, network);
                         done(null, userPassportWrapper(user, displayName));
                     } else {
                         const profileName = FB_NAME;
@@ -268,7 +268,7 @@ export default (app: Express.Express, network: Connection) => {
                         user.Online = true;
                         await user.save();
                         updateLoginStats(user.ID);
-                        const displayName = await getDisplayName(req.user.ID, network);
+                        const displayName = await getDisplayName(user.ID, network);
                         done(null, userPassportWrapper(user, displayName));
                     } else {
                         const profileName = G_NAME;

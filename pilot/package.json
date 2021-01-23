@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public",
+    "dev": "node dev.js",
+    "start": "sirv -s public",
     "validate": "svelte-check"
   },
   "devDependencies": {
