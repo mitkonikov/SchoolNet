@@ -43,11 +43,10 @@ const MySQLWrapper = (orm: Connection) => {
     }
 }
 
-const onConnect = (database_name, error) => {
+const onConnect = (database_name: string, error: string) => {
     if (!!error) console.log(error);
     else
         console.log(
-            "\x1b[32m%s\x1b[0m",
             "Successfully connected to the " + database_name + " database!"
         );
 }

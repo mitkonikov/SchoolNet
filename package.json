@@ -91,7 +91,8 @@
     "webpack-dev-server": "^3.11.0"
   },
   "scripts": {
-    "test": "tsc --project tsconfig.test.json && jest --rootDir=build --detectOpenHandles",
+    "test-dev": "tsc --project tsconfig.test.json && jest --rootDir=build --detectOpenHandles",
+    "test": "tsc && jest --rootDir=build --detectOpenHandles",
     "watch": "webpack --watch",
     "build": "webpack",
     "start": "webpack-dev-server",

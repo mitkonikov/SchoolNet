@@ -7,7 +7,10 @@ import ZBORAPI from './../ZBORAPI';
 import PILOTAPI from './../PILOTAPI';
 import GuestModule from '../auth/guest';
 
-export const main = (app: express.Express, guestModule: GuestModule) => {
+import socketio from 'socket.io';
+import PilotSocket from '../pilot/pilot.socket';
+
+export const main = (app: express.Express, socket: socketio.Server, guestModule: GuestModule) => {
     // ZBOR SERVING AND API
     let connectionPromise = ZBORAPI.connect(guestModule);
 
@@ -33,6 +36,7 @@ export const main = (app: express.Express, guestModule: GuestModule) => {
     app.use('/zbor', express.static(path.join(__dirname, './../../zbor/build')));            
 
     // PILOT SERVING AND API
+    new PilotSocket(socket.of('/pilot'));
     PILOTAPI.connect();
     app.post('/pilot/api/light', (req: IRequest, res) => {
         if (req.isAuthenticated() && req.user.Role === 4) {
@@ -52,7 +56,7 @@ export const main = (app: express.Express, guestModule: GuestModule) => {
 
     app.use('/pilot', (req: IRequest, res, next) => {
         if (req.isAuthenticated() && req.user.Role === 4) {
-            express.static(__dirname + '/pilot/build')(req, res, next);
+            express.static(path.join(__dirname, './../../pilot/public'))(req, res, next);
         } else {
             res.redirect("/");
         }

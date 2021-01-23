@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { getConnectionOrCreate, connectMongo, connectMySQL } from "./database/connection";
 import express, { Response } from "express";
 import http from "http";
+import socketio from 'socket.io';
 import requestIp from 'request-ip';
 import { buildSchema } from 'type-graphql';
 import { UserResolver } from "./resolvers/UserResolver";
@@ -66,6 +67,7 @@ async function main() {
     // Create the Express and Apollo apps
     const app = express();
     const server = http.createServer(app);
+    const socket = socketio(server);
 
     // Request Comes with Client's IP
     app.use(requestIp.mw())
@@ -101,7 +103,7 @@ async function main() {
 
     // Applications such as ZNAM and ZBOR
     if ((process.config as Partial<IConfig>).subApps) {
-        SubApps(app, guestModule);
+        SubApps(app, socket, guestModule);
     }
 
     StaticExpress(app);
