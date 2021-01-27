@@ -10,9 +10,9 @@ import GuestModule from '../auth/guest';
 import socketio from 'socket.io';
 import PilotSocket from '../pilot/pilot.socket';
 
-export const main = (app: express.Express, socket: socketio.Server, guestModule: GuestModule) => {
+export const main = async (app: express.Express, socket: socketio.Server, guestModule: GuestModule) => {
     // ZBOR SERVING AND API
-    let connectionPromise = ZBORAPI.connect(guestModule);
+    let connectionPromise = await ZBORAPI.connect(guestModule);
 
     // Index API for ZBOR
     if ((process.config as Partial<IConfig>).indexAPI) {
@@ -51,6 +51,13 @@ export const main = (app: express.Express, socket: socketio.Server, guestModule:
             PILOTAPI.query(req, res);
         } else {
             res.send({ status: "unauth" });
+        }
+    });
+
+    app.use('/pilot/console/test', (req: IRequest, res) => {
+        if (req.isAuthenticated() && req.user.Role === 4) {
+            console.log("This is a test LOG.");
+            res.send("Done.");
         }
     });
 

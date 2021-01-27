@@ -4,7 +4,6 @@ import { Db } from 'typeorm';
 import express, { IRouter, Express } from 'express';
 import { Requirements, IAPI } from './types';
 import socketio from 'socket.io';
-import { Server } from 'http';
 
 const CLEANER_APPS = ["cleaner", "cleaner-link"];
 let allCollections = [];
@@ -66,12 +65,12 @@ let requireGame = (path: string, read: any) => {
     });
 }
 
-let findJSON = (source: string, dir: string) => {
-    let fileNameTmp = source.split('\\');
-    let fileName = fileNameTmp[fileNameTmp.length - 1].toLowerCase();
+let findJSON = (source: string, dir: string): void => {
+    let directoryTmp = source.split(path.sep);
+    let fileName = path.basename(source).toLowerCase();
 
     for (let cleaner of CLEANER_APPS) {
-        if (fileNameTmp[fileNameTmp.length - 2] == cleaner) {
+        if (directoryTmp[directoryTmp.length - 2] == cleaner) {
             return;
         }
     }
@@ -82,6 +81,12 @@ let findJSON = (source: string, dir: string) => {
     }
 
     let read = JSON.parse(fs.readFileSync(source).toString());
+
+    if (read.short_name == "pilot") {
+        console.log("Pilot is a reserved word. Cannot be used as a short_name of an app.");
+        return;
+    }
+
     let mainModule = path.join(dir, read.backend, "main.js");
 
     if (!fs.existsSync(mainModule)) {
@@ -92,7 +97,7 @@ let findJSON = (source: string, dir: string) => {
     let url = '/' + read.short_name;
     let gameDir = path.join(
         __dirname,
-        '../play',
+        '../../play',
         read.short_name, 
         read.frontend
     );
@@ -105,7 +110,7 @@ let findJSON = (source: string, dir: string) => {
     requireGame(mainModule, read);
 }
 
-const recursiveSync = (source: string, level: number) => {
+const recursiveSync = (source: string, level: number): void => {
     let files = [];
 
     if (fs.lstatSync(source).isDirectory()) {
@@ -122,8 +127,8 @@ const recursiveSync = (source: string, level: number) => {
     }
 }
 
-export const initPlay = async (source: string, node_app: Express, server: Server, database: Db) => {
-    socketIO = socketio(server);
+export const initPlay = async (source: string, node_app: Express, socket: socketio.Server, database: Db): Promise<void> => {
+    socketIO = socket;
 
     app = node_app;
     play = database;

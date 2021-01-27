@@ -6,7 +6,7 @@ import { IRequest } from "./../../types";
 
 const key = process.env.INDEX_API_KEY;
 
-export const open = (connection: Promise<Connection>) => {
+export const open = (connection: Connection) => {
     let router = Router();
     router.post("/words", async (req: IRequest, res) => {
         if (typeof key == "undefined") {
@@ -36,14 +36,13 @@ export const open = (connection: Promise<Connection>) => {
     return router;
 }
 
-const importWords = async (data: { [key: string]: number }, connection: Promise<Connection>) => {
+const importWords = async (data: { [key: string]: number }, connection: Connection) => {
     console.log("Importing words...");
-    let conn = await connection;
     for (let i in data) {
         let word = new Word();
         word.Word_Text = i;
         word.Wiki_Frq = data[i];
-        await conn.getRepository(Word).insert(word)
+        await connection.getRepository(Word).insert(word)
             .catch((reason) => {
                 console.log("Error: ", {
                     "word": i,
@@ -56,13 +55,12 @@ const importWords = async (data: { [key: string]: number }, connection: Promise<
     return "success";
 }
 
-const importGeneratedWords = async (data: [string], connection: Promise<Connection>) => {
+const importGeneratedWords = async (data: [string], connection: Connection) => {
     console.log("Importing generated words.");
-    let conn = await connection;
     for (let i in data) {
         let word = new WordGenerated();
         word.Word = data[i];
-        await conn.getRepository(WordGenerated).insert(word)
+        await connection.getRepository(WordGenerated).insert(word)
             .catch((reason) => {
                 console.log("Error: ", {
                     "word": data[i],

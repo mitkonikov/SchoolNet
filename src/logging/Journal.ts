@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 type Props = {
     debug?: boolean;
@@ -21,15 +22,16 @@ export default class Journal {
      * @param logLocation File or Directory location of the logs
      * @param callback Callback Function with two params (filename, data)
      */
-    startWatch(logLocation: string, callback: (filename: string, data: string) => void) {
+    startWatch(logLocation: string, callback: (filename: string, data: string) => void): void {
         this.debug && console.log(" > Watching log location: ", logLocation);
         
         fs.watch(logLocation, (event, filename) => {
             if (filename) {
+                let filepath = path.join(logLocation, filename);
                 // If we haven't seen the file before
                 if (typeof this.startMap[filename] == "undefined") {
                     // read the file for the first time
-                    this.readFileWithSkip(filename, 0, (data: string) => {
+                    this.readFileWithSkip(filepath, 0, (data: string) => {
                         this.readOnStart && callback(filename, data);
                         this.startMap[filename] = data.length;
                     });
@@ -43,7 +45,7 @@ export default class Journal {
                         this.fileReadTimes[filename] = Date.now();
                         if (timeDiff > 0.5) {
                         
-                            this.readFileWithSkip(filename, this.startMap[filename], (data: string) => {
+                            this.readFileWithSkip(filepath, this.startMap[filename], (data: string) => {
                                 callback(filename, data);
                                 this.startMap[filename] += data.length;
                             });
@@ -56,7 +58,7 @@ export default class Journal {
         });
     }
 
-    readFileWithSkip (filename: string, skip: number, callback: (data: string) => void) {
+    readFileWithSkip (filename: string, skip: number, callback: (data: string) => void): void {
         // Read the file, but skip already read bytes
         let logStream = fs.createReadStream(filename, {
             start: skip 

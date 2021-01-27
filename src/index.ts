@@ -67,7 +67,9 @@ async function main() {
     // Create the Express and Apollo apps
     const app = express();
     const server = http.createServer(app);
-    const socket = socketio(server);
+    const socket = socketio(server, {
+        path: "/socket.io"
+    });
 
     // Request Comes with Client's IP
     app.use(requestIp.mw());
@@ -103,14 +105,14 @@ async function main() {
 
     // Applications such as ZNAM and ZBOR
     if ((process.config as Partial<IConfig>).subApps) {
-        SubApps(app, socket, guestModule);
+        await SubApps(app, socket, guestModule);
     }
 
     StaticExpress(app);
 
     // Require all the games
     let playDir = path.join(__dirname, '../play');
-    initPlay(playDir, app, server, play);
+    await initPlay(playDir, app, socket, play);
 
     // Main page
     let sendIndexPage = (res: Response<any>) => res.sendFile(path.join(__dirname, '../svelteframe/public/index.html'));
