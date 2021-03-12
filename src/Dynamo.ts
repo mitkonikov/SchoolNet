@@ -8,6 +8,12 @@ export default class Dynamo {
     repository: any;
     guestModule: GuestModule;
 
+    /**
+     * Dynamo is only used for Guest Statistics. It is highly flexible and imitates a NoSQL-style storage.
+     * @param connection    TypeORM Connection to the database where the repository is stored
+     * @param repository    TypeORM Repository
+     * @param GuestModule   Reference to the Guest Module
+     */
     constructor(connection: Connection, repository: any, GuestModule: GuestModule) {
         this.connection = connection;
         this.repository = repository;
@@ -35,7 +41,7 @@ export default class Dynamo {
             .find(object)
 
         if (exists.length == 0) {
-            // if it doesnt exist do we create it?
+            // if it doesn't exist do we create it?
             if (create) {
                 object.Data = dataToInsert;
                 

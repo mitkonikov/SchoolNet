@@ -1,3 +1,7 @@
+/*
+    THIS SCRIPT NEEDS UPDATING.
+*/
+
 const LINK_TO_NODE_DEPENDENCIES = `${__dirname}/cleaner-link`;
 
 const fs = require('fs');

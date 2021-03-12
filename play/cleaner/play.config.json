@@ -3,7 +3,7 @@
     "short_name": "{{short_name}}",
     "color": "{{color}}",
     "description": "{{description}}",
-    "frontend": "./front-src/build",
-    "backend": "./server-build",
+    "mongodb_password": "{{mongodb_password}}",
+    "mongodb_collections" : ["active", "archive"],
     "author": "{{author}}"
 }

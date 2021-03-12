@@ -3,8 +3,6 @@ import { MongoClient } from 'mongodb';
 import mysql from 'mysql';
 import { IDatabases } from '../types';
 
-const uri = 'mongodb://127.0.0.1:27017/?readPreference=primary&ssl=false';
-
 export const getConnectionOrCreate = async (name: string) => {
     let c: Connection;
     try {
@@ -15,7 +13,7 @@ export const getConnectionOrCreate = async (name: string) => {
     return c;
 }
 
-export const connectMongo = () => {
+export const connectMongo = (uri: string) => {
     return new Promise((resolve, reject) => {
         MongoClient.connect(uri, {
             useUnifiedTopology: true

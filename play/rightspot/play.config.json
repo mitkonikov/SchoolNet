@@ -3,7 +3,7 @@
     "short_name": "rightspot",
     "color": "#45b553",
     "description": "It's the right spot to start developing your own app!",
-    "frontend": "./front-src/build",
-    "backend": "./server-build",
+    "mongodb_password": "test123",
+    "mongodb_collections" : ["active", "archive"],
     "author": "Mitko Nikov"
 }
