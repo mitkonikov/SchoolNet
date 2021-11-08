@@ -18,7 +18,7 @@ First downloading the Typescript template frame.
 
 ```sh
 npx degit sveltejs/template svelteframe
-cd svelte-typescript-app
+cd svelteframe
 node scripts/setupTypeScript.js
 ```
 
@@ -26,7 +26,10 @@ Editing the `rollup.config.js` file.
 
 ```js
 output: {
-    dir: 'public/build'
+	sourcemap: true,
+	format: 'es',
+	name: 'app',
+	dir: 'public/frame/build'
 }
 ```
 
